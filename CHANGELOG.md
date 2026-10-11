@@ -20,3 +20,10 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 -->
 
 ## [Unreleased]
+
+### Added
+
+- Rule storage per site, category, course and activity, with optimistic locking and a per-context rule limit.
+- Rendering engine that derives each icon's markup from the running Moodle's icon map and compiles rules to CSS: recolour for font icons, background, shape, padding and opacity for any icon.
+- Per-context stylesheets delivered as one immutable bundle after the theme stylesheet, with cache revisions that only grow and single-flight compilation.
+- Site setting to disable the plugin, rule limit setting and capabilities for each scope.

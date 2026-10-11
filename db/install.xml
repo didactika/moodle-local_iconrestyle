@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/iconrestyle/db" VERSION="20261011" COMMENT="XMLDB file for Moodle local/iconrestyle"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_iconrestyle_rule" COMMENT="One customisation of one icon slot in one context.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context the rule belongs to."/>
+        <FIELD NAME="deltactxid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context whose delta stylesheet contains the rule."/>
+        <FIELD NAME="slotkey" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Validated slot key, component:name."/>
+        <FIELD NAME="painter" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="color" SEQUENCE="false" COMMENT="Artwork painter: color, mask, image or none."/>
+        <FIELD NAME="assetid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Artwork asset, if any."/>
+        <FIELD NAME="fg" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Foreground colour or token."/>
+        <FIELD NAME="fgdark" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Foreground colour or token in dark colour mode."/>
+        <FIELD NAME="bg" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Background colour or token."/>
+        <FIELD NAME="bgdark" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Background colour or token in dark colour mode."/>
+        <FIELD NAME="shape" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false" COMMENT="Background shape: none, square, rounded or circle."/>
+        <FIELD NAME="padding" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Padding in hundredths of an em."/>
+        <FIELD NAME="opacity" TYPE="int" LENGTH="3" NOTNULL="false" SEQUENCE="false" COMMENT="Opacity percentage."/>
+        <FIELD NAME="target" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="icon" SEQUENCE="false" COMMENT="icon, type, purpose or instance."/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="rev" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Optimistic lock counter."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="contextslottarget" UNIQUE="true" FIELDS="contextid, slotkey, target"/>
+        <INDEX NAME="deltactxid" UNIQUE="false" FIELDS="deltactxid"/>
+        <INDEX NAME="assetid" UNIQUE="false" FIELDS="assetid"/>
+        <INDEX NAME="slotkey" UNIQUE="false" FIELDS="slotkey"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_iconrestyle_ctxstate" COMMENT="Revision authority of each delta stylesheet context.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Delta owner context."/>
+        <FIELD NAME="rev" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Monotonic revision, zero when the context has no rules."/>
+        <FIELD NAME="rulecount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="contextid" UNIQUE="true" FIELDS="contextid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
