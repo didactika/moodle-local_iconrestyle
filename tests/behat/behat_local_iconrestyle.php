@@ -120,6 +120,72 @@ class behat_local_iconrestyle extends behat_base {
     }
 
     /**
+     * Check one computed style of the first icon in one column of the designer's preview.
+     *
+     * @Then /^the (default|current|new) preview icon should have "([^"]+)" "([^"]+)"$/
+     * @param string $area Preview column.
+     * @param string $property CSS property.
+     * @param string $value Expected computed value.
+     */
+    public function the_preview_icon_should_have(string $area, string $property, string $value): void {
+        $host = json_encode('[data-region="cells-' . $area . '"]');
+        $read = "(function () {
+            var host = document.querySelector(" . $host . ");
+            var element = host && host.shadowRoot ? host.shadowRoot.querySelector('.irs-cell > *') : null;
+            return element ? window.getComputedStyle(element)[" . json_encode($property) . "] : '';
+        })()";
+        $this->getSession()->wait(5000, '(' . $read . ') === ' . json_encode($value));
+        $actual = $this->getSession()->evaluateScript($read);
+        if ($actual !== $value) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                "The {$area} preview icon has {$property} '{$actual}', expected '{$value}'.",
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Choose a fixture file in the designer's upload field.
+     *
+     * The file is created in the page, because the browser container cannot see the plugin's files.
+     *
+     * @When /^I choose the artwork fixture "([^"]+)"$/
+     * @param string $name Name of a file in tests/fixtures, without extension.
+     */
+    public function i_choose_the_artwork_fixture(string $name): void {
+        $content = file_get_contents(__DIR__ . '/../fixtures/' . clean_param($name, PARAM_ALPHANUMEXT) . '.svg');
+        $script = "(function () {
+            var input = document.getElementById('irs-upload');
+            var transfer = new DataTransfer();
+            transfer.items.add(new File([" . json_encode($content) . "], 'fixture.svg', {type: 'image/svg+xml'}));
+            input.files = transfer.files;
+            input.dispatchEvent(new Event('change', {bubbles: true}));
+        })()";
+        $this->getSession()->executeScript($script);
+    }
+
+    /**
+     * Save a screenshot of the whole page, for looking at it.
+     *
+     * @Then /^I capture the page as "([^"]+)"$/
+     * @param string $name Screenshot name.
+     */
+    public function i_capture_the_page(string $name): void {
+        global $CFG;
+        $file = ($CFG->behat_faildump_path ?? sys_get_temp_dir()) . '/' . clean_param($name, PARAM_ALPHANUMEXT) . '.png';
+        file_put_contents($file, $this->getSession()->getScreenshot());
+    }
+
+    /**
+     * Open the designer by its address, as someone who does not use the administration menu would.
+     *
+     * @When /^I open the icon designer address$/
+     */
+    public function i_open_the_icon_designer_address(): void {
+        $this->getSession()->visit($this->locate_path('/local/iconrestyle/designer.php'));
+    }
+
+    /**
      * Check the colour really painted on screen at a point inside the artwork of an icon.
      *
      * Computed styles can be right while nothing is drawn, so this reads a pixel of a screenshot. The icon is shown as

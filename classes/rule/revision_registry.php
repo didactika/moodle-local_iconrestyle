@@ -37,16 +37,16 @@ class revision_registry {
     /** @var \moodle_database Database. */
     private $db;
 
-    /** @var \cache_application Revision cache. */
+    /** @var \cache Revision cache. */
     private $cache;
 
     /**
      * Create the registry.
      *
      * @param \moodle_database $db Database.
-     * @param \cache_application $cache Revision cache.
+     * @param \cache $cache Revision cache.
      */
-    public function __construct(\moodle_database $db, \cache_application $cache) {
+    public function __construct(\moodle_database $db, \cache $cache) {
         $this->db = $db;
         $this->cache = $cache;
     }

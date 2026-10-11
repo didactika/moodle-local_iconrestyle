@@ -30,3 +30,10 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 - Artwork intake: uploaded SVG is rebuilt from an allow-list (scripts, event handlers, external references, entities and document type declarations are refused or removed) and raster images are decoded and written again, then stored once by content hash.
 - Mask and image painters that replace an icon's artwork with an uploaded file, recolourable through a mask, on font icons and on image icons.
 - `asset.php` serves artwork by content hash with immutable caching, a restrictive content security policy and cross-origin access for CDN deployments.
+- Icon designer under Site administration > Appearance: a searchable, filterable and virtualised catalogue of every customisable icon, an inspector for artwork, foreground and background colour, shape, padding and opacity, a live preview of Moodle's default, the current and the new look on light and dark surfaces, staged changes with undo, redo, discard and save, and reset to inherited.
+- Web services behind the designer to read the catalogue and the rules of a context, save and delete rules, add artwork and compile unsaved rules for the preview, each checked against the capability of the context it is called for.
+
+### Fixed
+
+- The plugin no longer fails on sites where caching is disabled: the caches it uses now accept the cache object Moodle returns in that case.
+- Customisations now apply on the icon designer page too. Its preview columns draw inside isolated shadow trees, so the "Moodle default" column still shows the untouched icon.

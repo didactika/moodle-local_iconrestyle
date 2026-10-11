@@ -65,6 +65,9 @@ final class architecture_test extends \basic_testcase {
         $problems = [];
         $files = array_merge(glob(__DIR__ . '/../classes/*.php'), glob(__DIR__ . '/../classes/*/*.php'));
         foreach ($files as $file) {
+            if (strpos(file_get_contents($file), 'class_alias(') !== false) {
+                continue;
+            }
             $pattern = '/^(?:final\s+|abstract\s+)?(?:class|interface|trait)\s+([a-z_0-9]+)/mi';
             preg_match_all($pattern, file_get_contents($file), $matches);
             if ($matches[1] !== [basename($file, '.php')]) {

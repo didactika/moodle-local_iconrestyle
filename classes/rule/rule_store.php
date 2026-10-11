@@ -57,6 +57,19 @@ class rule_store {
     }
 
     /**
+     * Rules that belong to any of several contexts.
+     *
+     * @param int[] $contextids Context ids.
+     * @return rule[] Rules.
+     */
+    public function find_in_contexts(array $contextids): array {
+        if ($contextids === []) {
+            return [];
+        }
+        return array_values(array_map([$this, 'to_rule'], $this->db->get_records_list(self::TABLE, 'contextid', $contextids)));
+    }
+
+    /**
      * One rule by its natural key.
      *
      * @param int $contextid Context id.

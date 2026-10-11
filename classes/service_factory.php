@@ -34,12 +34,15 @@ use local_iconrestyle\delivery\chain_resolver;
 use local_iconrestyle\delivery\compile_lock;
 use local_iconrestyle\delivery\compiled_cache;
 use local_iconrestyle\rule\delta_context;
+use local_iconrestyle\rule\effective_rules;
+use local_iconrestyle\rule\permissions;
 use local_iconrestyle\rule\revision_registry;
 use local_iconrestyle\rule\rule;
 use local_iconrestyle\rule\rule_service;
 use local_iconrestyle\rule\rule_store;
 use local_iconrestyle\slot\glyph_signature_factory;
 use local_iconrestyle\slot\icon_map;
+use local_iconrestyle\slot\slot_catalogue;
 use local_iconrestyle\style\color_painter;
 use local_iconrestyle\style\container_painter;
 use local_iconrestyle\style\image_painter;
@@ -141,6 +144,38 @@ class service_factory {
                 rule::PAINTER_IMAGE => new image_painter($this->asset_urls()),
             ],
             new container_painter()
+        );
+    }
+
+    /**
+     * Who may customise icons where.
+     *
+     * @return permissions Permissions.
+     */
+    public function permissions(): permissions {
+        return $this->services['permissions'] ?? $this->services['permissions'] = new permissions();
+    }
+
+    /**
+     * Rules that apply in a context.
+     *
+     * @return effective_rules Reader.
+     */
+    public function effective_rules(): effective_rules {
+        return $this->services['effective'] ?? $this->services['effective'] = new effective_rules($this->rules());
+    }
+
+    /**
+     * The icons that can be customised.
+     *
+     * @return slot_catalogue Catalogue.
+     */
+    public function catalogue(): slot_catalogue {
+        return $this->services['catalogue'] ?? $this->services['catalogue'] = new slot_catalogue(
+            new icon_map(),
+            $this->signatures(),
+            \cache::make('local_iconrestyle', 'catalogue'),
+            $this->version_hash()
         );
     }
 

@@ -28,15 +28,15 @@ namespace local_iconrestyle\delivery;
  * Stores compiled CSS by an immutable key. Keys contain a colon, which the simple-key cache does not accept, so they are hashed.
  */
 class compiled_cache {
-    /** @var \cache_application Compiled CSS cache. */
+    /** @var \cache Compiled CSS cache. */
     private $cache;
 
     /**
      * Create the cache.
      *
-     * @param \cache_application $cache Compiled CSS cache.
+     * @param \cache $cache Compiled CSS cache.
      */
-    public function __construct(\cache_application $cache) {
+    public function __construct(\cache $cache) {
         $this->cache = $cache;
     }
 

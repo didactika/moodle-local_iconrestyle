@@ -1,0 +1,53 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_iconrestyle/colour_field
+
+    One colour control: a picker, a hex field, a theme colour menu and a button to clear it.
+
+    Context variables required for this template:
+    * name - fg or bg
+    * label - visible label
+    * tokens - theme colours, each with value and label
+
+    Example context (json):
+    {
+        "name": "fg",
+        "label": "Foreground",
+        "tokens": [{"value": "token:primary", "label": "Primary"}]
+    }
+}}
+<div class="irs-field irs-colour" data-colour="{{name}}">
+    <label class="irs-label" for="irs-{{name}}-hex">{{label}}</label>
+    <div class="irs-colour-row">
+        <input type="color" class="irs-colour-picker" data-region="{{name}}-picker" value="#000000"
+            aria-label="{{label}}" title="{{label}}">
+        <input type="text" class="form-control irs-colour-hex" id="irs-{{name}}-hex" data-region="{{name}}-hex"
+            maxlength="9" spellcheck="false" autocomplete="off" placeholder="#rrggbb">
+        <select class="custom-select form-select irs-colour-token" data-region="{{name}}-token"
+            aria-label="{{#str}}themecolour, local_iconrestyle{{/str}}">
+            <option value="">{{#str}}themecolour, local_iconrestyle{{/str}}</option>
+            {{#tokens}}
+                <option value="{{value}}">{{label}}</option>
+            {{/tokens}}
+        </select>
+        <button type="button" class="btn btn-secondary irs-clear" data-action="clear-{{name}}">
+            {{#str}}clearcolour, local_iconrestyle{{/str}}
+        </button>
+    </div>
+    <p class="irs-hint" data-region="{{name}}-hint" hidden></p>
+</div>

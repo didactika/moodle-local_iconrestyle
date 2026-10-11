@@ -32,6 +32,13 @@ $definitions = [
         'staticacceleration' => true,
         'staticaccelerationsize' => 64,
     ],
+    'catalogue' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
+    ],
     'compiled' => [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,

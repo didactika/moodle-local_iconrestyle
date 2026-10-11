@@ -16,7 +16,7 @@ Icon Restyle (**local_iconrestyle**) changes how Moodle draws its icons without 
 
 ## Status
 
-**Pre-release, under active development.** The rendering engine, storage, delivery and the intake of replacement artwork are implemented; the designer interface, icon libraries and export/import are not yet. It is not ready for production sites.
+**Pre-release, under active development.** The rendering engine, storage, delivery and the intake of replacement artwork are implemented; the icon designer for the whole site is available; per-category and per-course editing, icon libraries and export/import are not yet. It is not ready for production sites.
 
 ## How it works
 
@@ -38,7 +38,7 @@ From Moodle 5.1 the plugin directory is `public/local/iconrestyle`.
 
 ## Configuration
 
-Settings are under **Site administration → Appearance → Icon Restyle**.
+The designer is under **Site administration → Appearance → Icon appearance**. Settings are under **Site administration → Appearance → Icon Restyle**.
 
 | Setting | Default | Meaning |
 |---|---|---|
