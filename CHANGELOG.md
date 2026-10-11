@@ -27,3 +27,6 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 - Rendering engine that derives each icon's markup from the running Moodle's icon map and compiles rules to CSS: recolour for font icons, background, shape, padding and opacity for any icon.
 - Per-context stylesheets delivered as one immutable bundle after the theme stylesheet, with cache revisions that only grow and single-flight compilation.
 - Site setting to disable the plugin, rule limit setting and capabilities for each scope.
+- Artwork intake: uploaded SVG is rebuilt from an allow-list (scripts, event handlers, external references, entities and document type declarations are refused or removed) and raster images are decoded and written again, then stored once by content hash.
+- Mask and image painters that replace an icon's artwork with an uploaded file, recolourable through a mask, on font icons and on image icons.
+- `asset.php` serves artwork by content hash with immutable caching, a restrictive content security policy and cross-origin access for CDN deployments.

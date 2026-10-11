@@ -76,12 +76,9 @@ class stylesheet_compiler {
             if ($signature === null) {
                 continue;
             }
-            $blocks = [];
+            $blocks = $rule->styles_container() ? $this->container->paint($rule, $signature) : [];
             if (isset($this->artwork[$rule->painter()])) {
-                $blocks = $this->artwork[$rule->painter()]->paint($rule, $signature);
-            }
-            if ($rule->styles_container()) {
-                $blocks = $this->merge($blocks, $this->container->paint($rule, $signature));
+                $blocks = $this->merge($blocks, $this->artwork[$rule->painter()]->paint($rule, $signature));
             }
             foreach ($blocks as $suffix => $declarations) {
                 $css .= $this->block($signature->selectors($prefix), (string)$suffix, $declarations);
@@ -92,6 +89,8 @@ class stylesheet_compiler {
 
     /**
      * Merge two sets of declarations grouped by suffix.
+     *
+     * The artwork painter comes second so that, where both write the same property, the artwork wins.
      *
      * @param array $first First set.
      * @param array $second Second set, which wins on conflict.

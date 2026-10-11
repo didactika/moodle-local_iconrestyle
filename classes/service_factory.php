@@ -24,6 +24,11 @@
  */
 namespace local_iconrestyle;
 
+use local_iconrestyle\asset\asset_service;
+use local_iconrestyle\asset\asset_store;
+use local_iconrestyle\asset\asset_urls;
+use local_iconrestyle\asset\raster_reencoder;
+use local_iconrestyle\asset\svg_sanitizer;
 use local_iconrestyle\delivery\bundle_service;
 use local_iconrestyle\delivery\chain_resolver;
 use local_iconrestyle\delivery\compile_lock;
@@ -37,6 +42,8 @@ use local_iconrestyle\slot\glyph_signature_factory;
 use local_iconrestyle\slot\icon_map;
 use local_iconrestyle\style\color_painter;
 use local_iconrestyle\style\container_painter;
+use local_iconrestyle\style\image_painter;
+use local_iconrestyle\style\mask_painter;
 use local_iconrestyle\style\stylesheet_compiler;
 
 /**
@@ -128,9 +135,42 @@ class service_factory {
     public function compiler(): stylesheet_compiler {
         return $this->services['compiler'] ?? $this->services['compiler'] = new stylesheet_compiler(
             $this->signatures(),
-            [rule::PAINTER_COLOR => new color_painter()],
+            [
+                rule::PAINTER_COLOR => new color_painter(),
+                rule::PAINTER_MASK => new mask_painter($this->asset_urls()),
+                rule::PAINTER_IMAGE => new image_painter($this->asset_urls()),
+            ],
             new container_painter()
         );
+    }
+
+    /**
+     * Artwork storage.
+     *
+     * @return asset_store Store.
+     */
+    public function asset_store(): asset_store {
+        global $DB;
+        return $this->services['asset_store'] ?? $this->services['asset_store'] = new asset_store($DB);
+    }
+
+    /**
+     * Artwork addresses for CSS.
+     *
+     * @return asset_urls Helper.
+     */
+    public function asset_urls(): asset_urls {
+        return $this->services['asset_urls'] ?? $this->services['asset_urls'] = new asset_urls($this->asset_store());
+    }
+
+    /**
+     * Artwork intake.
+     *
+     * @return asset_service Service.
+     */
+    public function assets(): asset_service {
+        return $this->services['assets'] ?? $this->services['assets'] =
+            new asset_service(new svg_sanitizer(), new raster_reencoder(), $this->asset_store());
     }
 
     /**

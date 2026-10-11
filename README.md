@@ -16,7 +16,7 @@ Icon Restyle (**local_iconrestyle**) changes how Moodle draws its icons without 
 
 ## Status
 
-**Pre-release, under active development.** The rendering engine, storage and delivery are implemented; the designer interface, uploads, icon libraries and export/import are not yet. It is not ready for production sites.
+**Pre-release, under active development.** The rendering engine, storage, delivery and the intake of replacement artwork are implemented; the designer interface, icon libraries and export/import are not yet. It is not ready for production sites.
 
 ## How it works
 

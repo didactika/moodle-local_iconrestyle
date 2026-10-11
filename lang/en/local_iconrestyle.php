@@ -24,6 +24,7 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+$string['assetmissing'] = 'The stored artwork file is missing.';
 $string['cachedef_compiled'] = 'Compiled icon stylesheets';
 $string['cachedef_ctxrev'] = 'Icon stylesheet revisions by context';
 $string['enabled'] = 'Apply icon customisations';

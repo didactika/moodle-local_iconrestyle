@@ -34,7 +34,8 @@ class local_iconrestyle_generator extends component_generator_base {
     /**
      * Create a rule, by default for the whole site.
      *
-     * @param array $record Slot key plus optional contextid, painter, fg, bg, shape, padding, opacity, target and enabled.
+     * @param array $record Slot key plus optional contextid, painter, fg, bg, shape, padding, opacity, target, enabled
+     *     and svg, the name of a file in tests/fixtures that becomes the rule's artwork and defaults the painter to mask.
      * @return rule Stored rule.
      */
     public function create_rule(array $record): rule {
@@ -45,6 +46,11 @@ class local_iconrestyle_generator extends component_generator_base {
         });
         if (isset($record['enabled'])) {
             $options['enabled'] = (bool)$record['enabled'];
+        }
+        if (!empty($record['svg'])) {
+            $file = __DIR__ . '/../fixtures/' . clean_param($record['svg'], PARAM_ALPHANUMEXT) . '.svg';
+            $options['assetid'] = service_factory::instance()->assets()->add(file_get_contents($file), (int)get_admin()->id)->id();
+            $options['painter'] = $options['painter'] ?? rule::PAINTER_MASK;
         }
         return service_factory::instance()->rule_service()->save(
             new rule(0, $contextid, slot_key::parse($record['slot']), $options),

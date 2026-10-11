@@ -116,11 +116,16 @@ final class rule {
         if ($opacity !== null && ($opacity < 0 || $opacity > 100)) {
             throw new \InvalidArgumentException('Opacity out of range.');
         }
+        $assetid = isset($options['assetid']) ? (int)$options['assetid'] : null;
+        $needsasset = in_array($painter, [self::PAINTER_MASK, self::PAINTER_IMAGE], true);
+        if ($needsasset !== ($assetid !== null)) {
+            throw new \InvalidArgumentException('Artwork painters need an asset and other painters must not have one.');
+        }
         $this->id = $id;
         $this->contextid = $contextid;
         $this->slot = $slot;
         $this->painter = $painter;
-        $this->assetid = isset($options['assetid']) ? (int)$options['assetid'] : null;
+        $this->assetid = $assetid;
         $this->fg = $this->color_option($options['fg'] ?? null);
         $this->bg = $this->color_option($options['bg'] ?? null);
         $this->shape = $shape;

@@ -97,12 +97,12 @@ final class stylesheet_compiler_test extends \basic_testcase {
         ])]);
         $this->assertSame(
             "body .icon.fa-regular.fa-bookmark {\n" .
-            "  color: var(--bs-primary, var(--primary));\n" .
             "  background-color: #ffffff;\n" .
             "  border-radius: 50%;\n" .
             "  box-sizing: content-box;\n" .
             "  padding: 0.25em;\n" .
-            "  opacity: 0.80;\n}\n",
+            "  opacity: 0.80;\n" .
+            "  color: var(--bs-primary, var(--primary));\n}\n",
             $css
         );
     }

@@ -30,5 +30,30 @@
  * @return bool Always true.
  */
 function xmldb_local_iconrestyle_upgrade(int $oldversion): bool {
+    global $DB;
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2026101101) {
+        $table = new xmldb_table('local_iconrestyle_asset');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->add_field('contenthash', XMLDB_TYPE_CHAR, '64', null, XMLDB_NOTNULL);
+        $table->add_field('kind', XMLDB_TYPE_CHAR, '8', null, XMLDB_NOTNULL);
+        $table->add_field('bytes', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('width', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('height', XMLDB_TYPE_INTEGER, '5', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('monochrome', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('source', XMLDB_TYPE_CHAR, '8', null, XMLDB_NOTNULL, null, 'upload');
+        $table->add_field('sourceref', XMLDB_TYPE_CHAR, '255');
+        $table->add_field('license', XMLDB_TYPE_CHAR, '64');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_index('contenthash', XMLDB_INDEX_UNIQUE, ['contenthash']);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_plugin_savepoint(true, 2026101101, 'local', 'iconrestyle');
+    }
+
     return true;
 }

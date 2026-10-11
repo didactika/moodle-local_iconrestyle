@@ -33,8 +33,9 @@ final class architecture_test extends \basic_testcase {
     /** @var string[][] Packages each package may use. Entry points under other folders may use any package. */
     private const ALLOWED = [
         'slot' => [],
+        'asset' => [],
         'rule' => ['slot'],
-        'style' => ['slot', 'rule'],
+        'style' => ['slot', 'rule', 'asset'],
         'delivery' => ['rule', 'style'],
     ];
 
