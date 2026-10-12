@@ -32,7 +32,7 @@ use local_iconrestyle\rule\design;
 /**
  * The designer is drawn by the React component local_iconrestyle/Designer, which gets everything it needs here.
  */
-class designer_page implements \renderable, react_component_renderable {
+class designer_page implements react_component_renderable, \renderable {
     #[\Override]
     public function get_react_component_name(): string {
         return 'local_iconrestyle/Designer';
