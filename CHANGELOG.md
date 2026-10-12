@@ -23,6 +23,8 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ### Added
 
+- A user manual with screenshots (`docs/user-manual`), written in the format of a GitHub wiki, a performance report of the mass benchmarks (`docs/performance-report.md`) and an icon for the plugin in the colours of Didactika.
+- A benchmark for importing a package of any size one line at a time (B-06).
 - Settings for what the designer starts from: the parts of a look that are copied, whether copying between modes replaces, and how an import starts. They are only starting points; each person can change them every time.
 - More ways to customise an icon: a gradient behind it, an outline with its own colour and offset, skew, a shadow that follows the glyph, three more shadows for the box (inner, lifted, hard), sepia, invert, blending with the background and a hover effect (grow, shrink, lift, tilt, fade). All typed, range checked, counted in the cost of the design and part of the looks that can be copied.
 - A *Filters* panel next to the search: component, purpose, what an icon customises, where it applies, colour mode and sorting, with a badge that counts the filters that are on and an icon that clears them.

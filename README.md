@@ -59,7 +59,8 @@ Every control is explained, with screenshots, in the user manual.
 ## User manual
 
 - **[User manual](docs/user-manual/Home.md)**: getting started, the designer, finding icons, editing, places and colour modes, copying looks, export and import, administration and troubleshooting.
-- The same manual is published in the [wiki of the repository](https://github.com/didactika/moodle-local_iconrestyle/wiki).
+- The pages are written in the format of a GitHub wiki, with its `_Sidebar.md`, so they can be published as the wiki of the repository by copying `docs/user-manual` into it.
+- The screenshots are taken from the real designer by `tests/behat/manual.feature`; run it with `--tags=@iconrestyle_manual` to refresh them.
 
 ## Configuration
 
