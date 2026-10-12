@@ -11,6 +11,9 @@ Feature: The screenshots of the user manual
     And the following "courses" exist:
       | fullname    | shortname | category |
       | Biology 101 | BIO101    | ARTS     |
+    And the following "activities" exist:
+      | activity | name         | course | idnumber |
+      | assign   | Assignment 1 | BIO101 | A1       |
     And the following "local_iconrestyle > rules" exist:
       | slot             | fg      | bg      | design                                                                         |
       | core:a/setting   | #ffffff | #0f6cbf | {"shape":"circle","pt":30,"pr":30,"pb":30,"pl":30,"shadow":"soft"}             |
@@ -69,7 +72,8 @@ Feature: The screenshots of the user manual
     And I navigate to "Plugins > Local plugins > Icon Restyle > Settings" in site administration
     And I wait "1" seconds
     And I capture the page as "settings"
-    And I am on "BIO101" course homepage
+    And I am on "BIO101" course homepage with editing mode on
+    And I open "Assignment 1" actions menu
     And I wait "1" seconds
     And I capture the page as "result-site"
 
