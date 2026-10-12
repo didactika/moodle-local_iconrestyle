@@ -56,8 +56,8 @@ final class services_test extends \advanced_testcase {
     private function input(array $values): array {
         return $values + [
             'slotkey' => 'core:a/setting', 'contextid' => \context_system::instance()->id, 'pages' => [], 'regions' => [],
-            'painter' => 'color', 'assetid' => 0, 'fg' => '', 'bg' => '', 'shape' => '',
-            'padding' => -1, 'opacity' => -1, 'enabled' => true, 'rev' => 0,
+            'painter' => 'color', 'assetid' => 0, 'fg' => '', 'bg' => '', 'design' => '',
+            'enabled' => true, 'rev' => 0,
         ];
     }
 
@@ -70,6 +70,26 @@ final class services_test extends \advanced_testcase {
      */
     private function clean(string $function, $result) {
         return api::clean_returnvalue($function::execute_returns(), $result);
+    }
+
+    /**
+     * Save one rule through the batch service.
+     *
+     * @param array $input Fields following the input description.
+     * @return array The stored rule.
+     */
+    private function save(array $input): array {
+        return $this->clean(save_rules::class, save_rules::execute([$input], []))['rules'][0];
+    }
+
+    /**
+     * Delete one rule through the batch service.
+     *
+     * @param int $id Rule id.
+     * @return bool Whether a rule was deleted.
+     */
+    private function remove(int $id): bool {
+        return save_rules::execute([], [$id])['deleted'] !== [];
     }
 
     /**
@@ -87,24 +107,159 @@ final class services_test extends \advanced_testcase {
     }
 
     /**
+     * The boxes around activity icons are listed with a preview image, and only their box and the colour of the glyph can be set.
+     */
+    public function test_activity_boxes(): void {
+        $catalogue = $this->clean(get_catalogue::class, get_catalogue::execute());
+        $bykey = array_column($catalogue['icons'], null, 'key');
+        $this->assertSame('container', $bykey['purpose:assessment']['kind']);
+        $this->assertStringContainsString('monologo', $bykey['purpose:assessment']['imageurl']);
+        $this->assertStringContainsString('filtericon=1', $bykey['purpose:assessment']['imageurl']);
+        $this->assertSame('assign', $bykey['activity:assign']['sample']);
+
+        $saved = $this->save($this->input([
+            'slotkey' => 'purpose:assessment', 'bg' => 'transparent', 'fg' => '#000000',
+        ]));
+        $this->assertSame(['none', 'transparent', '#000000'], [$saved['painter'], $saved['bg'], $saved['fg']]);
+
+        $asset = add_asset::execute(base64_encode(self::ICON));
+        $own = $this->save($this->input(['slotkey' => 'purpose:content', 'painter' => 'color', 'assetid' => $asset['id']]));
+        $this->assertSame(['mask', $asset['id']], [$own['painter'], $own['assetid']]);
+        $image = $this->save($this->input(['slotkey' => 'activity:assign', 'painter' => 'image', 'assetid' => $asset['id']]));
+        $this->assertSame('image', $image['painter']);
+    }
+
+    /**
+     * An image icon is recoloured through its own file, which the designer fetches as artwork.
+     */
+    public function test_icon_artwork(): void {
+        $asset = $this->clean(use_icon_artwork::class, use_icon_artwork::execute('core:i/agg_mean'));
+        $this->assertContains($asset['kind'], ['svg', 'png']);
+        $this->assertGreaterThan(0, $asset['width']);
+
+        $saved = $this->save($this->input([
+            'slotkey' => 'core:i/agg_mean', 'painter' => 'mask', 'assetid' => $asset['id'], 'fg' => '#e83e8c',
+        ]));
+        $this->assertSame([$asset['id'], 'mask', '#e83e8c'], [$saved['assetid'], $saved['painter'], $saved['fg']]);
+
+        $again = use_icon_artwork::execute('core:i/agg_mean');
+        $this->assertSame($asset['id'], $again['id']);
+
+        $module = use_icon_artwork::execute('activity:assign');
+        $this->assertGreaterThan(0, $module['id']);
+    }
+
+    /**
+     * Icons without a file of their own, and names that try to leave the icon folder, are refused.
+     */
+    public function test_icon_artwork_refusals(): void {
+        try {
+            use_icon_artwork::execute('purpose:assessment');
+            $this->fail('A purpose has no file.');
+        } catch (\moodle_exception $exception) {
+            $this->assertSame('noiconfile', $exception->errorcode);
+        }
+        try {
+            use_icon_artwork::execute('core:i/no-such-icon-anywhere');
+            $this->fail('A missing file was accepted.');
+        } catch (\moodle_exception $exception) {
+            $this->assertSame('noiconfile', $exception->errorcode);
+        }
+        foreach (['core:../../config', 'core:i/../../config', 'x', ''] as $key) {
+            try {
+                use_icon_artwork::execute($key);
+                $this->fail('Accepted ' . $key);
+            } catch (\invalid_parameter_exception $exception) {
+                $this->assertInstanceOf(\invalid_parameter_exception::class, $exception);
+            }
+        }
+    }
+
+    /**
+     * The designer learns the new address of the site stylesheet after every save, and none when no rule is left.
+     */
+    public function test_stylesheet_address_follows_the_rules(): void {
+        $this->assertSame('', get_stylesheet_url::execute());
+        $saved = $this->save($this->input(['fg' => '#e83e8c']));
+        $first = get_stylesheet_url::execute();
+        $this->assertStringContainsString('/local/iconrestyle/styles.php/', $first);
+        $this->save($this->input(['fg' => '#000000', 'rev' => $saved['rev']]));
+        $this->assertNotSame($first, get_stylesheet_url::execute());
+        $this->remove($saved['id']);
+        $this->assertSame('', get_stylesheet_url::execute());
+    }
+
+    /**
+     * Several rules are saved and deleted in one request, and the site stylesheet changes once.
+     */
+    public function test_save_rules_in_one_request(): void {
+        $first = $this->clean(save_rules::class, save_rules::execute([
+            $this->input(['fg' => '#111111']),
+            $this->input(['slotkey' => 'core:t/delete', 'fg' => '#222222']),
+            $this->input(['fg' => '#333333', 'pages' => ['admin']]),
+        ], []));
+        $this->assertCount(3, $first['rules']);
+        $this->assertSame(['core:a/setting', 'core:t/delete', 'core:a/setting'], array_column($first['rules'], 'slotkey'));
+        $this->assertSame([], $first['deleted']);
+        $this->assertStringContainsString('/local/iconrestyle/styles.php/', $first['stylesheeturl']);
+        $this->assertSame(3, $this->count_rules());
+
+        $second = $this->clean(save_rules::class, save_rules::execute([
+            $this->input(['fg' => '#444444', 'rev' => $first['rules'][0]['rev']]),
+        ], [$first['rules'][1]['id'], $first['rules'][2]['id'], 999999]));
+        $this->assertSame([$first['rules'][1]['id'], $first['rules'][2]['id']], $second['deleted']);
+        $this->assertSame(1, $this->count_rules());
+        $this->assertNotSame($first['stylesheeturl'], $second['stylesheeturl']);
+
+        $last = save_rules::execute([], [$second['rules'][0]['id']]);
+        $this->assertSame('', $last['stylesheeturl']);
+    }
+
+    /**
+     * A batch is all or nothing: one conflict undoes every other change of the request.
+     */
+    public function test_save_rules_is_atomic(): void {
+        $saved = save_rules::execute([$this->input(['fg' => '#111111'])], []);
+        try {
+            save_rules::execute([
+                $this->input(['slotkey' => 'core:t/delete', 'fg' => '#222222']),
+                $this->input(['fg' => '#333333', 'rev' => $saved['rules'][0]['rev'] + 5]),
+            ], []);
+            $this->fail('A stale revision was accepted.');
+        } catch (\moodle_exception $exception) {
+            $this->assertSame('ruleconflict', $exception->errorcode);
+        }
+        $this->assertSame(1, $this->count_rules());
+        $this->assertSame($saved['stylesheeturl'], get_stylesheet_url::execute());
+    }
+
+    /**
+     * A request cannot carry an unbounded number of changes.
+     */
+    public function test_save_rules_is_bounded(): void {
+        $this->expectException(\invalid_parameter_exception::class);
+        save_rules::execute([], range(1, save_rules::MAX_CHANGES + 1));
+    }
+
+    /**
      * Saving, reading back, updating and deleting a rule.
      */
     public function test_rule_life_cycle(): void {
-        $input = $this->input(['fg' => '#E83E8C', 'shape' => 'circle']);
-        $saved = $this->clean(save_rule::class, save_rule::execute($input));
+        $input = $this->input(['fg' => '#E83E8C', 'design' => '{"shape":"circle","pt":25}']);
+        $saved = $this->save($input);
         $this->assertSame(['core:a/setting', '#e83e8c', 'circle', 1, 'site'], [
-            $saved['slotkey'], $saved['fg'], $saved['shape'], $saved['rev'], $saved['contextkind'],
+            $saved['slotkey'], $saved['fg'], json_decode($saved['design'], true)['shape'], $saved['rev'], $saved['contextkind'],
         ]);
 
         $listed = $this->clean(get_rules::class, get_rules::execute());
         $this->assertCount(1, $listed['rules']);
         $this->assertSame($saved['rev'], $listed['rules'][0]['rev']);
 
-        $updated = save_rule::execute($this->input(['fg' => '#000', 'rev' => $saved['rev']]));
-        $this->assertSame([2, '#000000', ''], [$updated['rev'], $updated['fg'], $updated['shape']]);
+        $updated = $this->save($this->input(['fg' => '#000', 'rev' => $saved['rev']]));
+        $this->assertSame([2, '#000000', ''], [$updated['rev'], $updated['fg'], $updated['design']]);
 
-        $this->assertTrue(delete_rule::execute($saved['id']));
-        $this->assertFalse(delete_rule::execute($saved['id']));
+        $this->assertTrue($this->remove($saved['id']));
+        $this->assertFalse($this->remove($saved['id']));
         $this->assertSame([], get_rules::execute()['rules']);
     }
 
@@ -114,10 +269,10 @@ final class services_test extends \advanced_testcase {
     public function test_variants_of_one_icon(): void {
         $category = $this->getDataGenerator()->create_category();
         $categoryid = \context_coursecat::instance($category->id)->id;
-        save_rule::execute($this->input(['fg' => '#111111']));
-        save_rule::execute($this->input(['fg' => '#222222', 'pages' => ['admin']]));
-        save_rule::execute($this->input(['fg' => '#333333', 'pages' => ['admin'], 'regions' => ['navbar', 'footer']]));
-        $stored = save_rule::execute($this->input(['fg' => '#444444', 'contextid' => $categoryid]));
+        $this->save($this->input(['fg' => '#111111']));
+        $this->save($this->input(['fg' => '#222222', 'pages' => ['admin']]));
+        $this->save($this->input(['fg' => '#333333', 'pages' => ['admin'], 'regions' => ['navbar', 'footer']]));
+        $stored = $this->save($this->input(['fg' => '#444444', 'contextid' => $categoryid]));
 
         $this->assertSame(['category', $category->name], [$stored['contextkind'], $stored['contextname']]);
         $listed = $this->clean(get_rules::class, get_rules::execute());
@@ -125,7 +280,7 @@ final class services_test extends \advanced_testcase {
         $regions = array_column($listed['rules'], 'regions');
         $this->assertContains(['navbar', 'footer'], $regions);
 
-        $again = save_rule::execute($this->input(['fg' => '#555555', 'pages' => ['admin'], 'rev' => 1]));
+        $again = $this->save($this->input(['fg' => '#555555', 'pages' => ['admin'], 'rev' => 1]));
         $this->assertSame(['#555555', 2], [$again['fg'], $again['rev']]);
         $this->assertCount(4, get_rules::execute()['rules']);
     }
@@ -134,16 +289,16 @@ final class services_test extends \advanced_testcase {
      * A stale editor gets a clear conflict instead of overwriting a newer change.
      */
     public function test_conflict(): void {
-        $first = save_rule::execute($this->input(['fg' => '#111111']));
-        save_rule::execute($this->input(['fg' => '#222222', 'rev' => $first['rev']]));
+        $first = $this->save($this->input(['fg' => '#111111']));
+        $this->save($this->input(['fg' => '#222222', 'rev' => $first['rev']]));
         try {
-            save_rule::execute($this->input(['fg' => '#333333', 'rev' => $first['rev']]));
+            $this->save($this->input(['fg' => '#333333', 'rev' => $first['rev']]));
             $this->fail('A stale save was accepted.');
         } catch (\moodle_exception $exception) {
             $this->assertSame('ruleconflict', $exception->errorcode);
         }
         try {
-            save_rule::execute($this->input(['fg' => '#444444', 'rev' => 0]));
+            $this->save($this->input(['fg' => '#444444', 'rev' => 0]));
             $this->fail('Saving as new over an existing rule was accepted.');
         } catch (\moodle_exception $exception) {
             $this->assertSame('ruleconflict', $exception->errorcode);
@@ -160,7 +315,7 @@ final class services_test extends \advanced_testcase {
         global $DB;
         $this->expectException(\invalid_parameter_exception::class);
         try {
-            save_rule::execute($this->input($values));
+            $this->save($this->input($values));
         } finally {
             $this->assertSame(0, $DB->count_records('local_iconrestyle_rule'));
         }
@@ -176,9 +331,13 @@ final class services_test extends \advanced_testcase {
             'unknown icon' => [['slotkey' => 'core:does/not-exist']],
             'bad slot key' => [['slotkey' => 'core:../x']],
             'bad colour' => [['fg' => 'red; background:url(x)']],
-            'bad shape' => [['shape' => 'blob']],
-            'padding too big' => [['padding' => 1000]],
-            'opacity too big' => [['opacity' => 101]],
+            'bad shape' => [['design' => '{"shape":"blob"}']],
+            'padding too big' => [['design' => '{"pt":1000}']],
+            'opacity too big' => [['design' => '{"opacity":101}']],
+            'unknown property' => [['design' => '{"content":"x"}']],
+            'not an object' => [['design' => '[1,2]']],
+            'broken json' => [['design' => '{shape:']],
+            'bad border colour' => [['design' => '{"bc":"red;x"}']],
             'bad painter' => [['painter' => 'script']],
             'unknown page' => [['pages' => ['everything']]],
             'unknown region' => [['regions' => ['body > div']]],
@@ -196,7 +355,7 @@ final class services_test extends \advanced_testcase {
         $this->assertSame(['svg', 24, 24, true], [$asset['kind'], $asset['width'], $asset['height'], $asset['monochrome']]);
         $this->assertStringContainsString('/local/iconrestyle/asset.php/', $asset['url']);
 
-        $saved = save_rule::execute($this->input(['painter' => 'mask', 'assetid' => $asset['id'], 'fg' => '#ff0000']));
+        $saved = $this->save($this->input(['painter' => 'mask', 'assetid' => $asset['id'], 'fg' => '#ff0000']));
         $this->assertSame([$asset['id'], 'svg', $asset['url']], [$saved['assetid'], $saved['assetkind'], $saved['asseturl']]);
     }
 
@@ -267,7 +426,9 @@ final class services_test extends \advanced_testcase {
         $this->assertSame(['Introduction to design', 'DES101'], [$courses[0]['name'], $courses[0]['detail']]);
 
         $activities = search_locations::execute('activity', 'introduction')['places'];
-        $this->assertSame(['Welcome page', 'Introduction to design'], [$activities[0]['name'], $activities[0]['detail']]);
+        $this->assertSame('Welcome page', $activities[0]['name']);
+        $this->assertStringContainsString('DES101', $activities[0]['detail']);
+        $this->assertStringContainsString('Introduction to design', $activities[0]['detail']);
 
         $this->assertSame([], search_locations::execute('course', 'x')['places']);
         $this->expectException(\invalid_parameter_exception::class);
@@ -293,13 +454,22 @@ final class services_test extends \advanced_testcase {
                 return get_rules::execute();
             },
             function () {
-                return save_rule::execute($this->input([]));
+                return $this->save($this->input([]));
             },
             function () {
-                return delete_rule::execute(1);
+                return $this->remove(1);
+            },
+            function () {
+                return save_rules::execute([$this->input([])], []);
             },
             function () {
                 return add_asset::execute(base64_encode(self::ICON));
+            },
+            function () {
+                return use_icon_artwork::execute('core:i/agg_mean');
+            },
+            function () {
+                return get_stylesheet_url::execute();
             },
             function () {
                 return preview_css::execute([]);

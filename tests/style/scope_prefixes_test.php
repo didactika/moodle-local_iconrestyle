@@ -54,18 +54,44 @@ final class scope_prefixes_test extends \basic_testcase {
     }
 
     /**
-     * Pages are alternatives, regions are alternatives, and the two limits combine.
+     * Pages are alternatives, regions are alternatives, and the two limits combine, each written once as a list, ids first.
      */
     public function test_pages_and_regions_combine(): void {
         $prefixes = (new scope_prefixes())->for_rule($this->rule([
             'pages' => ['admin', 'course'], 'regions' => ['navbar', 'footer'],
         ]), 'body ', true);
         $this->assertSame([
-            'body.path-course-view .navbar ',
-            'body.path-course-view #page-footer ',
-            'body.path-admin .navbar ',
-            'body.path-admin #page-footer ',
+            'body:is(.path-admin, .path-course-view) #page-footer ',
+            'body:is(.path-admin, .path-course-view) .navbar ',
         ], $prefixes);
+    }
+
+    /**
+     * A list never joins an id with a class, because the list would take the specificity of the id for both.
+     */
+    public function test_ids_and_classes_are_listed_apart(): void {
+        $prefixes = (new scope_prefixes())->for_rule($this->rule([
+            'pages' => ['dashboard', 'sitehome', 'course'], 'regions' => ['blocks'],
+        ]), 'body ', true);
+        $this->assertSame([
+            'body:is(#page-my-index, #page-site-index) .block-region ',
+            'body.path-course-view .block-region ',
+        ], $prefixes);
+    }
+
+    /**
+     * However many pages and regions a rule has, it needs at most four prefixes.
+     */
+    public function test_a_rule_limited_to_everything_needs_four_prefixes(): void {
+        $prefixes = (new scope_prefixes())->for_rule(
+            $this->rule(['pages' => audience::PAGES, 'regions' => audience::REGIONS, 'mode' => 'dark']),
+            'body ',
+            true
+        );
+        $this->assertCount(4, $prefixes);
+        foreach ($prefixes as $prefix) {
+            $this->assertStringStartsWith('html[data-bs-theme="dark"] body:is(', $prefix);
+        }
     }
 
     /**
@@ -100,7 +126,33 @@ final class scope_prefixes_test extends \basic_testcase {
         $this->assertSame($first->variant(), $second->variant());
         $this->assertNotSame($first->variant(), $this->rule(['pages' => ['admin']])->variant());
         $this->assertNotSame($first->variant(), $this->rule(['regions' => ['navbar']])->variant());
-        $this->assertSame('', $this->rule([])->variant());
+        $this->assertSame(audience::UNLIMITED, $this->rule([])->variant());
         $this->assertSame(audience::PAGES, array_keys(array_flip(audience::PAGES)));
+    }
+
+    /**
+     * A rule for one colour mode starts at the html element, where Boost writes the mode, and still combines with pages.
+     */
+    public function test_colour_mode(): void {
+        $builder = new scope_prefixes();
+        $this->assertSame(['html[data-bs-theme="dark"] body '], $builder->for_rule($this->rule(['mode' => 'dark']), 'body ', true));
+        $this->assertSame(
+            ['html:not([data-bs-theme]:not([data-bs-theme="light"])) body.path-admin '],
+            $builder->for_rule($this->rule(['mode' => 'light', 'pages' => ['admin']]), 'body ', true)
+        );
+        $this->assertSame(['body '], $builder->for_rule($this->rule(['mode' => 'all']), 'body ', true));
+        $this->assertSame(['.irs-preview-new '], $builder->for_rule($this->rule(['mode' => 'dark']), '.irs-preview-new ', false));
+    }
+
+    /**
+     * The colour mode is part of the identity of a variant, and anything but the three modes is refused.
+     */
+    public function test_colour_mode_identity_and_validation(): void {
+        $this->assertSame(audience::UNLIMITED, $this->rule([])->variant());
+        $this->assertNotSame(audience::UNLIMITED, $this->rule(['mode' => 'dark'])->variant());
+        $this->assertNotSame($this->rule(['mode' => 'dark'])->variant(), $this->rule(['mode' => 'light'])->variant());
+        $this->assertSame('dark', $this->rule(['mode' => 'dark'])->mode());
+        $this->expectException(\InvalidArgumentException::class);
+        $this->rule(['mode' => 'sepia']);
     }
 }

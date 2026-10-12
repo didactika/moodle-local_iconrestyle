@@ -34,9 +34,12 @@ final class architecture_test extends \basic_testcase {
     private const ALLOWED = [
         'slot' => [],
         'asset' => [],
-        'rule' => ['slot'],
+        'rule' => ['slot', 'event'],
         'style' => ['slot', 'rule', 'asset'],
         'delivery' => ['rule', 'style'],
+        'event' => [],
+        'exchange' => ['slot', 'asset', 'rule'],
+        'privacy' => [],
     ];
 
     /**

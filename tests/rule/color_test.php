@@ -65,6 +65,8 @@ final class color_test extends \basic_testcase {
             'current colour' => ['currentColor', 'currentcolor', 'currentColor'],
             'bootstrap token' => ['token:primary', 'token:primary', 'var(--bs-primary, var(--primary))'],
             'activity token' => ['token:activitycommunication', 'token:activitycommunication', 'var(--activitycommunication)'],
+            'theme variable' => ['var:--bs-primary', 'var:--bs-primary', 'var(--bs-primary)'],
+            'theme variable keeps its case' => ['var:--brandBlue_2', 'var:--brandBlue_2', 'var(--brandBlue_2)'],
             'surrounding space' => ['  #000  ', '#000000', '#000000'],
         ];
     }
@@ -101,21 +103,27 @@ final class color_test extends \basic_testcase {
             'brace break out' => ['#fff}body{display:none'],
             'unknown token' => ['token:evil'],
             'var injection' => ['var(--x)'],
+            'variable without dashes' => ['var:primary'],
+            'variable with a fallback' => ['var:--x, red'],
+            'variable with a break out' => ['var:--x;background:url(x)'],
+            'variable with a brace' => ['var:--x}body{display:none'],
+            'variable name too long' => ['var:--' . str_repeat('a', 70)],
             'important' => ['#fff !important'],
         ];
     }
 
     /**
-     * Only fixed colours have a luminance and a contrast.
+     * Only fixed colours have a luminance.
      */
-    public function test_contrast(): void {
+    public function test_luminance(): void {
         $white = color::parse('#fff');
-        $black = color::parse('#000');
-        $this->assertEqualsWithDelta(21.0, $white->contrast_with($black), 0.01);
-        $this->assertEqualsWithDelta(1.0, $white->contrast_with($white), 0.01);
+        $this->assertEqualsWithDelta(1.0, $white->luminance(), 0.001);
+        $this->assertEqualsWithDelta(0.0, color::parse('#000')->luminance(), 0.001);
         $this->assertNull(color::parse('token:primary')->luminance());
-        $this->assertNull($white->contrast_with(color::parse('currentcolor')));
+        $this->assertNull(color::parse('currentcolor')->luminance());
         $this->assertTrue(color::parse('token:primary')->follows_theme());
+        $this->assertTrue(color::parse('var:--bs-primary')->follows_theme());
+        $this->assertNull(color::parse('var:--bs-primary')->luminance());
         $this->assertFalse($white->follows_theme());
     }
 }

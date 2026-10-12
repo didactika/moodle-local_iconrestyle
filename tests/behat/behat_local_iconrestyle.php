@@ -122,7 +122,7 @@ class behat_local_iconrestyle extends behat_base {
     /**
      * Check one computed style of the first icon in one column of the designer's preview.
      *
-     * @Then /^the (default|current|new) preview icon should have "([^"]+)" "([^"]+)"$/
+     * @Then /^the (default|new) preview icon should have "([^"]+)" "([^"]+)"$/
      * @param string $area Preview column.
      * @param string $property CSS property.
      * @param string $value Expected computed value.
@@ -131,7 +131,7 @@ class behat_local_iconrestyle extends behat_base {
         $host = json_encode('[data-region="cells-' . $area . '"]');
         $read = "(function () {
             var host = document.querySelector(" . $host . ");
-            var element = host && host.shadowRoot ? host.shadowRoot.querySelector('.irs-cell > *') : null;
+            var element = host && host.shadowRoot ? host.shadowRoot.querySelector('.irs-cell .irs-fit > *') : null;
             return element ? window.getComputedStyle(element)[" . json_encode($property) . "] : '';
         })()";
         $this->getSession()->wait(5000, '(' . $read . ') === ' . json_encode($value));
@@ -158,6 +158,24 @@ class behat_local_iconrestyle extends behat_base {
             var input = document.getElementById('irs-upload');
             var transfer = new DataTransfer();
             transfer.items.add(new File([" . json_encode($content) . "], 'fixture.svg', {type: 'image/svg+xml'}));
+            input.files = transfer.files;
+            input.dispatchEvent(new Event('change', {bubbles: true}));
+        })()";
+        $this->getSession()->executeScript($script);
+    }
+
+    /**
+     * Choose a package in the file field of the import, as if the person picked it from their computer.
+     *
+     * @When /^I choose the package fixture "([^"]+)"$/
+     * @param string $name Name of a file in tests/fixtures, without extension.
+     */
+    public function i_choose_the_package_fixture(string $name): void {
+        $content = file_get_contents(__DIR__ . '/../fixtures/' . clean_param($name, PARAM_ALPHANUMEXT) . '.iconrestyle');
+        $script = "(function () {
+            var input = document.querySelector('[data-region=\"exchange-file\"]');
+            var transfer = new DataTransfer();
+            transfer.items.add(new File([" . json_encode($content) . "], 'fixture.iconrestyle', {type: 'text/plain'}));
             input.files = transfer.files;
             input.dispatchEvent(new Event('change', {bubbles: true}));
         })()";
@@ -299,6 +317,334 @@ class behat_local_iconrestyle extends behat_base {
         if ($actual !== $value) {
             throw new \Behat\Mink\Exception\ExpectationException(
                 "The icon {$slot} has {$property} '{$actual}', expected '{$value}'.",
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Check one computed style of the box Moodle draws around the icons of a purpose, or of the glyph inside it.
+     *
+     * @Then /^the (box|glyph) of the "([a-z]+)" activities (should|should not) have "([^"]+)" "([^"]+)"$/
+     * @param string $part box or glyph.
+     * @param string $purpose Purpose such as assessment.
+     * @param string $expectation should or should not.
+     * @param string $property CSS property.
+     * @param string $value Computed value.
+     */
+    public function the_activity_part_should_have(
+        string $part,
+        string $purpose,
+        string $expectation,
+        string $property,
+        string $value
+    ): void {
+        $selector = '.activityiconcontainer.' . $purpose . ($part === 'glyph' ? ' .activityicon' : '');
+        $read = "(function () {
+            var element = document.querySelector(" . json_encode($selector) . ");
+            return element ? window.getComputedStyle(element)[" . json_encode($property) . "] : '';
+        })()";
+        $wanted = $expectation === 'should';
+        $this->getSession()->wait(5000, '((' . $read . ') === ' . json_encode($value) . ') === ' . json_encode($wanted));
+        $actual = $this->getSession()->evaluateScript($read);
+        if (($actual === $value) !== $wanted) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                "The {$part} of the {$purpose} activities has {$property} '{$actual}', which {$expectation} be '{$value}'.",
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Check that the glyph inside the box of a purpose is really painted in a colour, by looking at the screen.
+     *
+     * The glyph is an image whose colour comes from a filter and which is moved out of its box, so computed styles cannot tell
+     * whether it shows. The box is scanned, because the image itself is not where it is drawn.
+     *
+     * @Then /^the glyph of the "([a-z]+)" activities should show "(#[0-9a-f]{6})"$/
+     * @param string $purpose Purpose such as assessment.
+     * @param string $expected Expected colour as six hexadecimal digits.
+     */
+    public function the_glyph_should_show(string $purpose, string $expected): void {
+        $selector = '.activityiconcontainer.' . $purpose;
+        $script = "(function () {
+            var element = document.querySelector(" . json_encode($selector) . ");
+            element.scrollIntoView({block: 'center'});
+            var rect = element.getBoundingClientRect();
+            return JSON.stringify([rect.left, rect.top, rect.width, rect.height]);
+        })()";
+        [$left, $top, $width, $height] = json_decode($this->getSession()->evaluateScript($script));
+        $image = imagecreatefromstring($this->getSession()->getScreenshot());
+        $wanted = [hexdec(substr($expected, 1, 2)), hexdec(substr($expected, 3, 2)), hexdec(substr($expected, 5, 2))];
+        $found = 0;
+        for ($x = (int)$left; $x < (int)($left + $width); $x++) {
+            for ($y = (int)$top; $y < (int)($top + $height); $y++) {
+                $rgb = imagecolorat($image, $x, $y);
+                $actual = [($rgb >> 16) & 0xFF, ($rgb >> 8) & 0xFF, $rgb & 0xFF];
+                $near = abs($wanted[0] - $actual[0]) <= 12 && abs($wanted[1] - $actual[1]) <= 12;
+                if ($near && abs($wanted[2] - $actual[2]) <= 12) {
+                    $found++;
+                }
+            }
+        }
+        if ($found < 8) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                "The glyph of the {$purpose} activities shows only {$found} pixels of {$expected}.",
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Put the page in the colour mode that Boost writes on the html element, as Moodle 5.3 does for dark mode.
+     *
+     * @When /^I switch the page to (light|dark) mode$/
+     * @param string $mode light or dark.
+     */
+    public function i_switch_the_page_to_mode(string $mode): void {
+        $this->getSession()->executeScript("document.documentElement.setAttribute('data-bs-theme', " . json_encode($mode) . ");");
+    }
+
+    /**
+     * Wait until the designer has written everything it was asked to change.
+     *
+     * The designer saves on its own a moment after the last change and shows its state, so this follows that state.
+     *
+     * @Then /^the changes are saved$/
+     */
+    public function the_changes_are_saved(): void {
+        $read = "(function () {
+            var status = document.querySelector('[data-region=\"status\"]');
+            return status ? status.dataset.state : '';
+        })()";
+        $this->getSession()->wait(20000, '(' . $read . ') === "saved"');
+        $actual = $this->getSession()->evaluateScript($read);
+        if ($actual !== 'saved') {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                "The designer did not finish saving, its state is '{$actual}'.",
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Wait until the modal that adds places has finished appearing, which Behat cannot tell from its content alone.
+     *
+     * @Then /^the places modal is open$/
+     */
+    public function the_places_modal_is_open(): void {
+        $read = "document.querySelector('.modal.show .irs-places-form') !== null";
+        $this->getSession()->wait(10000, $read);
+        if (!$this->getSession()->evaluateScript($read)) {
+            throw new \Behat\Mink\Exception\ExpectationException('The modal that adds places did not open.', $this->getSession());
+        }
+    }
+
+    /**
+     * Wait until the modal has finished closing, so nothing is left in front of the page.
+     *
+     * @Then /^the places modal is closed$/
+     */
+    public function the_places_modal_is_closed(): void {
+        $read = "document.querySelector('.modal.show .irs-places-form') === null";
+        $this->getSession()->wait(10000, $read);
+        if (!$this->getSession()->evaluateScript($read)) {
+            throw new \Behat\Mink\Exception\ExpectationException('The modal that adds places did not close.', $this->getSession());
+        }
+    }
+
+    /**
+     * Pick a place in the autocomplete of the modal that adds places: type its name, which selects the only place that matches.
+     *
+     * @When /^I choose the place "(?P<name_string>(?:[^"]|\\")*)" in the "(?P<kind_string>category|course|activity)" field$/
+     * @param string $name Text to type and to find among the chosen places.
+     * @param string $kind Kind of place the field belongs to.
+     */
+    public function i_choose_the_place_in_the_field(string $name, string $kind): void {
+        $field = "//div[@data-kind-field='" . $kind . "']";
+        $this->execute('behat_forms::i_set_the_field_with_xpath_to', [$field . "//input[@type='text']", $name]);
+        $literal = $this->getSession()->getSelectorsHandler()->xpathLiteral($name);
+        $chosen = $field . "//*[@data-value][contains(@class, 'badge') or @role='option' or @role='listitem']"
+            . "[contains(., " . $literal . ")]";
+        $this->execute('behat_general::wait_until_exists', [$chosen, 'xpath_element']);
+    }
+
+    /**
+     * Check how many icons the designer lists.
+     *
+     * @Then /^the designer lists at least "(\d+)" icons$/
+     * @param string $minimum Fewest icons.
+     */
+    public function the_designer_lists_at_least_icons(string $minimum): void {
+        $text = $this->getSession()->evaluateScript("document.querySelector('[data-region=\"count\"]').textContent");
+        $count = (int)preg_replace('/\D+/', '', (string)$text);
+        if ($count < (int)$minimum) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                'The designer lists ' . $count . ' icons, fewer than ' . $minimum . '.',
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Check that the grid only holds the cards that can be seen, however many icons there are.
+     *
+     * @Then /^the grid holds at most "(\d+)" cards$/
+     * @param string $maximum Most cards.
+     */
+    public function the_grid_holds_at_most_cards(string $maximum): void {
+        $cards = (int)$this->getSession()->evaluateScript("document.querySelectorAll('.irs-card').length");
+        if ($cards > (int)$maximum) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                'The grid holds ' . $cards . ' cards, more than ' . $maximum . '.',
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Check how long the designer took from its start to the first grid on screen.
+     *
+     * @Then /^the designer drew its first grid within "(\d+)" milliseconds$/
+     * @param string $budget Most milliseconds.
+     */
+    public function the_designer_drew_its_first_grid_within(string $budget): void {
+        $script = "(function () {
+            var start = performance.getEntriesByName('irs:init')[0];
+            var done = performance.getEntriesByName('irs:rendered')[0];
+            return start && done ? Math.round(done.startTime - start.startTime) : -1;
+        })()";
+        $took = (int)$this->getSession()->evaluateScript($script);
+        if ($took < 0 || $took > (int)$budget) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                'The first grid took ' . $took . ' ms, the budget is ' . $budget . ' ms.',
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Scroll the icon grid from the top to the bottom in steps, as fast as the browser lets it, and note how long it took.
+     *
+     * @When /^I scroll the icon grid through the whole catalogue$/
+     */
+    public function i_scroll_the_icon_grid_through_the_whole_catalogue(): void {
+        $script = "(function () {
+            var view = document.querySelector('[data-region=\"grid\"]');
+            var steps = 40;
+            var step = 0;
+            var worst = 0;
+            var started = performance.now();
+            var last = started;
+            window.irsScroll = null;
+            var next = function () {
+                step++;
+                view.scrollTop = Math.round((view.scrollHeight - view.clientHeight) * step / steps);
+                window.requestAnimationFrame(function () {
+                    var now = performance.now();
+                    worst = Math.max(worst, now - last);
+                    last = now;
+                    if (step < steps) {
+                        window.setTimeout(next, 0);
+                    } else {
+                        window.irsScroll = {total: Math.round(now - started), worst: Math.round(worst)};
+                    }
+                });
+            };
+            next();
+        })()";
+        $this->getSession()->executeScript($script);
+        $this->getSession()->wait(60000, 'window.irsScroll !== null');
+    }
+
+    /**
+     * Check how smooth the scroll was.
+     *
+     * @Then /^scrolling took at most "(\d+)" milliseconds and no frame took more than "(\d+)"$/
+     * @param string $total Most milliseconds for the whole scroll.
+     * @param string $frame Most milliseconds for one frame.
+     */
+    public function scrolling_took_at_most(string $total, string $frame): void {
+        $result = $this->getSession()->evaluateScript('window.irsScroll');
+        if (!is_array($result)) {
+            throw new \Behat\Mink\Exception\ExpectationException('The scroll did not finish.', $this->getSession());
+        }
+        if ((int)$result['total'] > (int)$total || (int)$result['worst'] > (int)$frame) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                'Scrolling took ' . $result['total'] . ' ms with a slowest frame of ' . $result['worst'] . ' ms, the budget is ' .
+                    $total . ' ms and ' . $frame . ' ms.',
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Turn colour modes on, which only Moodle versions that have them can do; on the others the scenario is left pending.
+     *
+     * @Given /^colour modes are turned on$/
+     */
+    public function colour_modes_are_turned_on(): void {
+        if (!class_exists(\theme_boost\colour_mode::class)) {
+            throw new \Behat\Behat\Tester\Exception\PendingException('This Moodle has no colour modes.');
+        }
+        set_config('enablecolourmodes', 1, 'theme_boost');
+        theme_reset_all_caches();
+    }
+
+    /**
+     * Check the theme colour a colour field shows.
+     *
+     * @Then /^the theme colour of "(fg|bg|bc|sc)" should contain "([^"]+)"$/
+     * @param string $name Name of the colour field.
+     * @param string $text Text the colour must contain.
+     */
+    public function the_theme_colour_should_contain(string $name, string $text): void {
+        $value = (string)$this->getSession()->evaluateScript(
+            "document.querySelector('[data-region=\"" . $name . "-themeinput\"]').value"
+        );
+        if (strpos($value, $text) === false) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                'The theme colour of ' . $name . ' is "' . $value . '", which does not contain "' . $text . '".',
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Check that a colour field shows the code of the colour it has, also when the colour comes from the theme.
+     *
+     * @Then /^the colour of "(fg|bg|bc|sc)" should be written as a hex code$/
+     * @param string $name Name of the colour field.
+     */
+    public function the_colour_should_be_a_hex_code(string $name): void {
+        $value = (string)$this->getSession()->evaluateScript(
+            "document.querySelector('[data-region=\"" . $name . "-hex\"]').value"
+        );
+        if (!preg_match('/^#[0-9a-f]{6,8}$/', $value)) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                'The colour of ' . $name . ' is written as "' . $value . '", not as a hex code.',
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
+     * Check one computed style of the box of an activity in the activity chooser.
+     *
+     * @Then /^the box of "([a-z0-9_]+)" in the activity chooser should have "([^"]+)" "([^"]+)"$/
+     * @param string $module Name of the module, such as assign.
+     * @param string $property CSS property.
+     * @param string $value Computed value.
+     */
+    public function the_chooser_box_should_have(string $module, string $property, string $value): void {
+        $selector = '.modal.show .optionicon.modicon_' . $module;
+        $actual = (string)$this->getSession()->evaluateScript(
+            "(function () { var e = document.querySelector(" . json_encode($selector) . "); " .
+            "return e ? window.getComputedStyle(e)[" . json_encode($property) . "] : ''; })()"
+        );
+        if ($actual !== $value) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                'The box of ' . $module . ' in the chooser has ' . $property . " '" . $actual . "', expected '" . $value . "'.",
                 $this->getSession()
             );
         }

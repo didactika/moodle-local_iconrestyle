@@ -122,14 +122,47 @@ final class chain_resolver_test extends \advanced_testcase {
     }
 
     /**
-     * Very deep paths are folded to a bounded number of contexts.
+     * A deep category tree does not hide the rules of a category in the middle of it.
      */
-    public function test_depth_is_bounded(): void {
+    public function test_a_deep_path_keeps_every_context_that_has_rules(): void {
         $revisions = service_factory::instance()->revisions();
         foreach ([1, 5, 40] as $contextid) {
             $revisions->bump($contextid, 1);
         }
         $chain = service_factory::instance()->chain_resolver()->chain('/' . implode('/', range(1, 40)));
-        $this->assertSame([1, 40], array_keys($chain));
+        $this->assertSame([1, 5, 40], array_keys($chain));
+    }
+
+    /**
+     * When more contexts have rules than a page can load, the site and the nearest ones stay.
+     */
+    public function test_the_chain_keeps_the_site_and_the_nearest_contexts(): void {
+        $revisions = service_factory::instance()->revisions();
+        foreach (range(1, 30) as $contextid) {
+            $revisions->bump($contextid, 1);
+        }
+        $chain = service_factory::instance()->chain_resolver()->chain('/' . implode('/', range(1, 30)));
+        $this->assertCount(chain_resolver::MAX_DEPTH, $chain);
+        $this->assertSame(1, array_key_first($chain));
+        $this->assertSame(30, array_key_last($chain));
+        $this->assertSame(array_merge([1], range(30 - chain_resolver::MAX_DEPTH + 2, 30)), array_keys($chain));
+        $this->assertNotNull(bundle_service::decode_chain(bundle_service::encode_chain($chain)));
+    }
+
+    /**
+     * An absurdly long path is cut to a bounded number of contexts before anything is read, and still gives a valid address.
+     */
+    public function test_an_absurd_path_is_bounded(): void {
+        global $DB;
+        $revisions = service_factory::instance()->revisions();
+        $revisions->bump(1, 1);
+        $revisions->bump(500, 1);
+        $path = '/' . implode('/', range(1, 500));
+        $resolver = service_factory::instance()->chain_resolver();
+        $resolver->chain($path);
+        $before = $DB->perf_get_reads();
+        $chain = $resolver->chain($path);
+        $this->assertSame($before, $DB->perf_get_reads());
+        $this->assertSame([1, 500], array_keys($chain));
     }
 }

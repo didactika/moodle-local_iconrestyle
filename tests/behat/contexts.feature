@@ -19,24 +19,24 @@ Feature: Rules apply only where they are meant to
       | slot           | fg      |
       | core:a/setting | #e83e8c |
 
-  Scenario: A variant limited to one course is added in the designer and only that course shows it
+  Scenario: A variant limited to one course is added in a modal and only that course shows it
     Given I log in as "admin"
-    And I navigate to "Appearance > Icon appearance" in site administration
+    And I navigate to "Appearance > Icon Restyle > Icon designer" in site administration
     And I wait until "[data-region='grid-window'] .irs-card" "css_element" exists
     When I set the field "Search icons" to "a/setting"
     And I wait until "[data-key='core:a/setting']" "css_element" exists
     And I click on "[data-key='core:a/setting']" "css_element"
-    And I click on "[data-action='add-variant']" "css_element"
-    And I set the field "Where" to "A course"
-    And I set the field "Search by name" to "Course A"
-    And I wait until ".irs-result" "css_element" exists
-    And I click on ".irs-result" "css_element"
-    Then I should see "Chosen: Course A"
-    When I click on "[data-action='confirm-variant']" "css_element"
+    And I click on "[data-tab='places']" "css_element"
+    And I click on "[data-action='add-places']" "css_element"
+    And the places modal is open
+    And I click on "//input[@name='irs-kind'][@value='course']/following-sibling::span" "xpath_element"
+    And I choose the place "Course A" in the "course" field
+    And I click on ".modal-footer [data-action='save']" "css_element"
+    And the places modal is closed
     Then ".irs-chip.irs-active" "css_element" should be visible
-    When I set the field "irs-fg-hex" to "#0a6b3d"
-    And I press "Save changes"
-    Then I should see "1 changes saved"
+    When I click on "[data-tab='style']" "css_element"
+    And I set the field "irs-fg-hex" to "#0a6b3d"
+    And the changes are saved
     When I am on "CA" course homepage
     Then the icon "core:a/setting" should have "color" "rgb(10, 107, 61)"
     When I am on "CB" course homepage
@@ -44,19 +44,43 @@ Feature: Rules apply only where they are meant to
     When I am on site homepage
     Then the icon "core:a/setting" should have "color" "rgb(232, 62, 140)"
 
-  Scenario: A variant limited to administration pages leaves the rest of the site alone
+  Scenario: Several places are added at once and each starts from the current look
     Given I log in as "admin"
-    And I navigate to "Appearance > Icon appearance" in site administration
+    And I navigate to "Appearance > Icon Restyle > Icon designer" in site administration
     And I wait until "[data-region='grid-window'] .irs-card" "css_element" exists
     When I set the field "Search icons" to "a/setting"
     And I wait until "[data-key='core:a/setting']" "css_element" exists
     And I click on "[data-key='core:a/setting']" "css_element"
-    And I click on "[data-action='add-variant']" "css_element"
+    And I click on "[data-tab='places']" "css_element"
+    And I click on "[data-action='add-places']" "css_element"
+    And the places modal is open
+    And I click on "//input[@name='irs-kind'][@value='course']/following-sibling::span" "xpath_element"
+    And I choose the place "Course A" in the "course" field
+    And I choose the place "Course B" in the "course" field
+    And I click on ".modal-footer [data-action='save']" "css_element"
+    And the places modal is closed
+    And the changes are saved
+    When I am on "CA" course homepage
+    Then the icon "core:a/setting" should have "color" "rgb(232, 62, 140)"
+    When I am on "CB" course homepage
+    Then the icon "core:a/setting" should have "color" "rgb(232, 62, 140)"
+
+  Scenario: A variant limited to administration pages leaves the rest of the site alone
+    Given I log in as "admin"
+    And I navigate to "Appearance > Icon Restyle > Icon designer" in site administration
+    And I wait until "[data-region='grid-window'] .irs-card" "css_element" exists
+    When I set the field "Search icons" to "a/setting"
+    And I wait until "[data-key='core:a/setting']" "css_element" exists
+    And I click on "[data-key='core:a/setting']" "css_element"
+    And I click on "[data-tab='places']" "css_element"
+    And I click on "[data-action='add-places']" "css_element"
+    And the places modal is open
     And I click on "Administration pages" "checkbox"
-    And I click on "[data-action='confirm-variant']" "css_element"
+    And I click on ".modal-footer [data-action='save']" "css_element"
+    And the places modal is closed
+    And I click on "[data-tab='style']" "css_element"
     And I set the field "irs-fg-hex" to "#0a6b3d"
-    And I press "Save changes"
-    Then I should see "1 changes saved"
+    And the changes are saved
     When I visit the path "/admin/search.php"
     Then the icon "core:a/setting" should have "color" "rgb(10, 107, 61)"
     When I am on site homepage
@@ -89,3 +113,23 @@ Feature: Rules apply only where they are meant to
     And I log in as "admin"
     When I am on site homepage
     Then the icon "core:a/setting" should have "color" "rgb(232, 62, 140)"
+
+  Scenario: A place is removed with the cross on its chip, and the places every icon has show none
+    Given I log in as "admin"
+    And I navigate to "Appearance > Icon Restyle > Icon designer" in site administration
+    And I wait until "[data-region='grid-window'] .irs-card" "css_element" exists
+    When I set the field "Search icons" to "a/setting"
+    And I wait until "[data-key='core:a/setting']" "css_element" exists
+    And I click on "[data-key='core:a/setting']" "css_element"
+    And I click on "[data-tab='places']" "css_element"
+    Then "[data-action='remove-chip']" "css_element" should not exist
+    When I click on "[data-action='add-places']" "css_element"
+    And the places modal is open
+    And I click on "//input[@name='irs-kind'][@value='course']/following-sibling::span" "xpath_element"
+    And I choose the place "Course A" in the "course" field
+    And I click on ".modal-footer [data-action='save']" "css_element"
+    And the places modal is closed
+    Then "[data-action='remove-chip']" "css_element" should exist
+    When I click on "[data-action='remove-chip']" "css_element"
+    Then "[data-action='remove-chip']" "css_element" should not exist
+    And the changes are saved

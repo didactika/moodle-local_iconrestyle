@@ -58,13 +58,14 @@ class local_iconrestyle_generator extends component_generator_base {
      * Create a rule, by default for the whole site.
      *
      * @param array $record Slot key plus optional contextid, category, course or activity, pages and regions (comma
-     *     separated), painter, fg, bg, shape, padding, opacity, target, enabled and svg, the name of a file in
-     *     tests/fixtures that becomes the rule's artwork and defaults the painter to mask.
+     *     separated), mode (all, light or dark), painter, fg, bg, design (JSON), shape, padding, opacity, target, enabled and svg,
+     *     the name of a file in tests/fixtures that becomes the rule's artwork and defaults the painter to mask.
      * @return rule Stored rule.
      */
     public function create_rule(array $record): rule {
         $contextid = $this->context_of($record);
-        $options = array_intersect_key($record, array_flip(['painter', 'fg', 'bg', 'shape', 'padding', 'opacity', 'target']));
+        $known = ['painter', 'fg', 'bg', 'design', 'shape', 'padding', 'opacity', 'target', 'mode'];
+        $options = array_intersect_key($record, array_flip($known));
         $options = array_filter($options, function ($value): bool {
             return $value !== '';
         });

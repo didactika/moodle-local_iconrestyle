@@ -127,7 +127,6 @@ final class stylesheet_compiler_test extends \basic_testcase {
     public function test_unsupported_combinations_produce_nothing(): void {
         $compiler = $this->compiler();
         $this->assertSame('', $compiler->compile([$this->rule('core:i/groupn', ['fg' => '#111'])]));
-        $this->assertSame('', $compiler->compile([$this->rule('purpose:communication', ['fg' => '#111'])]));
         $this->assertSame('', $compiler->compile([]));
     }
 

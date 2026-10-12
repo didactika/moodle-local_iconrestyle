@@ -23,8 +23,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {parseHex, toHex, normalise, rgbToHsv, hsvToRgb, contrastRatio} from '../../amd/src/lib/color.js';
 import {createHistory} from '../../amd/src/lib/history.js';
-import {filterIcons, visibleRows} from '../../amd/src/lib/filter.js';
-import {emptyDraft, ruleKey, toInput, whereKey, whereLabel} from '../../amd/src/lib/draft.js';
+import {collectNames, resolveColours, search, isVariableName, toStored, nameOf, cssOf} from '../../amd/src/lib/themevars.js';
+import {filterIcons, sortIcons, visibleRows} from '../../amd/src/lib/filter.js';
+import {emptyDraft, ruleKey, toInput, traitsOf, whereKey, whereLabel} from '../../amd/src/lib/draft.js';
 
 test('colours parse and normalise to the form the server stores', () => {
     assert.deepEqual(parseHex('#fff'), {r: 255, g: 255, b: 255, a: 255});
@@ -111,24 +112,112 @@ test('the grid renders only the rows that can be seen', () => {
     assert.deepEqual(visibleRows(0, 300, 100, 0), {first: 0, last: 0});
 });
 
-const site = {contextid: 1, contextname: 'Site', contextkind: 'site', pages: [], regions: []};
-const labels = {everywhere: 'Everywhere', pages: {admin: 'Administration pages'}, regions: {navbar: 'Navigation bar'}};
+const site = {contextid: 1, contextname: 'Site', contextkind: 'site', pages: [], regions: [], mode: 'all'};
+const labels = {everywhere: 'Everywhere', pages: {admin: 'Administration pages'}, regions: {navbar: 'Navigation bar'}, modes: {dark: 'Dark mode'}};
 
 test('a variant is identified by its icon and its place', () => {
-    assert.equal(whereKey(site), '1||');
-    assert.equal(ruleKey('core:a/setting', {...site, pages: ['admin'], regions: ['navbar']}), 'core:a/setting#1|admin|navbar');
+    assert.equal(whereKey(site), '1|||all');
+    assert.equal(ruleKey('core:a/setting', {...site, pages: ['admin'], regions: ['navbar']}), 'core:a/setting#1|admin|navbar|all');
     assert.notEqual(ruleKey('core:a/setting', site), ruleKey('core:a/setting', {...site, contextid: 7}));
 });
 
 test('a place is described in words', () => {
     assert.equal(whereLabel(site, labels), 'Everywhere');
     assert.equal(whereLabel({...site, pages: ['admin']}, labels), 'Administration pages');
-    const course = {contextid: 9, contextname: 'Course A', contextkind: 'course', pages: ['admin'], regions: ['navbar']};
+    const course = {contextid: 9, contextname: 'Course A', contextkind: 'course', pages: ['admin'], regions: ['navbar'], mode: 'all'};
     assert.equal(whereLabel(course, labels), 'Course A · Administration pages · Navigation bar');
+    assert.equal(whereLabel({...site, mode: 'dark'}, labels), 'Dark mode');
 });
 
 test('a draft carries its place into the rule input', () => {
     const where = {...site, contextid: 5, contextkind: 'category', contextname: 'Faculty', pages: ['admin']};
     const input = toInput({...emptyDraft('core:a/setting', where), fg: '#111111'}, 'font');
     assert.deepEqual([input.contextid, input.pages, input.regions, input.painter], [5, ['admin'], [], 'color']);
+});
+
+const rule = (selectorText, ...properties) => ({selectorText, style: properties});
+
+test('the colours of a theme are the custom properties it declares on the root of the page', () => {
+    const sheets = [
+        {cssRules: [rule(':root', '--bs-primary', '--bs-body-font-size', 'color'), rule('.btn', '--bs-btn-bg'), rule('html[data-bs-theme="dark"]', '--bs-body-bg')]},
+        {cssRules: [{cssRules: [rule('body', '--brand')]}]},
+        {get cssRules() {
+            throw new Error('blocked');
+        }},
+    ];
+    assert.deepEqual(collectNames(sheets), ['--brand', '--bs-body-bg', '--bs-body-font-size', '--bs-primary']);
+});
+
+test('only the custom properties whose value is a colour are offered', () => {
+    const values = {'--bs-primary': '#0f6cbf', '--bs-body-font-size': '0.9375rem', '--empty': '', '--inherit': 'inherit'};
+    const found = resolveColours(Object.keys(values), (name) => values[name], (value) => value.startsWith('#'));
+    assert.deepEqual(found, [{name: '--bs-primary', value: '#0f6cbf'}]);
+});
+
+test('the colours are searched by name or by value, best matches first', () => {
+    const items = [
+        {name: '--bs-secondary', value: '#ced4da'},
+        {name: '--bs-primary', value: '#0f6cbf'},
+        {name: '--bs-link-color', value: '#0f6cbf'},
+    ];
+    assert.deepEqual(search(items, 'primary', 10).items.map((item) => item.name), ['--bs-primary']);
+    assert.equal(search(items, '0f6cbf', 10).items.length, 2);
+    assert.deepEqual(search(items, '--bs primary', 10).items.map((item) => item.name), ['--bs-primary']);
+    assert.equal(search(items, '', 2).more, true);
+    assert.equal(search(items, 'nothing', 10).items.length, 0);
+});
+
+test('a theme variable is stored with its name and read back, also from the first design', () => {
+    assert.equal(isVariableName('--bs-primary'), true);
+    assert.equal(isVariableName('bs-primary'), false);
+    assert.equal(isVariableName('--x;color:red'), false);
+    assert.equal(toStored('--bs-primary'), 'var:--bs-primary');
+    assert.equal(nameOf('var:--bs-primary'), '--bs-primary');
+    assert.equal(nameOf('token:primary'), '--bs-primary');
+    assert.equal(nameOf('token:activitycontent'), '--activitycontent');
+    assert.equal(nameOf('#ffffff'), '');
+    assert.equal(cssOf('var:--bs-primary'), 'var(--bs-primary)');
+    assert.equal(cssOf('token:primary'), 'var(--bs-primary, var(--primary))');
+    assert.equal(cssOf('token:activitycontent'), 'var(--activitycontent)');
+    assert.equal(cssOf('#fff'), '');
+});
+
+test('icons are narrowed by component, purpose, what they customise, place and mode, and sorted', () => {
+    const icons = [
+        {key: 'core:a/setting', kind: 'font', group: 0, component: 'core', name: 'a/setting', purpose: ''},
+        {key: 'core:t/edit', kind: 'font', group: 0, component: 'core', name: 't/edit', purpose: ''},
+        {key: 'activity:assign', kind: 'container', group: 0, component: 'activity', name: 'assign', purpose: 'assessment'},
+        {key: 'activity:forum', kind: 'container', group: 0, component: 'activity', name: 'forum', purpose: 'collaboration'},
+    ];
+    const keys = (list) => list.map((icon) => icon.key);
+    const modified = new Set(['core:a/setting', 'activity:forum']);
+    const traits = new Map([
+        ['core:a/setting', new Set(['colour', 'place:site', 'mode:light'])],
+        ['activity:forum', new Set(['colour', 'effects', 'place:course', 'mode:dark'])],
+    ]);
+    const traitsFor = (key) => traits.get(key) || new Set();
+    const options = {modified, traitsOf: traitsFor};
+    assert.deepEqual(keys(filterIcons(icons, {components: ['activity']})), ['activity:assign', 'activity:forum']);
+    assert.deepEqual(keys(filterIcons(icons, {purposes: ['assessment']})), ['activity:assign']);
+    assert.deepEqual(keys(filterIcons(icons, {...options, traits: ['colour']})), ['core:a/setting', 'activity:forum']);
+    assert.deepEqual(keys(filterIcons(icons, {...options, traits: ['colour', 'effects']})), ['activity:forum']);
+    assert.deepEqual(keys(filterIcons(icons, {...options, traits: ['untouched']})), ['core:t/edit', 'activity:assign']);
+    assert.deepEqual(keys(filterIcons(icons, {...options, traits: ['modified']})), ['core:a/setting', 'activity:forum']);
+    assert.deepEqual(keys(filterIcons(icons, {...options, kinds: ['container'], traits: ['modified']})), ['activity:forum']);
+    assert.deepEqual(keys(filterIcons(icons, {kinds: ['font', 'container']})).length, 4);
+    assert.deepEqual(keys(filterIcons(icons, {...options, places: ['course', 'activity']})), ['activity:forum']);
+    assert.deepEqual(keys(filterIcons(icons, {...options, modes: ['light']})), ['core:a/setting']);
+    assert.deepEqual(keys(filterIcons(icons, {...options, components: ['activity'], traits: ['colour']})), ['activity:forum']);
+    assert.deepEqual(keys(sortIcons(icons, 'name', modified)), ['core:a/setting', 'activity:assign', 'activity:forum', 'core:t/edit']);
+    assert.deepEqual(keys(sortIcons(icons, 'component', modified)), ['activity:assign', 'activity:forum', 'core:a/setting', 'core:t/edit']);
+    assert.deepEqual(keys(sortIcons(icons, 'modified', modified)).slice(0, 2).sort(), ['activity:forum', 'core:a/setting']);
+    assert.deepEqual(keys(sortIcons(icons, 'catalogue', modified)), keys(icons));
+});
+
+test('a draft says what it customises', () => {
+    const where = {contextid: 1, contextname: 'Site', contextkind: 'site', pages: [], regions: [], mode: 'light'};
+    const draft = {...emptyDraft('core:a/setting', where), fg: '#112233', shadow: 'soft', hover: 'grow', assetid: 3};
+    assert.deepEqual([...traitsOf(draft)].sort(), ['artwork', 'colour', 'effects', 'mode:light', 'place:site']);
+    const limited = {...emptyDraft('core:a/setting', where), pages: ['course'], skx: 10, pt: 5};
+    assert.deepEqual([...traitsOf(limited)].sort(), ['limited', 'mode:light', 'place:site', 'spacing', 'transform']);
 });

@@ -39,14 +39,14 @@ final class permissions_test extends \advanced_testcase {
         $this->resetAfterTest();
         $permissions = new permissions();
         $this->setAdminUser();
-        $this->assertTrue($permissions->can_manage());
+        $this->assertTrue(has_capability(permissions::CAPABILITY, \context_system::instance()));
         $permissions->require_manage();
 
         $user = $this->getDataGenerator()->create_user();
         $managerid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
         $this->getDataGenerator()->role_assign($managerid, $user->id, \context_system::instance()->id);
         $this->setUser($user);
-        $this->assertTrue($permissions->can_manage());
+        $this->assertTrue(has_capability(permissions::CAPABILITY, \context_system::instance()));
     }
 
     /**
@@ -65,7 +65,7 @@ final class permissions_test extends \advanced_testcase {
 
         foreach ([$manager, $teacher] as $user) {
             $this->setUser($user);
-            $this->assertFalse($permissions->can_manage());
+            $this->assertFalse(has_capability(permissions::CAPABILITY, \context_system::instance()));
         }
         $this->expectException(\required_capability_exception::class);
         $permissions->require_manage();
