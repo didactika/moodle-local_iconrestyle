@@ -454,7 +454,7 @@ class behat_local_iconrestyle extends behat_base {
     }
 
     /**
-     * Pick a place in the autocomplete of the modal that adds places: type its name, which selects the only place that matches.
+     * Pick a place in the search of the modal that adds places: type its name and choose it from the list.
      *
      * @When /^I choose the place "(?P<name_string>(?:[^"]|\\")*)" in the "(?P<kind_string>category|course|activity)" field$/
      * @param string $name Text to type and to find among the chosen places.
@@ -462,10 +462,12 @@ class behat_local_iconrestyle extends behat_base {
      */
     public function i_choose_the_place_in_the_field(string $name, string $kind): void {
         $field = "//div[@data-kind-field='" . $kind . "']";
-        $this->execute('behat_forms::i_set_the_field_with_xpath_to', [$field . "//input[@type='text']", $name]);
         $literal = $this->getSession()->getSelectorsHandler()->xpathLiteral($name);
-        $chosen = $field . "//*[@data-value][contains(@class, 'badge') or @role='option' or @role='listitem']"
-            . "[contains(., " . $literal . ")]";
+        $this->execute('behat_forms::i_set_the_field_with_xpath_to', [$field . "//input[@type='text']", $name]);
+        $option = $field . "//*[@role='option'][contains(., " . $literal . ")]";
+        $this->execute('behat_general::wait_until_exists', [$option, 'xpath_element']);
+        $this->execute('behat_general::i_click_on', [$option, 'xpath_element']);
+        $chosen = $field . "//*[@data-value][contains(@class, 'badge')][contains(., " . $literal . ")]";
         $this->execute('behat_general::wait_until_exists', [$chosen, 'xpath_element']);
     }
 

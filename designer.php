@@ -34,9 +34,6 @@ $PAGE->set_pagelayout('report');
 $PAGE->add_body_class('local-iconrestyle-designer');
 service_factory::instance()->permissions()->require_manage();
 
-$page = new designer_page();
-$PAGE->requires->js_call_amd('local_iconrestyle/designer/index', 'init');
-
 echo $OUTPUT->header();
-echo $OUTPUT->render_from_template('local_iconrestyle/designer/page', $page->export_for_template($OUTPUT));
+echo $OUTPUT->render(new designer_page());
 echo $OUTPUT->footer();
