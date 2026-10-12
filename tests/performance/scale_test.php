@@ -35,6 +35,7 @@ require_once(__DIR__ . '/../fixtures/scale_dataset.php');
 require_once(__DIR__ . '/../fixtures/counting_compiler_factory.php');
 
 #[\PHPUnit\Framework\Attributes\CoversNothing]
+#[\PHPUnit\Framework\Attributes\Group('local_iconrestyle_performance')]
 /**
  * One large site is built once and every scenario of the benchmark plan runs on it. Each scenario states its budget; the ones
  * that are exceeded are all reported together at the end, so a single run shows everything that is slow.
@@ -160,6 +161,7 @@ final class scale_test extends \advanced_testcase {
         $this->b05_catalogue();
         $this->cache_entries();
         $this->b08_disabled_and_enabled($chains[8]);
+        $this->b06_import($data);
 
         $table = '';
         foreach ($this->report as $id => $metrics) {
@@ -316,6 +318,47 @@ final class scale_test extends \advanced_testcase {
         });
         $this->budget('B-05', 'cold build milliseconds', $cold, 3000);
         $this->budget('B-05', 'cached read milliseconds', $warm, 50);
+    }
+
+    /**
+     * B-06: a package is imported one line at a time, so the memory it takes does not depend on how big it is.
+     *
+     * The package is a generator, never a list, and is written to the courses of the dataset. ICONRESTYLE_BENCH_IMPORT says
+     * how many rules it has.
+     *
+     * @param scale_dataset $data Dataset.
+     */
+    private function b06_import(scale_dataset $data): void {
+        set_config('maxcontextswithrules', 100000, 'local_iconrestyle');
+        service_factory::reset();
+        $total = scale_dataset::size('IMPORT', 3000);
+        $slots = $data->slots();
+        $courses = count($data->courses);
+        $each = min(count($slots), max(1, (int)ceil($total / $courses)));
+        $lines = (function () use ($total, $slots, $each): \Generator {
+            yield json_encode(['type' => 'header', 'format' => 'local_iconrestyle', 'version' => 1]);
+            for ($i = 0; $i < $total; $i++) {
+                yield json_encode([
+                    'type' => 'rule', 'place' => 'course:shortname=B' . intdiv($i, $each), 'slot' => $slots[$i % $each],
+                    'painter' => 'color', 'asset' => null, 'fg' => sprintf('#%06x', ($i * 2654435761) & 0xffffff), 'bg' => null,
+                    'design' => [], 'pages' => [], 'regions' => [], 'mode' => 'all', 'enabled' => true,
+                ]);
+            }
+        })();
+        gc_collect_cycles();
+        $before = memory_get_usage();
+        $peak = memory_get_peak_usage();
+        $report = null;
+        $time = $this->ms(function () use ($lines, &$report) {
+            $report = service_factory::instance()->importer()->run($lines, 'merge', false, (int)get_admin()->id);
+        });
+        $growth = max(0, memory_get_peak_usage() - max($peak, $before)) / 1048576;
+        $this->note('B-06', 'rules in the package', $total);
+        $this->note('B-06', 'rules created', $report->get('created'));
+        $this->note('B-06', 'seconds', $time / 1000);
+        $this->note('B-06', 'rules per second', $total / max(0.001, $time / 1000));
+        $this->budget('B-06', 'memory the import added to the peak, MB', $growth, 64);
+        $this->budget('B-06', 'rules left out', $report->get('skipped'), 0);
     }
 
     /**
