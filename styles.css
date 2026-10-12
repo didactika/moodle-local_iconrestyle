@@ -1516,8 +1516,14 @@
     font-weight: 600;
 }
 
+.irs.irs-picking {
+    height: auto;
+    min-height: max(32rem, calc(100vh - var(--irs-top, 9rem) - 1.25rem));
+}
+
 .irs.irs-picking .irs-grid {
-    padding-bottom: calc(var(--irs-selbar, 4rem) + 1.5rem);
+    min-height: calc(var(--irs-selbar, 12rem) + 9rem);
+    padding-bottom: calc(var(--irs-selbar, 12rem) + 2rem);
 }
 
 .irs .irs-pick {

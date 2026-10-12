@@ -588,7 +588,34 @@ class behat_local_iconrestyle extends behat_base {
             throw new \Behat\Behat\Tester\Exception\PendingException('This Moodle has no colour modes.');
         }
         set_config('enablecolourmodes', 1, 'theme_boost');
-        theme_reset_all_caches();
+        // Chrome may still be fetching theme files of the previous scenario, which makes the removal of that cache warn.
+        set_error_handler(static function (): bool {
+            return true;
+        }, E_WARNING);
+        try {
+            theme_reset_all_caches();
+        } finally {
+            restore_error_handler();
+        }
+    }
+
+    /**
+     * Open the activity chooser of the first section of the course.
+     *
+     * The step of core clicks the link of the section, which Chrome does not consider interactable until the section is
+     * hovered; here the link is clicked by script.
+     *
+     * @When /^I open the activity chooser of the course$/
+     */
+    public function i_open_the_activity_chooser_of_the_course(): void {
+        $this->getSession()->wait(
+            10000,
+            "document.querySelector('[data-action=\"open-chooser\"], .section-modchooser-link') !== null"
+        );
+        $this->getSession()->executeScript(
+            "document.querySelector('[data-action=\"open-chooser\"], .section-modchooser-link').click();"
+        );
+        $this->getSession()->wait(10000, "document.querySelector('.modal.show .optionicon') !== null");
     }
 
     /**
