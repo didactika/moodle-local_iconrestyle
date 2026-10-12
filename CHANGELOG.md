@@ -21,6 +21,12 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+### Changed
+
+- The styles are authored as nested SCSS (`styles.scss` and `scss/`) and compiled into `styles.css` by `tools/build-styles.mjs`, which the pipeline checks.
+- Copying to another colour mode is a button with an icon in the selection bar.
+- Filter chips and rows show what a click would choose when the pointer is over them.
+
 ### Added
 
 - A user manual with screenshots (`docs/user-manual`), written in the format of a GitHub wiki, a performance report of the mass benchmarks (`docs/performance-report.md`) and an icon for the plugin in the colours of Didactika.

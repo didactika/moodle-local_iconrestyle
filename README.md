@@ -116,6 +116,10 @@ The benchmarks are part of the test suite, with budgets that fail the build when
 
 More in the [troubleshooting chapter](docs/user-manual/Troubleshooting.md).
 
+## Development
+
+The styles are written as nested SCSS (`styles.scss` and the partials in `scss/`) and compiled into the `styles.css` that is distributed. After changing them, run `node tools/build-styles.mjs /path/to/moodle` with the root of a Moodle checkout (it uses the Sass of that checkout and checks the result with the stylelint of Moodle). The pipeline runs the same command with `--check` and fails when `styles.css` is not what the sources produce.
+
 ## Getting help
 
 Open an [issue](https://github.com/didactika/moodle-local_iconrestyle/issues) with your Moodle and PHP versions, the theme in use and what you expected.

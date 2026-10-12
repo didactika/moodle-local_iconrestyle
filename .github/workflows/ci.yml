@@ -236,6 +236,14 @@ jobs:
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci grunt --max-lint-warnings 0
 
+      - name: Check generated component styles
+        if: ${{ !cancelled() }}
+        run: |
+          # Match the installed core's Node runtime, including legacy Node Sass bindings.
+          source "$NVM_DIR/nvm.sh"
+          nvm use "$(cat moodle/.nvmrc)"
+          node plugin/tools/build-styles.mjs moodle --check
+
       - name: PHPUnit tests
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci phpunit --fail-on-warning

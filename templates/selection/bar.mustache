@@ -49,8 +49,9 @@
         <button type="button" class="irs-pillbtn" data-action="selection-back" data-for="modes" hidden>
             {{#str}}back, local_iconrestyle{{/str}}
         </button>
-        <button type="button" class="irs-pillbtn" data-action="selection-modes" data-for="export" hidden disabled>
-            {{#str}}selectmodes, local_iconrestyle{{/str}}
+        <button type="button" class="irs-iconbtn irs-modesbtn" data-action="selection-modes" data-for="export" hidden disabled
+            title="{{#str}}selectmodes, local_iconrestyle{{/str}}" aria-label="{{#str}}selectmodes, local_iconrestyle{{/str}}">
+            {{> local_iconrestyle/common/icon_colour_mode}}
         </button>
         <button type="button" class="irs-pillbtn irs-pillbtn-primary" data-action="selection-apply" disabled>
             <span data-region="selection-apply-text"></span>

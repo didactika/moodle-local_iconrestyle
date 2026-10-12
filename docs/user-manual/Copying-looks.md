@@ -20,10 +20,10 @@ An icon of an image kind that gets a colour fetches its own file so it can be co
 
 ## Copy one colour mode to another
 
-When your site has colour modes, choose icons with **Select** and use **Copy to another mode** in the bar:
+When your site has colour modes, choose icons with **Select** and use the **colour modes** button (a circle with one half filled) in the bar:
 
 1. Choose the icons (it is usual to filter *Status → Customised* and press **All shown**).
-2. Press **Copy to another mode**. Choose the mode to copy **from** and the one to copy **to**.
+2. Press the colour modes button. Choose the mode to copy **from** and the one to copy **to**.
 3. Tick **Replace existing** only if the second mode already has looks that you want to overwrite. Otherwise they are left as
    they are.
 4. Press **Copy**. A message says how many looks were copied and how many were left because they already existed.
