@@ -33,11 +33,22 @@ use local_iconrestyle\rule\design;
  * The designer is drawn by the React component local_iconrestyle/Designer, which gets everything it needs here.
  */
 class designer_page implements react_component_renderable, \renderable {
+    /**
+     * The React component that draws the designer.
+     *
+     * @return string Name of the component inside the plugin.
+     */
     #[\Override]
     public function get_react_component_name(): string {
         return 'local_iconrestyle/Designer';
     }
 
+    /**
+     * The settings and the text the component starts from.
+     *
+     * @param \renderer_base $renderer Renderer.
+     * @return \stdClass Properties of the component.
+     */
     #[\Override]
     public function get_react_component_props(\renderer_base $renderer): \stdClass {
         $site = \context_system::instance();
