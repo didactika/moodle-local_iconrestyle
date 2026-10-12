@@ -104,7 +104,7 @@ export const createExchange = (root, options) => {
             return;
         }
         const total = usable.length;
-        const wanted = {all: () => true, new: (entry) => entry.updated === 0, none: () => false}[defaults.importchoose];
+        const wanted = {all: () => true, 'new': (entry) => entry.updated === 0, none: () => false}[defaults.importchoose];
         const chosen = new Set(usable.filter(wanted).map((entry) => entry.slot));
         const rules = entries.reduce((sum, entry) => sum + entry.created + entry.updated + entry.skipped, 0);
         let mode = defaults.importmode;
@@ -135,8 +135,8 @@ export const createExchange = (root, options) => {
         };
         const drawCount = () => {
             find(selectors.count).textContent = text('importchosen', {chosen: chosen.size, total});
-            find(selectors.modeHelp).textContent = text(mode === 'merge' ? 'importmergehelp' :
-                (chosen.size === total ? 'importreplacehelp' : 'importreplacechosenhelp'));
+            const replaceHelp = chosen.size === total ? 'importreplacehelp' : 'importreplacechosenhelp';
+            find(selectors.modeHelp).textContent = text(mode === 'merge' ? 'importmergehelp' : replaceHelp);
             find(selectors.error).hidden = true;
         };
         const preview = async() => {

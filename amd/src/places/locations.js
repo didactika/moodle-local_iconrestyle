@@ -33,15 +33,15 @@ const names = new Map();
  *
  * @param {string} selector Selector of the select element.
  * @param {string} query Text typed so far.
- * @param {Function} callback Receives the places found.
- * @param {Function} errorCallback Receives the error.
+ * @param {Function} found Receives the places found.
+ * @param {Function} failed Receives the error.
  */
-export const transport = (selector, query, callback, errorCallback) => {
+export const transport = (selector, query, found, failed) => {
     const kind = document.querySelector(selector).dataset.kind;
     services.searchLocations(kind, query).then((result) => {
-        callback(result.places);
+        found(result.places);
         return null;
-    }).catch(errorCallback);
+    }).catch(failed);
 };
 
 /**

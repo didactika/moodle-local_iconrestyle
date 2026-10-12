@@ -30,6 +30,7 @@
 const words = (text) => String(text).toLowerCase().split(/[\s/:_-]+/).filter((word) => word !== '');
 
 const NONE = new Set();
+const STATUS = ['untouched', 'modified', 'shared'];
 
 /**
  * Put icons in the order the person asked for.
@@ -53,6 +54,41 @@ export const sortIcons = (icons, sort, modified) => {
 };
 
 /**
+ * Whether an icon passes the filters that look only at the icon and at whether it has a customisation.
+ *
+ * @param {object} icon Catalogue entry.
+ * @param {object} options Filters, as filterIcons describes them.
+ * @returns {boolean} True when the icon passes all of them.
+ */
+const basicPasses = (icon, options) => {
+    const {kind = 'all', state = 'all', kinds = [], modified = new Set(), components = [], purposes = [], traits = []} = options;
+    const inList = (list, value) => list.length === 0 || list.includes(value);
+    if ((kind !== 'all' && icon.kind !== kind) || (state === 'modified' && !modified.has(icon.key)) ||
+        (state === 'shared' && icon.group < 2)) {
+        return false;
+    }
+    if (!inList(kinds, icon.kind) || !inList(components, icon.component) || !inList(purposes, icon.purpose)) {
+        return false;
+    }
+    return !((traits.includes('untouched') && modified.has(icon.key)) || (traits.includes('modified') && !modified.has(icon.key)) ||
+        (traits.includes('shared') && icon.group < 2));
+};
+
+/**
+ * Whether the traits of a customised icon meet the filters of traits, places and modes.
+ *
+ * @param {Set<string>} have Traits of the icon.
+ * @param {object} options Filters, as filterIcons describes them.
+ * @returns {boolean} True when the traits meet the filters.
+ */
+const traitsPass = (have, options) => {
+    const {traits = [], places = [], modes = []} = options;
+    const all = traits.filter((trait) => !STATUS.includes(trait));
+    const anyOf = (prefix, list) => list.length === 0 || list.some((name) => have.has(`${prefix}:${name}`));
+    return all.every((trait) => have.has(trait)) && anyOf('place', places) && anyOf('mode', modes);
+};
+
+/**
  * Filter icons.
  *
  * Every word must appear in the key, so "forum mono" finds mod_forum:monologo.
@@ -64,43 +100,12 @@ export const sortIcons = (icons, sort, modified) => {
  * @returns {Array} Entries that pass every filter, in catalogue order.
  */
 export const filterIcons = (icons, options = {}) => {
-    const {
-        query = '', kind = 'all', state = 'all', kinds = [], modified = new Set(), components = [], purposes = [], traits = [],
-        places = [], modes = [], traitsOf = () => NONE,
-    } = options;
+    const {query = '', traits = [], places = [], modes = [], traitsOf = () => NONE} = options;
     const wanted = words(query);
-    const status = ['untouched', 'modified', 'shared'];
-    const all = traits.filter((trait) => !status.includes(trait));
-    const needTraits = all.length > 0 || places.length > 0 || modes.length > 0;
+    const needTraits = traits.some((trait) => !STATUS.includes(trait)) || places.length > 0 || modes.length > 0;
     return icons.filter((icon) => {
-        if (kind !== 'all' && icon.kind !== kind) {
+        if (!basicPasses(icon, options) || (needTraits && !traitsPass(traitsOf(icon.key), options))) {
             return false;
-        }
-        if (state === 'modified' && !modified.has(icon.key)) {
-            return false;
-        }
-        if (state === 'shared' && icon.group < 2) {
-            return false;
-        }
-        if (kinds.length > 0 && !kinds.includes(icon.kind)) {
-            return false;
-        }
-        if (components.length > 0 && !components.includes(icon.component)) {
-            return false;
-        }
-        if (purposes.length > 0 && !purposes.includes(icon.purpose)) {
-            return false;
-        }
-        if ((traits.includes('untouched') && modified.has(icon.key)) || (traits.includes('modified') && !modified.has(icon.key)) ||
-            (traits.includes('shared') && icon.group < 2)) {
-            return false;
-        }
-        if (needTraits) {
-            const have = traitsOf(icon.key);
-            const anyOf = (prefix, list) => list.length === 0 || list.some((name) => have.has(`${prefix}:${name}`));
-            if (!all.every((trait) => have.has(trait)) || !anyOf('place', places) || !anyOf('mode', modes)) {
-                return false;
-            }
         }
         const haystack = icon.key.toLowerCase();
         return wanted.every((word) => haystack.includes(word));

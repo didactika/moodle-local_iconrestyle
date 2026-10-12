@@ -165,7 +165,8 @@ export const createThemeColours = (field, name, config) => {
     const setCurrent = (stored) => {
         const variable = themevars.nameOf(stored);
         const special = config.specials.find((item) => item.value === stored);
-        shown = variable !== '' ? variable : (special ? special.label : '');
+        const specialLabel = special ? special.label : '';
+        shown = variable !== '' ? variable : specialLabel;
         if (panel.hidden) {
             input.value = shown;
         }

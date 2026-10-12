@@ -46,6 +46,21 @@ const hexOf = (css) => {
 };
 
 /**
+ * What the hex box of a colour shows.
+ *
+ * @param {string} colour Stored colour.
+ * @param {boolean} themed Whether the colour follows the theme.
+ * @param {string} fromtheme The CSS value of a colour that follows the theme.
+ * @returns {string} Hex code, or an empty string when the colour has none.
+ */
+const hexFor = (colour, themed, fromtheme) => {
+    if (!themed) {
+        return colour;
+    }
+    return fromtheme === '' ? '' : hexOf(fromtheme);
+};
+
+/**
  * Create the colour fields.
  *
  * @param {HTMLElement} root Designer root element.
@@ -67,7 +82,7 @@ export const createColourFields = (root, options) => {
         const hex = find(selectors.hex(name));
         const fromtheme = themevars.cssOf(colour);
         if (document.activeElement !== hex) {
-            hex.value = themed ? (fromtheme === '' ? '' : hexOf(fromtheme)) : colour;
+            hex.value = hexFor(colour, themed, fromtheme);
             hex.removeAttribute('aria-invalid');
         }
         hex.classList.toggle('irs-from-theme', fromtheme !== '');

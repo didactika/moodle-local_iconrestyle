@@ -48,7 +48,7 @@ export const withTimeout = (promise, milliseconds) => new Promise((resolve, reje
         window.clearTimeout(timer);
         resolve(value);
         return null;
-    }, (error) => {
+    }).catch((error) => {
         window.clearTimeout(timer);
         reject(error);
     });

@@ -27,7 +27,7 @@
         "adminurl": "https://example.org/admin/search.php"
     }
 }}
-<header class="irs-bar" role="search">
+<div class="irs-bar" role="search">
     <button type="button" class="irs-back" data-action="history-back" data-fallback="{{adminurl}}"
         title="{{#str}}back, local_iconrestyle{{/str}}">
         {{> local_iconrestyle/common/icon_back}}<span>{{#str}}back, local_iconrestyle{{/str}}</span>
@@ -84,4 +84,4 @@
     </div>
     <input type="file" class="irs-upload-input" data-region="exchange-file" tabindex="-1" aria-hidden="true"
         accept=".iconrestyle,.json,.txt,text/plain,application/json">
-</header>
+</div>
