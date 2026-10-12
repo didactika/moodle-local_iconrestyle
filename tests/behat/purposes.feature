@@ -96,5 +96,5 @@ Feature: Activity purposes and the box around their icons
       | activity:assign | #e83e8c |
     And I log in as "admin"
     And I am on "CA" course homepage with editing mode on
-    When I open the activity chooser
+    When I open the activity chooser of the course
     Then the box of "assign" in the activity chooser should have "background-color" "rgb(232, 62, 140)"
