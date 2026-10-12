@@ -115,7 +115,7 @@ export default function Toolbar(props: ToolbarProps) {
         {icon}<span>{label}</span>{shortcut ? <kbd>{shortcut}</kbd> : null}
     </button>;
 
-    return <header className="irs-bar" role="search" onKeyDown={(event) => {
+    return <div className="irs-bar" role="search" onKeyDown={(event) => {
         if (event.key === 'Escape') {
             setMenu(null);
         }
@@ -176,5 +176,5 @@ export default function Toolbar(props: ToolbarProps) {
                     props.onFile(chosen);
                 }
             }} />
-    </header>;
+    </div>;
 }

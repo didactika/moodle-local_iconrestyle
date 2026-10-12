@@ -130,7 +130,7 @@ export default function FiltersPanel({icons, filters, modes, text, onChange}: Fi
         </button>
         <div className="irs-filters-panel" data-region="filters-panel" role="dialog" aria-label={text('filtbutton')} hidden={!open}
             style={place}>
-            <header className="irs-filter-head">
+            <div className="irs-filter-head">
                 <h2 className="irs-filter-heading">{text('filtbutton')}</h2>
                 <button type="button" className="irs-iconbtn" data-action="filters-clear" disabled={total === 0}
                     title={text('filtclear')} aria-label={text('filtclear')}
@@ -139,7 +139,7 @@ export default function FiltersPanel({icons, filters, modes, text, onChange}: Fi
                     })}>
                     <IconFilterClear />
                 </button>
-            </header>
+            </div>
             <section className="irs-filter-section">
                 <h3 className="irs-filter-title">{text('filttype')}</h3>
                 <div className="irs-filter-chips">

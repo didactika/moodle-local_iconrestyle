@@ -112,7 +112,7 @@ function Toolbar(props) {
     },
     this
   ), "item");
-  return /* @__PURE__ */ jsxDEV("header", { className: "irs-bar", role: "search", onKeyDown: (event) => {
+  return /* @__PURE__ */ jsxDEV("div", { className: "irs-bar", role: "search", onKeyDown: (event) => {
     if (event.key === "Escape") {
       setMenu(null);
     }

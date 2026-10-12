@@ -183,7 +183,7 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
         hidden: !open,
         style: place,
         children: [
-          /* @__PURE__ */ jsxDEV("header", { className: "irs-filter-head", children: [
+          /* @__PURE__ */ jsxDEV("div", { className: "irs-filter-head", children: [
             /* @__PURE__ */ jsxDEV("h2", { className: "irs-filter-heading", children: text("filtbutton") }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
               lineNumber: 134,
