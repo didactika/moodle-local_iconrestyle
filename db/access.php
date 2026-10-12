@@ -25,33 +25,15 @@
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = [
-    'local/iconrestyle:managesite' => [
+    'local/iconrestyle:manage' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => ['manager' => CAP_ALLOW],
         'riskbitmask' => RISK_XSS | RISK_CONFIG,
     ],
-    'local/iconrestyle:managecategory' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSECAT,
-        'archetypes' => ['manager' => CAP_ALLOW],
-        'riskbitmask' => RISK_XSS,
-    ],
-    'local/iconrestyle:managecourse' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => [],
-        'riskbitmask' => RISK_XSS,
-    ],
-    'local/iconrestyle:managemodule' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => [],
-        'riskbitmask' => RISK_XSS,
-    ],
     'local/iconrestyle:viewhistory' => [
         'captype' => 'read',
-        'contextlevel' => CONTEXT_COURSE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => ['manager' => CAP_ALLOW],
     ],
     'local/iconrestyle:exchange' => [

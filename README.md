@@ -16,11 +16,11 @@ Icon Restyle (**local_iconrestyle**) changes how Moodle draws its icons without 
 
 ## Status
 
-**Pre-release, under active development.** The rendering engine, storage, delivery and the intake of replacement artwork are implemented; the icon designer for the whole site is available; per-category and per-course editing, icon libraries and export/import are not yet. It is not ready for production sites.
+**Pre-release, under active development.** The rendering engine, storage, delivery and the intake of replacement artwork are implemented; one designer in the site administration customises icons, with each rule limited to the whole site, a category, a course, an activity, some pages or some page regions; icon libraries and export/import are not yet. It is not ready for production sites.
 
 ## How it works
 
-Moodle's icon markup does not carry the icon's name, only its Font Awesome classes or its image URL. Icon Restyle derives, from the icon map of the running Moodle, the markup each icon produces, and generates CSS that targets exactly that markup. Rules inherit down the context tree (site, category, course, activity): the page loads the stylesheets of the contexts on its path in order, so the nearest context wins.
+Moodle's icon markup does not carry the icon's name, only its Font Awesome classes or its image URL. Icon Restyle derives, from the icon map of the running Moodle, the markup each icon produces, and generates CSS that targets exactly that markup. A rule applies in the context where it is stored (the site, a category, a course or an activity) and everything below it, and can be limited further to kinds of page and parts of a page. The page loads the stylesheets of the contexts on its path in order, and the more a rule is limited the more specific its selectors are, so the most specific rule wins.
 
 Icons that several Moodle icon names draw with the same Font Awesome glyph cannot be styled independently; they are treated as one glyph.
 
@@ -51,15 +51,12 @@ To disable the plugin without the administration interface, set `$CFG->local_ico
 
 | Capability | Context | Default |
 |---|---|---|
-| `local/iconrestyle:managesite` | System | Manager |
-| `local/iconrestyle:managecategory` | Category | Manager |
-| `local/iconrestyle:managecourse` | Course | None |
-| `local/iconrestyle:managemodule` | Activity | None |
-| `local/iconrestyle:viewhistory` | Course | Manager |
+| `local/iconrestyle:manage` | System | Manager |
+| `local/iconrestyle:viewhistory` | System | Manager |
 | `local/iconrestyle:exchange` | System | Manager |
 | `local/iconrestyle:managelibraries` | System | Manager |
 
-Capabilities that change what every page renders carry the XSS risk flag.
+Capabilities that change what every page renders carry the XSS risk flag. Icons are customised in one place, Site administration > Appearance > Icon appearance, so one capability governs every rule, wherever it applies.
 
 ## Getting help
 

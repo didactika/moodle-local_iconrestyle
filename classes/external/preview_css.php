@@ -47,7 +47,6 @@ class preview_css extends api {
      */
     public static function execute_parameters(): parameters {
         return new parameters([
-            'contextid' => new value(PARAM_INT, 'Context being edited'),
             'rules' => new listof(rule_payload::input()),
             'scope' => new value(PARAM_ALPHA, 'Preview area: current or new', VALUE_DEFAULT, 'new'),
         ]);
@@ -56,33 +55,26 @@ class preview_css extends api {
     /**
      * Compile unsaved rules.
      *
-     * @param int $contextid Context being edited.
      * @param array $rules Rules to compile.
      * @param string $scope Preview area the CSS is scoped to: current or new.
      * @return string CSS.
      */
-    public static function execute(int $contextid, array $rules, string $scope = 'new'): string {
-        $params = self::validate_parameters(
-            self::execute_parameters(),
-            ['contextid' => $contextid, 'rules' => $rules, 'scope' => $scope]
-        );
+    public static function execute(array $rules, string $scope = 'new'): string {
+        $params = self::validate_parameters(self::execute_parameters(), ['rules' => $rules, 'scope' => $scope]);
         if (!in_array($params['scope'], self::SCOPES, true)) {
             throw new \invalid_parameter_exception('Unknown preview area.');
         }
-        $context = \context::instance_by_id($params['contextid']);
-        self::validate_context($context);
+        self::validate_context(\context_system::instance());
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage($context);
+        $factory->permissions()->require_manage();
         if (count($params['rules']) > self::MAX_RULES) {
             throw new \invalid_parameter_exception('Too many rules in one preview.');
         }
         $compiled = [];
         foreach ($params['rules'] as $rule) {
-            $existing = $factory->rules()->find($context->id, $rule['slotkey'], 'icon');
-            $rule['rev'] = $existing ? $existing->rev() : 0;
-            $compiled[] = rule_payload::to_rule($context->id, $rule);
+            $compiled[] = rule_payload::to_rule($rule, false);
         }
-        return $factory->compiler()->compile($compiled, '.irs-preview-' . $params['scope'] . ' ');
+        return $factory->compiler()->compile($compiled, '.irs-preview-' . $params['scope'] . ' ', false);
     }
 
     /**

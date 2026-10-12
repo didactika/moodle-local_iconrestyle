@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/compat.php');
 
 /**
- * Returns the winning rule for each icon, saying which context it comes from.
+ * Returns every rule of the site, each saying where it applies.
  */
 class get_rules extends api {
     /**
@@ -40,27 +40,21 @@ class get_rules extends api {
      * @return parameters Description.
      */
     public static function execute_parameters(): parameters {
-        return new parameters(['contextid' => new value(PARAM_INT, 'Context being edited')]);
+        return new parameters([]);
     }
 
     /**
-     * List the rules that apply in a context.
+     * List every rule of the site, wherever it applies.
      *
-     * @param int $contextid Context being edited.
      * @return array Rules.
      */
-    public static function execute(int $contextid): array {
-        $params = self::validate_parameters(self::execute_parameters(), ['contextid' => $contextid]);
-        $context = \context::instance_by_id($params['contextid']);
-        self::validate_context($context);
+    public static function execute(): array {
+        self::validate_parameters(self::execute_parameters(), []);
+        self::validate_context(\context_system::instance());
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage($context);
+        $factory->permissions()->require_manage();
 
-        $rules = [];
-        foreach ($factory->effective_rules()->for_context($context) as $entry) {
-            $rules[] = rule_payload::export($entry['rule'], $entry['own']);
-        }
-        return ['contextname' => $context->get_context_name(false), 'rules' => $rules];
+        return ['rules' => array_map([rule_payload::class, 'export'], $factory->rules()->find_all())];
     }
 
     /**
@@ -69,9 +63,6 @@ class get_rules extends api {
      * @return structure Description.
      */
     public static function execute_returns(): structure {
-        return new structure([
-            'contextname' => new value(PARAM_RAW, 'Name of the context being edited'),
-            'rules' => new listof(rule_payload::output()),
-        ]);
+        return new structure(['rules' => new listof(rule_payload::output())]);
     }
 }

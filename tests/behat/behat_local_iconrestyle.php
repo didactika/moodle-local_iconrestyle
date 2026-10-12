@@ -186,6 +186,16 @@ class behat_local_iconrestyle extends behat_base {
     }
 
     /**
+     * Open a page of the site by its path.
+     *
+     * @When /^I visit the path "([^"]+)"$/
+     * @param string $path Path starting with a slash.
+     */
+    public function i_visit_the_path(string $path): void {
+        $this->getSession()->visit($this->locate_path($path));
+    }
+
+    /**
      * Check the colour really painted on screen at a point inside the artwork of an icon.
      *
      * Computed styles can be right while nothing is drawn, so this reads a pixel of a screenshot. The icon is shown as

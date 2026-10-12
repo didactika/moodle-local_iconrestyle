@@ -105,6 +105,16 @@ class revision_registry {
     }
 
     /**
+     * Forget a context for good, because the context itself no longer exists.
+     *
+     * @param int $contextid Delta owner context.
+     */
+    public function forget(int $contextid): void {
+        $this->db->delete_records(self::TABLE, ['contextid' => $contextid]);
+        $this->cache->delete((string)$contextid);
+    }
+
+    /**
      * Read effective revisions from the database.
      *
      * @param int[] $contextids Context ids.

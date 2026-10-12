@@ -20,6 +20,9 @@
         <FIELD NAME="padding" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Padding in hundredths of an em."/>
         <FIELD NAME="opacity" TYPE="int" LENGTH="3" NOTNULL="false" SEQUENCE="false" COMMENT="Opacity percentage."/>
         <FIELD NAME="target" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="icon" SEQUENCE="false" COMMENT="icon, type, purpose or instance."/>
+        <FIELD NAME="pages" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated kinds of page the rule is limited to, empty for every page."/>
+        <FIELD NAME="regions" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated regions of a page the rule is limited to, empty for every region."/>
+        <FIELD NAME="variant" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="" SEQUENCE="false" COMMENT="Identity of pages and regions, tells variants of one icon in one context apart."/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="rev" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Optimistic lock counter."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -30,7 +33,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="contextslottarget" UNIQUE="true" FIELDS="contextid, slotkey, target"/>
+        <INDEX NAME="contextslottargetvariant" UNIQUE="true" FIELDS="contextid, slotkey, target, variant"/>
         <INDEX NAME="deltactxid" UNIQUE="false" FIELDS="deltactxid"/>
         <INDEX NAME="assetid" UNIQUE="false" FIELDS="assetid"/>
         <INDEX NAME="slotkey" UNIQUE="false" FIELDS="slotkey"/>

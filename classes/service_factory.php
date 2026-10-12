@@ -34,10 +34,11 @@ use local_iconrestyle\delivery\chain_resolver;
 use local_iconrestyle\delivery\compile_lock;
 use local_iconrestyle\delivery\compiled_cache;
 use local_iconrestyle\rule\delta_context;
-use local_iconrestyle\rule\effective_rules;
 use local_iconrestyle\rule\permissions;
 use local_iconrestyle\rule\revision_registry;
 use local_iconrestyle\rule\rule;
+use local_iconrestyle\rule\module_scope;
+use local_iconrestyle\rule\rule_cleaner;
 use local_iconrestyle\rule\rule_service;
 use local_iconrestyle\rule\rule_store;
 use local_iconrestyle\slot\glyph_signature_factory;
@@ -143,7 +144,8 @@ class service_factory {
                 rule::PAINTER_MASK => new mask_painter($this->asset_urls()),
                 rule::PAINTER_IMAGE => new image_painter($this->asset_urls()),
             ],
-            new container_painter()
+            new container_painter(),
+            new module_scope()
         );
     }
 
@@ -154,15 +156,6 @@ class service_factory {
      */
     public function permissions(): permissions {
         return $this->services['permissions'] ?? $this->services['permissions'] = new permissions();
-    }
-
-    /**
-     * Rules that apply in a context.
-     *
-     * @return effective_rules Reader.
-     */
-    public function effective_rules(): effective_rules {
-        return $this->services['effective'] ?? $this->services['effective'] = new effective_rules($this->rules());
     }
 
     /**
@@ -220,6 +213,20 @@ class service_factory {
             $this->compiler(),
             new compiled_cache(\cache::make('local_iconrestyle', 'compiled')),
             new compile_lock()
+        );
+    }
+
+    /**
+     * Cleaner that removes the rules of deleted contexts.
+     *
+     * @return rule_cleaner Cleaner.
+     */
+    public function rule_cleaner(): rule_cleaner {
+        global $DB;
+        return $this->services['rule_cleaner'] ?? $this->services['rule_cleaner'] = new rule_cleaner(
+            $DB,
+            $this->rules(),
+            $this->revisions()
         );
     }
 

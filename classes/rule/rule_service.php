@@ -81,7 +81,7 @@ class rule_service {
         $delta = $this->deltas->owner_of($rule->contextid());
         $transaction = $this->db->start_delegated_transaction();
         try {
-            $existing = $this->store->find($rule->contextid(), (string)$rule->slot(), $rule->target());
+            $existing = $this->store->find($rule->contextid(), (string)$rule->slot(), $rule->target(), $rule->variant());
             if ($existing === null && $this->store->count_by_delta($delta) >= $this->maxrules) {
                 throw new \InvalidArgumentException('Rule limit reached for this context.');
             }
@@ -100,13 +100,14 @@ class rule_service {
      * @param int $contextid Rule context.
      * @param slot_key $slot Slot.
      * @param string $target Target.
+     * @param string $variant Identity of the rule's pages and regions.
      * @return bool True when a rule was deleted.
      */
-    public function delete(int $contextid, slot_key $slot, string $target = rule::TARGET_ICON): bool {
+    public function delete(int $contextid, slot_key $slot, string $target = rule::TARGET_ICON, string $variant = ''): bool {
         $delta = $this->deltas->owner_of($contextid);
         $transaction = $this->db->start_delegated_transaction();
         try {
-            $deleted = $this->store->delete($contextid, (string)$slot, $target);
+            $deleted = $this->store->delete($contextid, (string)$slot, $target, $variant);
             if ($deleted) {
                 $this->revisions->bump($delta, $this->store->count_by_delta($delta));
             }
@@ -115,5 +116,19 @@ class rule_service {
         }
         $transaction->allow_commit();
         return $deleted;
+    }
+
+    /**
+     * Delete a rule by its id.
+     *
+     * @param int $id Rule id.
+     * @return bool True when a rule was deleted.
+     */
+    public function delete_by_id(int $id): bool {
+        $rule = $this->store->find_by_id($id);
+        if ($rule === null) {
+            return false;
+        }
+        return $this->delete($rule->contextid(), $rule->slot(), $rule->target(), $rule->variant());
     }
 }

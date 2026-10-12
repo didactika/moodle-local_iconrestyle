@@ -46,6 +46,9 @@ class rule_payload {
     public static function input(): structure {
         return new structure([
             'slotkey' => new value(PARAM_RAW, 'Slot key such as core:a/setting'),
+            'contextid' => new value(PARAM_INT, 'Where the rule applies: the site, a category, a course or an activity'),
+            'pages' => new listof(new value(PARAM_ALPHA, 'Kind of page'), 'Pages the rule is limited to', VALUE_DEFAULT, []),
+            'regions' => new listof(new value(PARAM_ALPHA, 'Region'), 'Regions the rule is limited to', VALUE_DEFAULT, []),
             'painter' => new value(PARAM_ALPHA, 'color, mask, image or none', VALUE_DEFAULT, 'color'),
             'assetid' => new value(PARAM_INT, 'Artwork asset, zero for none', VALUE_DEFAULT, 0),
             'fg' => new value(PARAM_RAW, 'Foreground colour or token, empty for none', VALUE_DEFAULT, ''),
@@ -65,7 +68,13 @@ class rule_payload {
      */
     public static function output(): structure {
         return new structure([
+            'id' => new value(PARAM_INT, 'Rule id'),
             'slotkey' => new value(PARAM_RAW, 'Slot key'),
+            'contextid' => new value(PARAM_INT, 'Context where the rule applies'),
+            'contextname' => new value(PARAM_RAW, 'Name of that context'),
+            'contextkind' => new value(PARAM_ALPHA, 'site, category, course or activity'),
+            'pages' => new listof(new value(PARAM_ALPHA, 'Kind of page'), 'Pages the rule is limited to'),
+            'regions' => new listof(new value(PARAM_ALPHA, 'Region'), 'Regions the rule is limited to'),
             'painter' => new value(PARAM_ALPHA, 'Painter'),
             'assetid' => new value(PARAM_INT, 'Artwork asset, zero for none'),
             'asseturl' => new value(PARAM_RAW, 'Address of the artwork, empty for none'),
@@ -77,34 +86,31 @@ class rule_payload {
             'opacity' => new value(PARAM_INT, 'Opacity, -1 for none'),
             'enabled' => new value(PARAM_BOOL, 'Whether the rule is applied'),
             'rev' => new value(PARAM_INT, 'Revision for optimistic locking'),
-            'contextid' => new value(PARAM_INT, 'Context the rule belongs to'),
-            'contextname' => new value(PARAM_RAW, 'Name of that context'),
-            'own' => new value(PARAM_BOOL, 'Whether the rule belongs to the context being edited'),
         ]);
     }
 
     /**
      * Build a rule from client input.
      *
-     * @param int $contextid Context the rule belongs to.
      * @param array $input Validated input following input().
+     * @param bool $lock Whether a stored rule with another revision is a conflict, which an unsaved preview ignores.
      * @return rule Rule.
      * @throws \invalid_parameter_exception When a value is not accepted.
      */
-    public static function to_rule(int $contextid, array $input): rule {
+    public static function to_rule(array $input, bool $lock = true): rule {
         try {
             $factory = service_factory::instance();
+            $context = \context::instance_by_id($input['contextid'], IGNORE_MISSING);
+            if (!$context || !$factory->permissions()->supports($context)) {
+                throw new \InvalidArgumentException('Rules cannot apply in this context.');
+            }
             if (!$factory->catalogue()->find($input['slotkey'])) {
                 throw new \InvalidArgumentException('Unknown icon.');
             }
             if ($input['assetid'] > 0 && !$factory->asset_store()->find($input['assetid'])) {
                 throw new \InvalidArgumentException('Unknown artwork.');
             }
-            $existing = $factory->rules()->find($contextid, $input['slotkey'], rule::TARGET_ICON);
-            if ($existing && $existing->rev() !== (int)$input['rev']) {
-                throw new rule_conflict_exception('The rule changed since it was read.');
-            }
-            return new rule($existing ? $existing->id() : 0, $contextid, slot_key::parse($input['slotkey']), [
+            $options = [
                 'painter' => $input['painter'],
                 'assetid' => $input['assetid'] > 0 ? $input['assetid'] : null,
                 'fg' => $input['fg'],
@@ -114,7 +120,16 @@ class rule_payload {
                 'opacity' => $input['opacity'] >= 0 ? $input['opacity'] : null,
                 'enabled' => $input['enabled'],
                 'rev' => $input['rev'],
-            ]);
+                'pages' => $input['pages'],
+                'regions' => $input['regions'],
+            ];
+            $slot = slot_key::parse($input['slotkey']);
+            $variant = (new rule(0, $context->id, $slot, ['pages' => $input['pages'], 'regions' => $input['regions']]))->variant();
+            $existing = $factory->rules()->find($context->id, $input['slotkey'], rule::TARGET_ICON, $variant);
+            if ($lock && $existing && $existing->rev() !== (int)$input['rev']) {
+                throw new rule_conflict_exception('The rule changed since it was read.');
+            }
+            return new rule($existing ? $existing->id() : 0, $context->id, $slot, $options);
         } catch (\InvalidArgumentException $exception) {
             throw new \invalid_parameter_exception($exception->getMessage());
         }
@@ -124,15 +139,20 @@ class rule_payload {
      * Describe a stored rule for a client.
      *
      * @param rule $rule Rule.
-     * @param bool $own Whether it belongs to the context being edited.
      * @return array Fields following output().
      */
-    public static function export(rule $rule, bool $own): array {
+    public static function export(rule $rule): array {
         $store = service_factory::instance()->asset_store();
         $asset = $rule->assetid() === null ? null : $store->find($rule->assetid());
         $context = \context::instance_by_id($rule->contextid(), IGNORE_MISSING);
         return [
+            'id' => $rule->id(),
             'slotkey' => (string)$rule->slot(),
+            'contextid' => $rule->contextid(),
+            'contextname' => $context ? $context->get_context_name(false) : '',
+            'contextkind' => self::kind_of($context),
+            'pages' => $rule->pages(),
+            'regions' => $rule->regions(),
             'painter' => $rule->painter(),
             'assetid' => $asset ? $asset->id() : 0,
             'asseturl' => $asset ? asset_urls::public_url($asset) : '',
@@ -144,9 +164,25 @@ class rule_payload {
             'opacity' => $rule->opacity() ?? -1,
             'enabled' => $rule->enabled(),
             'rev' => $rule->rev(),
-            'contextid' => $rule->contextid(),
-            'contextname' => $context ? $context->get_context_name(false) : '',
-            'own' => $own,
         ];
+    }
+
+    /**
+     * Name the kind of place a context is.
+     *
+     * @param \context|false $context Context.
+     * @return string site, category, course or activity, empty when the context is gone.
+     */
+    public static function kind_of($context): string {
+        if (!$context) {
+            return '';
+        }
+        $kinds = [
+            CONTEXT_SYSTEM => 'site',
+            CONTEXT_COURSECAT => 'category',
+            CONTEXT_COURSE => 'course',
+            CONTEXT_MODULE => 'activity',
+        ];
+        return $kinds[$context->contextlevel] ?? '';
     }
 }

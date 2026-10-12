@@ -30,11 +30,10 @@ use local_iconrestyle\output\designer_page;
 use local_iconrestyle\service_factory;
 
 admin_externalpage_setup('local_iconrestyle_designer');
-$context = context_system::instance();
-service_factory::instance()->permissions()->require_manage($context);
+service_factory::instance()->permissions()->require_manage();
 
-$page = new designer_page($context);
-$PAGE->requires->js_call_amd('local_iconrestyle/designer', 'init', [$page->script_config()]);
+$page = new designer_page();
+$PAGE->requires->js_call_amd('local_iconrestyle/designer', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('designer', 'local_iconrestyle'));

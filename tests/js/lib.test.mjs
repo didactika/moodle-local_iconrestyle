@@ -24,6 +24,7 @@ import assert from 'node:assert/strict';
 import {parseHex, toHex, normalise, rgbToHsv, hsvToRgb, contrastRatio} from '../../amd/src/lib/color.js';
 import {createHistory} from '../../amd/src/lib/history.js';
 import {filterIcons, visibleRows} from '../../amd/src/lib/filter.js';
+import {emptyDraft, ruleKey, toInput, whereKey, whereLabel} from '../../amd/src/lib/draft.js';
 
 test('colours parse and normalise to the form the server stores', () => {
     assert.deepEqual(parseHex('#fff'), {r: 255, g: 255, b: 255, a: 255});
@@ -108,4 +109,26 @@ test('the grid renders only the rows that can be seen', () => {
     assert.deepEqual(visibleRows(500, 300, 100, 1000, 2), {first: 3, last: 10});
     assert.deepEqual(visibleRows(99700, 300, 100, 1000, 2), {first: 995, last: 1000});
     assert.deepEqual(visibleRows(0, 300, 100, 0), {first: 0, last: 0});
+});
+
+const site = {contextid: 1, contextname: 'Site', contextkind: 'site', pages: [], regions: []};
+const labels = {everywhere: 'Everywhere', pages: {admin: 'Administration pages'}, regions: {navbar: 'Navigation bar'}};
+
+test('a variant is identified by its icon and its place', () => {
+    assert.equal(whereKey(site), '1||');
+    assert.equal(ruleKey('core:a/setting', {...site, pages: ['admin'], regions: ['navbar']}), 'core:a/setting#1|admin|navbar');
+    assert.notEqual(ruleKey('core:a/setting', site), ruleKey('core:a/setting', {...site, contextid: 7}));
+});
+
+test('a place is described in words', () => {
+    assert.equal(whereLabel(site, labels), 'Everywhere');
+    assert.equal(whereLabel({...site, pages: ['admin']}, labels), 'Administration pages');
+    const course = {contextid: 9, contextname: 'Course A', contextkind: 'course', pages: ['admin'], regions: ['navbar']};
+    assert.equal(whereLabel(course, labels), 'Course A · Administration pages · Navigation bar');
+});
+
+test('a draft carries its place into the rule input', () => {
+    const where = {...site, contextid: 5, contextkind: 'category', contextname: 'Faculty', pages: ['admin']};
+    const input = toInput({...emptyDraft('core:a/setting', where), fg: '#111111'}, 'font');
+    assert.deepEqual([input.contextid, input.pages, input.regions, input.painter], [5, ['admin'], [], 'color']);
 });

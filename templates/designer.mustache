@@ -20,25 +20,22 @@
     The icon designer. The structure is rendered once; the script fills the grid, the inspector and the preview.
 
     Context variables required for this template:
-    * contextid - context being edited
-    * contextname - its name
+    * config - settings and text for the script, as JSON
+    * pages - kinds of page a rule can be limited to: value and label
+    * regions - regions of a page a rule can be limited to: value and label
     * fgfield - the foreground colour control: name, label and tokens
     * bgfield - the background colour control
 
     Example context (json):
     {
-        "contextid": 1,
-        "contextname": "System",
+        "config": "{}",
+        "pages": [{"value": "admin", "label": "Administration pages"}],
+        "regions": [{"value": "navbar", "label": "Navigation bar"}],
         "fgfield": {"name": "fg", "label": "Foreground", "tokens": [{"value": "token:primary", "label": "Primary"}]},
         "bgfield": {"name": "bg", "label": "Background", "tokens": [{"value": "token:primary", "label": "Primary"}]}
     }
 }}
-<div class="irs" data-region="designer" data-contextid="{{contextid}}">
-    <p class="irs-scope">
-        {{#str}}editing, local_iconrestyle{{/str}}
-        <span class="irs-pill" data-region="scope-name">{{contextname}}</span>
-    </p>
-
+<div class="irs" data-region="designer" data-config="{{config}}">
     <div class="irs-toolbar" role="search">
         <div class="irs-search">
             <label class="sr-only visually-hidden" for="irs-search">{{#str}}searchicons, local_iconrestyle{{/str}}</label>
@@ -108,6 +105,53 @@
                 </p>
                 <p class="irs-notice" data-region="shared-notice" hidden></p>
 
+                <div class="irs-field irs-where-block" data-region="where-block">
+                    <span class="irs-label" id="irs-appliesto">{{#str}}appliesto, local_iconrestyle{{/str}}</span>
+                    <div class="irs-variants" data-region="variants" role="group" aria-labelledby="irs-appliesto"></div>
+                    <button type="button" class="btn btn-secondary btn-sm" data-action="add-variant">
+                        {{#str}}addvariant, local_iconrestyle{{/str}}
+                    </button>
+                    <div class="irs-where" data-region="where-form" hidden>
+                        <div class="irs-field">
+                            <label class="irs-label" for="irs-where-kind">{{#str}}wherelocation, local_iconrestyle{{/str}}</label>
+                            <select class="custom-select form-select" id="irs-where-kind" data-region="where-kind">
+                                <option value="site">{{#str}}wheresite, local_iconrestyle{{/str}}</option>
+                                <option value="category">{{#str}}wherecategory, local_iconrestyle{{/str}}</option>
+                                <option value="course">{{#str}}wherecourse, local_iconrestyle{{/str}}</option>
+                                <option value="activity">{{#str}}whereactivity, local_iconrestyle{{/str}}</option>
+                            </select>
+                        </div>
+                        <div class="irs-field" data-region="where-search-block" hidden>
+                            <label class="irs-label" for="irs-where-search">{{#str}}wheresearch, local_iconrestyle{{/str}}</label>
+                            <input type="search" class="form-control" id="irs-where-search" data-region="where-search"
+                                autocomplete="off">
+                            <ul class="irs-results" data-region="where-results"></ul>
+                            <p class="irs-chosen" data-region="where-chosen" role="status"></p>
+                        </div>
+                        <fieldset class="irs-checks">
+                            <legend class="irs-label">{{#str}}wherepages, local_iconrestyle{{/str}}</legend>
+                            {{#pages}}
+                            <label class="irs-check"><input type="checkbox" data-region="where-page" value="{{value}}"> {{label}}</label>
+                            {{/pages}}
+                        </fieldset>
+                        <fieldset class="irs-checks">
+                            <legend class="irs-label">{{#str}}whereregions, local_iconrestyle{{/str}}</legend>
+                            {{#regions}}
+                            <label class="irs-check"><input type="checkbox" data-region="where-region" value="{{value}}"> {{label}}</label>
+                            {{/regions}}
+                        </fieldset>
+                        <p class="irs-hint irs-error" data-region="where-error" role="alert" hidden></p>
+                        <div class="irs-where-actions">
+                            <button type="button" class="btn btn-primary" data-action="confirm-variant">
+                                {{#str}}addvariantconfirm, local_iconrestyle{{/str}}
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-action="cancel-variant">
+                                {{#str}}cancel, moodle{{/str}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="irs-field" data-region="artwork">
                     <span class="irs-label">{{#str}}artwork, local_iconrestyle{{/str}}</span>
                     <div class="irs-artwork-row">
@@ -147,8 +191,8 @@
                     <output data-region="opacity-value"></output>
                 </div>
 
-                <button type="button" class="btn btn-secondary" data-action="reset-rule">
-                    {{#str}}resetinherited, local_iconrestyle{{/str}}
+                <button type="button" class="btn btn-secondary" data-action="remove-variant">
+                    {{#str}}removevariant, local_iconrestyle{{/str}}
                 </button>
             </div>
         </section>

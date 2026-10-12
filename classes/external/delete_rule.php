@@ -24,16 +24,14 @@
  */
 namespace local_iconrestyle\external;
 
-use local_iconrestyle\rule\rule;
 use local_iconrestyle\service_factory;
-use local_iconrestyle\slot\slot_key;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/compat.php');
 
 /**
- * Deleting a rule at one scope lets the rule of a parent scope, or Moodle's own icon, show through again.
+ * Deleting a rule lets the rules that are less specific, or Moodle's own icon, show through again.
  */
 class delete_rule extends api {
     /**
@@ -42,31 +40,21 @@ class delete_rule extends api {
      * @return parameters Description.
      */
     public static function execute_parameters(): parameters {
-        return new parameters([
-            'contextid' => new value(PARAM_INT, 'Context the rule belongs to'),
-            'slotkey' => new value(PARAM_RAW, 'Slot key'),
-        ]);
+        return new parameters(['id' => new value(PARAM_INT, 'Rule id')]);
     }
 
     /**
      * Delete a rule.
      *
-     * @param int $contextid Context the rule belongs to.
-     * @param string $slotkey Slot key.
+     * @param int $id Rule id.
      * @return bool True when a rule was deleted.
      */
-    public static function execute(int $contextid, string $slotkey): bool {
-        $params = self::validate_parameters(self::execute_parameters(), ['contextid' => $contextid, 'slotkey' => $slotkey]);
-        $context = \context::instance_by_id($params['contextid']);
-        self::validate_context($context);
+    public static function execute(int $id): bool {
+        $params = self::validate_parameters(self::execute_parameters(), ['id' => $id]);
+        self::validate_context(\context_system::instance());
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage($context);
-        try {
-            $slot = slot_key::parse($params['slotkey']);
-        } catch (\InvalidArgumentException $exception) {
-            throw new \invalid_parameter_exception($exception->getMessage());
-        }
-        return $factory->rule_service()->delete($context->id, $slot, rule::TARGET_ICON);
+        $factory->permissions()->require_manage();
+        return $factory->rule_service()->delete_by_id($params['id']);
     }
 
     /**

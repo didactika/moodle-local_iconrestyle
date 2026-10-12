@@ -41,36 +41,31 @@ class save_rule extends api {
      * @return parameters Description.
      */
     public static function execute_parameters(): parameters {
-        return new parameters([
-            'contextid' => new value(PARAM_INT, 'Context the rule belongs to'),
-            'rule' => rule_payload::input(),
-        ]);
+        return new parameters(['rule' => rule_payload::input()]);
     }
 
     /**
      * Save a rule.
      *
-     * @param int $contextid Context the rule belongs to.
      * @param array $rule Rule fields.
      * @return array The stored rule.
      * @throws \moodle_exception When the rule changed since the editor read it.
      */
-    public static function execute(int $contextid, array $rule): array {
+    public static function execute(array $rule): array {
         global $USER;
-        $params = self::validate_parameters(self::execute_parameters(), ['contextid' => $contextid, 'rule' => $rule]);
-        $context = \context::instance_by_id($params['contextid']);
-        self::validate_context($context);
+        $params = self::validate_parameters(self::execute_parameters(), ['rule' => $rule]);
+        self::validate_context(\context_system::instance());
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage($context);
+        $factory->permissions()->require_manage();
 
         try {
-            $stored = $factory->rule_service()->save(rule_payload::to_rule($context->id, $params['rule']), (int)$USER->id);
+            $stored = $factory->rule_service()->save(rule_payload::to_rule($params['rule']), (int)$USER->id);
         } catch (rule_conflict_exception $exception) {
             throw new \moodle_exception('ruleconflict', 'local_iconrestyle');
         } catch (\InvalidArgumentException $exception) {
             throw new \invalid_parameter_exception($exception->getMessage());
         }
-        return rule_payload::export($stored, true);
+        return rule_payload::export($stored);
     }
 
     /**

@@ -27,52 +27,55 @@ const call = (methodname, args) => fetchMany([{methodname, args}])[0];
 /**
  * Every customisable icon.
  *
- * @param {number} contextid Context being edited.
  * @returns {Promise<{version: string, icons: Array}>} Catalogue.
  */
-export const getCatalogue = (contextid) => call('local_iconrestyle_get_catalogue', {contextid});
+export const getCatalogue = () => call('local_iconrestyle_get_catalogue', {});
 
 /**
- * Rules that apply in a context.
+ * Every rule of the site, wherever it applies.
  *
- * @param {number} contextid Context being edited.
- * @returns {Promise<{contextname: string, rules: Array}>} Rules.
+ * @returns {Promise<{rules: Array}>} Rules.
  */
-export const getRules = (contextid) => call('local_iconrestyle_get_rules', {contextid});
+export const getRules = () => call('local_iconrestyle_get_rules', {});
 
 /**
  * Create or change a rule.
  *
- * @param {number} contextid Context the rule belongs to.
  * @param {object} rule Rule input.
  * @returns {Promise<object>} The stored rule.
  */
-export const saveRule = (contextid, rule) => call('local_iconrestyle_save_rule', {contextid, rule});
+export const saveRule = (rule) => call('local_iconrestyle_save_rule', {rule});
 
 /**
  * Delete a rule.
  *
- * @param {number} contextid Context the rule belongs to.
- * @param {string} slotkey Slot key.
+ * @param {number} id Rule id.
  * @returns {Promise<boolean>} Whether a rule was deleted.
  */
-export const deleteRule = (contextid, slotkey) => call('local_iconrestyle_delete_rule', {contextid, slotkey});
+export const deleteRule = (id) => call('local_iconrestyle_delete_rule', {id});
 
 /**
  * Upload artwork.
  *
- * @param {number} contextid Context the artwork will be used in.
  * @param {string} content The file, base64 encoded.
  * @returns {Promise<object>} The stored asset.
  */
-export const addAsset = (contextid, content) => call('local_iconrestyle_add_asset', {contextid, content});
+export const addAsset = (content) => call('local_iconrestyle_add_asset', {content});
 
 /**
  * Compile rules that are not saved yet.
  *
- * @param {number} contextid Context being edited.
  * @param {Array} rules Rule inputs.
  * @param {string} scope Preview area, current or new.
  * @returns {Promise<string>} CSS scoped to the area.
  */
-export const previewCss = (contextid, rules, scope) => call('local_iconrestyle_preview_css', {contextid, rules, scope});
+export const previewCss = (rules, scope) => call('local_iconrestyle_preview_css', {rules, scope});
+
+/**
+ * Find categories, courses or activities by name.
+ *
+ * @param {string} kind category, course or activity.
+ * @param {string} query Text to look for.
+ * @returns {Promise<{places: Array<{contextid: number, name: string, detail: string}>}>} Places.
+ */
+export const searchLocations = (kind, query) => call('local_iconrestyle_search_locations', {kind, query});

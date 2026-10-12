@@ -70,15 +70,40 @@ class rule_store {
     }
 
     /**
+     * Every rule of the site, in a stable order.
+     *
+     * @return rule[] Rules.
+     */
+    public function find_all(): array {
+        $records = $this->db->get_records(self::TABLE, null, 'slotkey ASC, target ASC, contextid ASC, variant ASC');
+        return array_values(array_map([$this, 'to_rule'], $records));
+    }
+
+    /**
+     * One rule by its id.
+     *
+     * @param int $id Rule id.
+     * @return rule|null Rule or null.
+     */
+    public function find_by_id(int $id): ?rule {
+        $record = $this->db->get_record(self::TABLE, ['id' => $id]);
+        return $record ? $this->to_rule($record) : null;
+    }
+
+    /**
      * One rule by its natural key.
      *
      * @param int $contextid Context id.
      * @param string $slotkey Slot key.
      * @param string $target Target.
+     * @param string $variant Identity of the rule's pages and regions.
      * @return rule|null Rule or null.
      */
-    public function find(int $contextid, string $slotkey, string $target): ?rule {
-        $record = $this->db->get_record(self::TABLE, ['contextid' => $contextid, 'slotkey' => $slotkey, 'target' => $target]);
+    public function find(int $contextid, string $slotkey, string $target, string $variant = ''): ?rule {
+        $record = $this->db->get_record(
+            self::TABLE,
+            ['contextid' => $contextid, 'slotkey' => $slotkey, 'target' => $target, 'variant' => $variant]
+        );
         return $record ? $this->to_rule($record) : null;
     }
 
@@ -107,13 +132,21 @@ class rule_store {
             'padding' => $rule->padding(),
             'opacity' => $rule->opacity(),
             'target' => $rule->target(),
+            'pages' => implode(',', $rule->pages()),
+            'regions' => implode(',', $rule->regions()),
+            'variant' => $rule->variant(),
             'enabled' => (int)$rule->enabled(),
             'usermodified' => $userid,
             'timemodified' => $now,
         ];
         $existing = $this->db->get_record(
             self::TABLE,
-            ['contextid' => $rule->contextid(), 'slotkey' => $values['slotkey'], 'target' => $values['target']]
+            [
+                'contextid' => $rule->contextid(),
+                'slotkey' => $values['slotkey'],
+                'target' => $values['target'],
+                'variant' => $values['variant'],
+            ]
         );
         if ($existing) {
             if ($rule->id() > 0 && (int)$existing->rev !== $rule->rev()) {
@@ -136,15 +169,44 @@ class rule_store {
      * @param int $contextid Context id.
      * @param string $slotkey Slot key.
      * @param string $target Target.
+     * @param string $variant Identity of the rule's pages and regions.
      * @return bool True when a rule was deleted.
      */
-    public function delete(int $contextid, string $slotkey, string $target): bool {
-        $conditions = ['contextid' => $contextid, 'slotkey' => $slotkey, 'target' => $target];
+    public function delete(int $contextid, string $slotkey, string $target, string $variant = ''): bool {
+        $conditions = ['contextid' => $contextid, 'slotkey' => $slotkey, 'target' => $target, 'variant' => $variant];
         if (!$this->db->record_exists(self::TABLE, $conditions)) {
             return false;
         }
         $this->db->delete_records(self::TABLE, $conditions);
         return true;
+    }
+
+    /**
+     * Delete every rule that belongs to one context.
+     *
+     * @param int $contextid Context id.
+     * @return int Number of rules deleted.
+     */
+    public function delete_by_context(int $contextid): int {
+        $count = $this->db->count_records(self::TABLE, ['contextid' => $contextid]);
+        if ($count > 0) {
+            $this->db->delete_records(self::TABLE, ['contextid' => $contextid]);
+        }
+        return $count;
+    }
+
+    /**
+     * Delete every rule compiled into one delta stylesheet.
+     *
+     * @param int $deltactxid Delta owner context.
+     * @return int Number of rules deleted.
+     */
+    public function delete_by_delta(int $deltactxid): int {
+        $count = $this->db->count_records(self::TABLE, ['deltactxid' => $deltactxid]);
+        if ($count > 0) {
+            $this->db->delete_records(self::TABLE, ['deltactxid' => $deltactxid]);
+        }
+        return $count;
     }
 
     /**
@@ -173,6 +235,8 @@ class rule_store {
             'padding' => $record->padding,
             'opacity' => $record->opacity,
             'target' => $record->target,
+            'pages' => audience::split($record->pages),
+            'regions' => audience::split($record->regions),
             'enabled' => (bool)$record->enabled,
             'rev' => (int)$record->rev,
         ]);

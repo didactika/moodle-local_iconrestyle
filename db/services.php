@@ -35,21 +35,21 @@ $functions = [
     'local_iconrestyle_get_rules' => [
         'classname' => 'local_iconrestyle\external\get_rules',
         'methodname' => 'execute',
-        'description' => 'List the icon rules that apply in a context and where each comes from.',
+        'description' => 'List every icon rule of the site and where each one applies.',
         'type' => 'read',
         'ajax' => true,
     ],
     'local_iconrestyle_save_rule' => [
         'classname' => 'local_iconrestyle\external\save_rule',
         'methodname' => 'execute',
-        'description' => 'Create or change an icon rule in a context.',
+        'description' => 'Create or change an icon rule.',
         'type' => 'write',
         'ajax' => true,
     ],
     'local_iconrestyle_delete_rule' => [
         'classname' => 'local_iconrestyle\external\delete_rule',
         'methodname' => 'execute',
-        'description' => 'Delete an icon rule so the icon inherits again.',
+        'description' => 'Delete an icon rule.',
         'type' => 'write',
         'ajax' => true,
     ],
@@ -58,6 +58,13 @@ $functions = [
         'methodname' => 'execute',
         'description' => 'Sanitise and store uploaded icon artwork.',
         'type' => 'write',
+        'ajax' => true,
+    ],
+    'local_iconrestyle_search_locations' => [
+        'classname' => 'local_iconrestyle\external\search_locations',
+        'methodname' => 'execute',
+        'description' => 'Find the categories, courses and activities an icon rule can be limited to.',
+        'type' => 'read',
         'ajax' => true,
     ],
     'local_iconrestyle_preview_css' => [

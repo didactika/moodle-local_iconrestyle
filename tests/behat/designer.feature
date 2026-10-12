@@ -10,8 +10,7 @@ Feature: Customise icons in the designer
     And I wait until "[data-region='grid-window'] .irs-card" "css_element" exists
 
   Scenario: The catalogue can be searched and filtered
-    Then I should see "Customising icons for"
-    And I should see "Choose an icon to customise it."
+    Then I should see "Choose an icon to customise it."
     When I set the field "Search icons" to "a/setting"
     And I wait until "[data-key='core:a/setting']" "css_element" exists
     Then "[data-key='core:t/delete']" "css_element" should not exist
@@ -79,7 +78,7 @@ Feature: Customise icons in the designer
     And I set the field "Search icons" to "a/setting"
     And I wait until "[data-key='core:a/setting']" "css_element" exists
     And I click on "[data-key='core:a/setting']" "css_element"
-    And I press "Reset to inherited"
+    And I press "Remove this customisation"
     And I press "Save changes"
     Then I should see "1 changes saved"
     And I am on site homepage
@@ -95,5 +94,5 @@ Feature: Customise icons in the designer
     And I log out
     And I log in as "manager1"
     When I open the icon designer address
-    Then I should see "Customising icons for"
+    Then I should see "Choose an icon to customise it."
     And I wait until "[data-region='grid-window'] .irs-card" "css_element" exists

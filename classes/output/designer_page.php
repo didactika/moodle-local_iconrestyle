@@ -24,24 +24,13 @@
  */
 namespace local_iconrestyle\output;
 
+use local_iconrestyle\rule\audience;
 use local_iconrestyle\rule\color;
 
 /**
  * Prepares what the designer template and script need; the markup itself lives in templates.
  */
 class designer_page implements \renderable, \templatable {
-    /** @var \context Context being edited. */
-    private $context;
-
-    /**
-     * Create the page data.
-     *
-     * @param \context $context Context being edited.
-     */
-    public function __construct(\context $context) {
-        $this->context = $context;
-    }
-
     /**
      * Data for the template.
      *
@@ -54,28 +43,60 @@ class designer_page implements \renderable, \templatable {
             $tokens[] = ['value' => 'token:' . $token, 'label' => get_string('token_' . $token, 'local_iconrestyle')];
         }
         return [
-            'contextid' => $this->context->id,
-            'contextname' => $this->context->get_context_name(false),
+            'config' => json_encode($this->script_config()),
+            'pages' => $this->options('page', audience::PAGES),
+            'regions' => $this->options('region', audience::REGIONS),
             'fgfield' => ['name' => 'fg', 'label' => get_string('foreground', 'local_iconrestyle'), 'tokens' => $tokens],
             'bgfield' => ['name' => 'bg', 'label' => get_string('background', 'local_iconrestyle'), 'tokens' => $tokens],
         ];
     }
 
     /**
-     * Settings and text the script needs that cannot live in the template.
+     * Settings and text the script needs, which travel to it in a data attribute of the template.
      *
      * @return array Configuration for the AMD module.
      */
     public function script_config(): array {
         $names = [
-            'stagedchanges', 'saved', 'saveerror', 'iconcount', 'originhere', 'origininherited', 'origindefault',
-            'originreset', 'sharedglyph', 'needsartwork', 'uploadfailed', 'contrastgood', 'contrastlow', 'nochanges',
-            'artworkready', 'noartwork', 'themeinherits',
+            'stagedchanges', 'saved', 'saveerror', 'iconcount', 'originhere', 'originunsaved', 'origindefault',
+            'sharedglyph', 'needsartwork', 'uploadfailed', 'contrastgood', 'contrastlow', 'nochanges',
+            'artworkready', 'noartwork', 'themeinherits', 'wherechoose', 'wherechosen',
         ];
         $strings = [];
         foreach ($names as $name) {
             $strings[$name] = get_string($name, 'local_iconrestyle', '{n}');
         }
-        return ['contextid' => $this->context->id, 'strings' => $strings];
+        $labels = ['everywhere' => get_string('everywhere', 'local_iconrestyle'), 'pages' => [], 'regions' => []];
+        foreach (audience::PAGES as $page) {
+            $labels['pages'][$page] = get_string('page_' . $page, 'local_iconrestyle');
+        }
+        foreach (audience::REGIONS as $region) {
+            $labels['regions'][$region] = get_string('region_' . $region, 'local_iconrestyle');
+        }
+        $site = \context_system::instance();
+        return [
+            'everywhere' => [
+                'contextid' => (int)$site->id,
+                'contextname' => $site->get_context_name(false),
+                'contextkind' => 'site',
+                'pages' => [],
+                'regions' => [],
+            ],
+            'labels' => $labels,
+            'strings' => $strings,
+        ];
+    }
+
+    /**
+     * Checkbox options for a fixed list of tokens.
+     *
+     * @param string $prefix Prefix of the language strings, page or region.
+     * @param string[] $tokens Tokens.
+     * @return array Options with value and label.
+     */
+    private function options(string $prefix, array $tokens): array {
+        return array_map(function (string $token) use ($prefix): array {
+            return ['value' => $token, 'label' => get_string($prefix . '_' . $token, 'local_iconrestyle')];
+        }, $tokens);
     }
 }

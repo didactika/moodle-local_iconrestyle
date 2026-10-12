@@ -40,22 +40,20 @@ class get_catalogue extends api {
      * @return parameters Description.
      */
     public static function execute_parameters(): parameters {
-        return new parameters(['contextid' => new value(PARAM_INT, 'Context being edited')]);
+        return new parameters([]);
     }
 
     /**
      * List every customisable icon.
      *
-     * @param int $contextid Context being edited.
      * @return array Version key and icons.
      */
-    public static function execute(int $contextid): array {
+    public static function execute(): array {
         global $PAGE;
-        $params = self::validate_parameters(self::execute_parameters(), ['contextid' => $contextid]);
-        $context = \context::instance_by_id($params['contextid']);
-        self::validate_context($context);
+        self::validate_parameters(self::execute_parameters(), []);
+        self::validate_context(\context_system::instance());
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage($context);
+        $factory->permissions()->require_manage();
 
         $icons = [];
         foreach ($factory->catalogue()->all() as $entry) {

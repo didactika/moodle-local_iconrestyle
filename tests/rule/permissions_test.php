@@ -26,19 +26,59 @@ namespace local_iconrestyle\rule;
 
 #[\PHPUnit\Framework\Attributes\CoversClass(permissions::class)]
 /**
- * Verify that each scope has its own capability and that nothing leaks between scopes.
+ * Icons are customised in one place, so one capability governs every rule.
  *
  * @covers \local_iconrestyle\rule\permissions
  */
 final class permissions_test extends \advanced_testcase {
     /**
-     * Administrators may customise every scope.
+     * Administrators and site managers may customise icons.
      */
-    public function test_administrator_may_manage_every_scope(): void {
+    public function test_administrator_and_manager_may_customise(): void {
+        global $DB;
         $this->resetAfterTest();
+        $permissions = new permissions();
         $this->setAdminUser();
+        $this->assertTrue($permissions->can_manage());
+        $permissions->require_manage();
+
+        $user = $this->getDataGenerator()->create_user();
+        $managerid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+        $this->getDataGenerator()->role_assign($managerid, $user->id, \context_system::instance()->id);
+        $this->setUser($user);
+        $this->assertTrue($permissions->can_manage());
+    }
+
+    /**
+     * A manager of a category or a teacher of a course cannot customise icons, because nothing is customised there.
+     */
+    public function test_category_managers_and_teachers_cannot(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $category = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course(['category' => $category->id]);
+        $manager = $this->getDataGenerator()->create_user();
+        $managerid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
+        $this->getDataGenerator()->role_assign($managerid, $manager->id, \context_coursecat::instance($category->id)->id);
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $permissions = new permissions();
+
+        foreach ([$manager, $teacher] as $user) {
+            $this->setUser($user);
+            $this->assertFalse($permissions->can_manage());
+        }
+        $this->expectException(\required_capability_exception::class);
+        $permissions->require_manage();
+    }
+
+    /**
+     * A rule may apply in the site, a category, a course or an activity, and nowhere else.
+     */
+    public function test_places_a_rule_may_apply(): void {
+        $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $page = $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
+        $user = $this->getDataGenerator()->create_user();
         $permissions = new permissions();
         $contexts = [
             \context_system::instance(),
@@ -47,71 +87,8 @@ final class permissions_test extends \advanced_testcase {
             \context_module::instance($page->cmid),
         ];
         foreach ($contexts as $context) {
-            $this->assertTrue($permissions->can_manage($context));
-            $permissions->require_manage($context);
+            $this->assertTrue($permissions->supports($context));
         }
-    }
-
-    /**
-     * A category manager can restyle the category and what is below it, but not the site.
-     */
-    public function test_category_manager_is_limited_to_the_category(): void {
-        global $DB;
-        $this->resetAfterTest();
-        $category = $this->getDataGenerator()->create_category();
-        $other = $this->getDataGenerator()->create_category();
-        $course = $this->getDataGenerator()->create_course(['category' => $category->id]);
-        $user = $this->getDataGenerator()->create_user();
-        $managerid = $DB->get_field('role', 'id', ['shortname' => 'manager']);
-        $this->getDataGenerator()->role_assign($managerid, $user->id, \context_coursecat::instance($category->id)->id);
-        $this->setUser($user);
-
-        $permissions = new permissions();
-        $this->assertTrue($permissions->can_manage(\context_coursecat::instance($category->id)));
-        $this->assertFalse($permissions->can_manage(\context_system::instance()));
-        $this->assertFalse($permissions->can_manage(\context_coursecat::instance($other->id)));
-        $this->assertFalse(
-            $permissions->can_manage(\context_course::instance($course->id)),
-            'managecourse is a separate capability'
-        );
-
-        $this->expectException(\required_capability_exception::class);
-        $permissions->require_manage(\context_system::instance());
-    }
-
-    /**
-     * Teachers cannot restyle anything until the site grants the capability, and then only their own course.
-     */
-    public function test_teacher_needs_a_grant_and_only_in_their_course(): void {
-        global $DB;
-        $this->resetAfterTest();
-        $course = $this->getDataGenerator()->create_course();
-        $other = $this->getDataGenerator()->create_course();
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
-        $this->setUser($teacher);
-        $permissions = new permissions();
-        $coursecontext = \context_course::instance($course->id);
-        $this->assertFalse($permissions->can_manage($coursecontext));
-
-        $roleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
-        assign_capability('local/iconrestyle:managecourse', CAP_ALLOW, $roleid, \context_system::instance()->id);
-        $this->assertTrue($permissions->can_manage($coursecontext));
-        $this->assertFalse($permissions->can_manage(\context_course::instance($other->id)));
-        $this->assertFalse($permissions->can_manage(\context_system::instance()));
-    }
-
-    /**
-     * Contexts that cannot hold rules are refused.
-     */
-    public function test_unsupported_contexts(): void {
-        $this->resetAfterTest();
-        $this->setAdminUser();
-        $user = $this->getDataGenerator()->create_user();
-        $context = \context_user::instance($user->id);
-        $permissions = new permissions();
-        $this->assertFalse($permissions->supports($context));
-        $this->assertFalse($permissions->can_manage($context));
-        $this->expectException(\InvalidArgumentException::class);
-        $permissions->require_manage($context);
+        $this->assertFalse($permissions->supports(\context_user::instance($user->id)));
     }
 }

@@ -24,6 +24,7 @@
  */
 namespace local_iconrestyle\style;
 
+use local_iconrestyle\rule\module_scope;
 use local_iconrestyle\rule\rule;
 use local_iconrestyle\slot\glyph_signature_factory;
 
@@ -43,17 +44,27 @@ class stylesheet_compiler {
     /** @var painter Container painter. */
     private $container;
 
+    /** @var scope_prefixes Selector prefixes of each rule. */
+    private $scopes;
+
     /**
      * Create the compiler.
      *
      * @param glyph_signature_factory $signatures Signature source.
      * @param painter[] $artwork Artwork painters keyed by painter name.
      * @param painter $container Container painter.
+     * @param module_scope|null $modules Scope resolver for activity rules.
      */
-    public function __construct(glyph_signature_factory $signatures, array $artwork, painter $container) {
+    public function __construct(
+        glyph_signature_factory $signatures,
+        array $artwork,
+        painter $container,
+        ?module_scope $modules = null
+    ) {
         $this->signatures = $signatures;
         $this->artwork = $artwork;
         $this->container = $container;
+        $this->scopes = new scope_prefixes($modules);
     }
 
     /**
@@ -61,11 +72,13 @@ class stylesheet_compiler {
      *
      * @param rule[] $rules Rules.
      * @param string $prefix Selector prefix.
+     * @param bool $scoped Whether each rule is limited to its pages, regions and activity, which only makes sense on pages.
      * @return string CSS.
      */
-    public function compile(array $rules, string $prefix = self::PREFIX): string {
+    public function compile(array $rules, string $prefix = self::PREFIX, bool $scoped = true): string {
         usort($rules, function (rule $first, rule $second): int {
-            return strcmp((string)$first->slot() . "\0" . $first->target(), (string)$second->slot() . "\0" . $second->target());
+            $order = strcmp((string)$first->slot() . "\0" . $first->target(), (string)$second->slot() . "\0" . $second->target());
+            return $order !== 0 ? $order : $first->id() <=> $second->id();
         });
         $css = '';
         foreach ($rules as $rule) {
@@ -80,8 +93,12 @@ class stylesheet_compiler {
             if (isset($this->artwork[$rule->painter()])) {
                 $blocks = $this->merge($blocks, $this->artwork[$rule->painter()]->paint($rule, $signature));
             }
+            $selectors = [];
+            foreach ($this->scopes->for_rule($rule, $prefix, $scoped) as $each) {
+                $selectors = array_merge($selectors, $signature->selectors($each));
+            }
             foreach ($blocks as $suffix => $declarations) {
-                $css .= $this->block($signature->selectors($prefix), (string)$suffix, $declarations);
+                $css .= $this->block($selectors, (string)$suffix, $declarations);
             }
         }
         return $css;

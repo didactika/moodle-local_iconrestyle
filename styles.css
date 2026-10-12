@@ -371,3 +371,107 @@
         transition: background-color 0.12s ease, border-color 0.12s ease;
     }
 }
+
+.irs .irs-variants {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin-bottom: 0.5rem;
+}
+
+.irs .irs-chip {
+    position: relative;
+    max-width: 100%;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--irs-border, #ced4da);
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font-size: 0.8125rem;
+    text-align: left;
+}
+
+.irs .irs-chip.irs-active {
+    border-color: var(--irs-accent);
+    background: var(--irs-accent-soft);
+    color: var(--irs-accent);
+    font-weight: 600;
+}
+
+.irs .irs-chip .irs-dot {
+    position: static;
+    display: inline-block;
+    margin-left: 0.25rem;
+}
+
+.irs .irs-where {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    border: 1px solid var(--irs-border, #ced4da);
+    border-radius: 0.5rem;
+}
+
+.irs .irs-results {
+    max-height: 10rem;
+    margin: 0.375rem 0 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+}
+
+.irs .irs-result {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.5rem;
+    border: 0;
+    border-radius: 0.25rem;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+}
+
+.irs .irs-result:hover,
+.irs .irs-result:focus {
+    background: var(--irs-accent-soft);
+}
+
+.irs .irs-result-detail {
+    margin-left: 0.25rem;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.irs .irs-chosen {
+    margin: 0.25rem 0 0;
+    font-size: 0.8125rem;
+}
+
+.irs .irs-checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: 0.25rem 0.75rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.irs .irs-checks .irs-label {
+    grid-column: 1 / -1;
+    margin-bottom: 0.25rem;
+}
+
+.irs .irs-check {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    margin: 0;
+    font-size: 0.8125rem;
+}
+
+.irs .irs-where-actions {
+    display: flex;
+    gap: 0.5rem;
+}

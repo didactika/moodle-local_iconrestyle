@@ -32,18 +32,47 @@ use local_iconrestyle\slot\slot_key;
  */
 class local_iconrestyle_generator extends component_generator_base {
     /**
+     * Context a record names, with the site as the default.
+     *
+     * @param array $record Record with optional contextid, category (id number), course (short name) or activity (id number).
+     * @return int Context id.
+     */
+    private function context_of(array $record): int {
+        global $DB;
+        if (!empty($record['category'])) {
+            $id = $DB->get_field('course_categories', 'id', ['idnumber' => $record['category']], MUST_EXIST);
+            return (int)context_coursecat::instance($id)->id;
+        }
+        if (!empty($record['activity'])) {
+            $id = $DB->get_field('course_modules', 'id', ['idnumber' => $record['activity']], MUST_EXIST);
+            return (int)context_module::instance($id)->id;
+        }
+        if (!empty($record['course'])) {
+            $id = $DB->get_field('course', 'id', ['shortname' => $record['course']], MUST_EXIST);
+            return (int)context_course::instance($id)->id;
+        }
+        return (int)($record['contextid'] ?? context_system::instance()->id);
+    }
+
+    /**
      * Create a rule, by default for the whole site.
      *
-     * @param array $record Slot key plus optional contextid, painter, fg, bg, shape, padding, opacity, target, enabled
-     *     and svg, the name of a file in tests/fixtures that becomes the rule's artwork and defaults the painter to mask.
+     * @param array $record Slot key plus optional contextid, category, course or activity, pages and regions (comma
+     *     separated), painter, fg, bg, shape, padding, opacity, target, enabled and svg, the name of a file in
+     *     tests/fixtures that becomes the rule's artwork and defaults the painter to mask.
      * @return rule Stored rule.
      */
     public function create_rule(array $record): rule {
-        $contextid = (int)($record['contextid'] ?? context_system::instance()->id);
+        $contextid = $this->context_of($record);
         $options = array_intersect_key($record, array_flip(['painter', 'fg', 'bg', 'shape', 'padding', 'opacity', 'target']));
         $options = array_filter($options, function ($value): bool {
             return $value !== '';
         });
+        foreach (['pages', 'regions'] as $list) {
+            if (!empty($record[$list])) {
+                $options[$list] = array_map('trim', explode(',', $record[$list]));
+            }
+        }
         if (isset($record['enabled'])) {
             $options['enabled'] = (bool)$record['enabled'];
         }

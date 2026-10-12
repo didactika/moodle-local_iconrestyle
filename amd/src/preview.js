@@ -99,10 +99,9 @@ const cell = (icon, size) => {
  * Create the preview.
  *
  * @param {HTMLElement} root Designer root element.
- * @param {number} contextid Context being edited.
  * @returns {{show: Function, hide: Function, update: Function, setSurface: Function}} Preview API.
  */
-export const createPreview = (root, contextid) => {
+export const createPreview = (root) => {
     const panel = root.querySelector(selectors.preview);
     const surface = root.querySelector(selectors.previewSurface);
     const timers = {};
@@ -128,7 +127,7 @@ export const createPreview = (root, contextid) => {
         return new Promise((resolve) => {
             timers[area] = window.setTimeout(async() => {
                 try {
-                    const css = await repository.previewCss(contextid, [toInput(draft, icon.kind)], area);
+                    const css = await repository.previewCss([toInput(draft, icon.kind)], area);
                     if (mine === tokens[area]) {
                         style.textContent = css;
                     }

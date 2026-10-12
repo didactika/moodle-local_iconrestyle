@@ -16,6 +16,9 @@
 /**
  * The editable form of a rule, kept apart from the server's own response so it can be compared and staged.
  *
+ * A rule is an icon, a place where it applies (the site, a category, a course or an activity, optionally limited to some
+ * kinds of page and some page regions) and an appearance. The place is what tells apart the variants of one icon.
+ *
  * @module     local_iconrestyle/lib/draft
  * @copyright  2026 Didactika.org
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -24,13 +27,54 @@
 const FIELDS = ['assetid', 'fg', 'bg', 'shape', 'padding', 'opacity', 'enabled'];
 
 /**
+ * Identity of a place, the same for the same site, category, course or activity with the same pages and regions.
+ *
+ * @param {{contextid: number, pages: string[], regions: string[]}} where Place.
+ * @returns {string} Identity.
+ */
+export const whereKey = (where) => `${where.contextid}|${where.pages.join(',')}|${where.regions.join(',')}`;
+
+/**
+ * Identity of one variant of one icon.
+ *
+ * @param {string} slotkey Slot key.
+ * @param {{contextid: number, pages: string[], regions: string[]}} where Place.
+ * @returns {string} Identity.
+ */
+export const ruleKey = (slotkey, where) => `${slotkey}#${whereKey(where)}`;
+
+/**
+ * Words that describe a place.
+ *
+ * @param {{contextname: string, contextkind: string, pages: string[], regions: string[]}} where Place.
+ * @param {{everywhere: string, pages: Object<string, string>, regions: Object<string, string>}} labels Names to use.
+ * @returns {string} For example "Faculty of Arts · Administration pages · Navigation bar", or "Everywhere".
+ */
+export const whereLabel = (where, labels) => {
+    const parts = [];
+    if (where.contextkind !== 'site') {
+        parts.push(where.contextname);
+    }
+    parts.push(...where.pages.map((page) => labels.pages[page] || page));
+    parts.push(...where.regions.map((region) => labels.regions[region] || region));
+    return parts.length ? parts.join(' · ') : labels.everywhere;
+};
+
+/**
  * A draft that changes nothing.
  *
  * @param {string} slotkey Slot key.
+ * @param {{contextid: number, contextname: string, contextkind: string, pages: string[], regions: string[]}} where Place.
  * @returns {object} Draft.
  */
-export const emptyDraft = (slotkey) => ({
+export const emptyDraft = (slotkey, where) => ({
     slotkey,
+    id: 0,
+    contextid: where.contextid,
+    contextname: where.contextname,
+    contextkind: where.contextkind,
+    pages: [...where.pages],
+    regions: [...where.regions],
     painter: 'none',
     assetid: 0,
     asseturl: '',
@@ -53,6 +97,12 @@ export const emptyDraft = (slotkey) => ({
  */
 export const fromRule = (rule) => ({
     slotkey: rule.slotkey,
+    id: rule.id,
+    contextid: rule.contextid,
+    contextname: rule.contextname,
+    contextkind: rule.contextkind,
+    pages: [...rule.pages],
+    regions: [...rule.regions],
     painter: rule.painter,
     assetid: rule.assetid,
     asseturl: rule.asseturl,
@@ -68,6 +118,20 @@ export const fromRule = (rule) => ({
 });
 
 /**
+ * The place of a draft.
+ *
+ * @param {object} draft Draft.
+ * @returns {{contextid: number, contextname: string, contextkind: string, pages: string[], regions: string[]}} Place.
+ */
+export const whereOf = (draft) => ({
+    contextid: draft.contextid,
+    contextname: draft.contextname,
+    contextkind: draft.contextkind,
+    pages: draft.pages,
+    regions: draft.regions,
+});
+
+/**
  * Whether a draft changes nothing at all.
  *
  * @param {object} draft Draft.
@@ -77,7 +141,7 @@ export const isEmpty = (draft) => draft.assetid === 0 && draft.fg === '' && draf
     draft.padding < 0 && draft.opacity < 0;
 
 /**
- * Whether two drafts would produce the same rule.
+ * Whether two drafts would produce the same appearance.
  *
  * @param {object} first First draft.
  * @param {object} second Second draft.
@@ -111,6 +175,9 @@ export const painterFor = (draft, kind) => {
  */
 export const toInput = (draft, kind) => ({
     slotkey: draft.slotkey,
+    contextid: draft.contextid,
+    pages: draft.pages,
+    regions: draft.regions,
     painter: painterFor(draft, kind),
     assetid: draft.assetid,
     fg: draft.fg,

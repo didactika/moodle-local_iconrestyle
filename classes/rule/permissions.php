@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Who may customise icons where.
+ * Who may customise icons.
  *
  * @package local_iconrestyle
  * @copyright 2026 Didactika.org
@@ -25,49 +25,38 @@
 namespace local_iconrestyle\rule;
 
 /**
- * Each kind of context has its own capability, so a manager of a category can restyle it without touching the site.
+ * Icons are customised in one place, the site administration, so one capability governs every rule wherever it applies.
  */
 class permissions {
-    /** @var string[] Capability that governs each context level. */
-    private const CAPABILITIES = [
-        CONTEXT_SYSTEM => 'local/iconrestyle:managesite',
-        CONTEXT_COURSECAT => 'local/iconrestyle:managecategory',
-        CONTEXT_COURSE => 'local/iconrestyle:managecourse',
-        CONTEXT_MODULE => 'local/iconrestyle:managemodule',
-    ];
+    /** @var string Capability that governs every rule. */
+    public const CAPABILITY = 'local/iconrestyle:manage';
 
     /**
-     * Whether rules may exist in a kind of context at all.
+     * Whether a rule may apply in a kind of context at all.
      *
      * @param \context $context Context.
-     * @return bool True for system, category, course and activity contexts.
+     * @return bool True for the site, categories, courses and activities.
      */
     public function supports(\context $context): bool {
-        return isset(self::CAPABILITIES[$context->contextlevel]);
+        return in_array($context->contextlevel, [CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_MODULE], true);
     }
 
     /**
-     * Whether a user may customise icons in a context.
+     * Whether a user may customise icons.
      *
-     * @param \context $context Context.
      * @param int|null $userid User, or null for the current user.
      * @return bool True when allowed.
      */
-    public function can_manage(\context $context, ?int $userid = null): bool {
-        return $this->supports($context) && has_capability(self::CAPABILITIES[$context->contextlevel], $context, $userid);
+    public function can_manage(?int $userid = null): bool {
+        return has_capability(self::CAPABILITY, \context_system::instance(), $userid);
     }
 
     /**
-     * Require permission to customise icons in a context.
+     * Require permission to customise icons.
      *
-     * @param \context $context Context.
      * @throws \required_capability_exception When the user lacks the capability.
-     * @throws \InvalidArgumentException When rules are not allowed in that kind of context.
      */
-    public function require_manage(\context $context): void {
-        if (!$this->supports($context)) {
-            throw new \InvalidArgumentException('Rules are not allowed in this context.');
-        }
-        require_capability(self::CAPABILITIES[$context->contextlevel], $context);
+    public function require_manage(): void {
+        require_capability(self::CAPABILITY, \context_system::instance());
     }
 }

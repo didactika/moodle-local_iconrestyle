@@ -46,7 +46,6 @@ class add_asset extends api {
      */
     public static function execute_parameters(): parameters {
         return new parameters([
-            'contextid' => new value(PARAM_INT, 'Context the artwork will be used in'),
             'content' => new value(PARAM_RAW, 'The file, base64 encoded'),
         ]);
     }
@@ -54,17 +53,15 @@ class add_asset extends api {
     /**
      * Sanitise and store artwork.
      *
-     * @param int $contextid Context the artwork will be used in.
      * @param string $content The file, base64 encoded.
      * @return array The asset.
      * @throws \moodle_exception With a reason code when the artwork is refused.
      */
-    public static function execute(int $contextid, string $content): array {
+    public static function execute(string $content): array {
         global $USER;
-        $params = self::validate_parameters(self::execute_parameters(), ['contextid' => $contextid, 'content' => $content]);
-        $context = \context::instance_by_id($params['contextid']);
-        self::validate_context($context);
-        service_factory::instance()->permissions()->require_manage($context);
+        $params = self::validate_parameters(self::execute_parameters(), ['content' => $content]);
+        self::validate_context(\context_system::instance());
+        service_factory::instance()->permissions()->require_manage();
 
         $bytes = strlen($params['content']) <= self::MAX_BASE64 ? base64_decode($params['content'], true) : false;
         if ($bytes === false || $bytes === '') {

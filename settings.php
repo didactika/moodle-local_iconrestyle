@@ -24,12 +24,12 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-if ($hassiteconfig || has_capability('local/iconrestyle:managesite', context_system::instance())) {
+if ($hassiteconfig || has_capability('local/iconrestyle:manage', context_system::instance())) {
     $ADMIN->add('appearance', new admin_externalpage(
         'local_iconrestyle_designer',
         get_string('designer', 'local_iconrestyle'),
         new moodle_url('/local/iconrestyle/designer.php'),
-        'local/iconrestyle:managesite'
+        'local/iconrestyle:manage'
     ));
 }
 

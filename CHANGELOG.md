@@ -23,15 +23,17 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ### Added
 
-- Rule storage per site, category, course and activity, with optimistic locking and a per-context rule limit.
+- Rule storage with optimistic locking and a per-context rule limit. A rule applies in the whole site, a category, a course or an activity, and can be limited to kinds of page and page regions chosen from fixed lists.
 - Rendering engine that derives each icon's markup from the running Moodle's icon map and compiles rules to CSS: recolour for font icons, background, shape, padding and opacity for any icon.
 - Per-context stylesheets delivered as one immutable bundle after the theme stylesheet, with cache revisions that only grow and single-flight compilation.
 - Site setting to disable the plugin, rule limit setting and capabilities for each scope.
 - Artwork intake: uploaded SVG is rebuilt from an allow-list (scripts, event handlers, external references, entities and document type declarations are refused or removed) and raster images are decoded and written again, then stored once by content hash.
 - Mask and image painters that replace an icon's artwork with an uploaded file, recolourable through a mask, on font icons and on image icons.
 - `asset.php` serves artwork by content hash with immutable caching, a restrictive content security policy and cross-origin access for CDN deployments.
-- Icon designer under Site administration > Appearance: a searchable, filterable and virtualised catalogue of every customisable icon, an inspector for artwork, foreground and background colour, shape, padding and opacity, a live preview of Moodle's default, the current and the new look on light and dark surfaces, staged changes with undo, redo, discard and save, and reset to inherited.
-- Web services behind the designer to read the catalogue and the rules of a context, save and delete rules, add artwork and compile unsaved rules for the preview, each checked against the capability of the context it is called for.
+- One icon designer under Site administration > Appearance: a searchable, filterable and virtualised catalogue of every customisable icon, several variants per icon each limited to a place (the whole site, a category, a course or an activity found by name, kinds of page and page regions), an inspector for artwork, foreground and background colour, shape, padding and opacity, a live preview of Moodle's default, the current and the new look on light and dark surfaces, and staged changes with undo, redo, discard and save.
+- Web services behind the designer to read the catalogue and every rule, save and delete rules, add artwork, compile unsaved rules for the preview and search categories, courses and activities by name, each checked against the capability.
 - Customisations apply on every page, the designer included. The preview columns draw inside isolated shadow trees, so the "Moodle default" column still shows the untouched icon.
 - Works on sites with caching disabled, using the cache object Moodle returns in that case.
+- A single capability, `local/iconrestyle:manage`, governs every rule: there are no designers, navigation entries or capabilities in categories, courses or activities.
+- Rules are removed when their category, course or activity is deleted, and the stylesheet of the course is refreshed when an activity goes.
 - The complete schema ships in `db/install.xml`; the first release has no upgrade steps.

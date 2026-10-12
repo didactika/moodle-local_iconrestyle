@@ -90,13 +90,20 @@ final class rule {
     /** @var int Optimistic lock counter. */
     private $rev;
 
+    /** @var string[] Kinds of page the rule is limited to, empty for every page. */
+    private $pages;
+
+    /** @var string[] Regions of a page the rule is limited to, empty for every region. */
+    private $regions;
+
     /**
      * Create a rule from validated parts.
      *
      * @param int $id Rule id.
-     * @param int $contextid Context id.
+     * @param int $contextid Context id, which is where the rule applies: the site, a category, a course or an activity.
      * @param slot_key $slot Slot.
-     * @param array $options Optional painter, assetid, fg, bg, shape, padding, opacity, target, enabled and rev.
+     * @param array $options Optional painter, assetid, fg, bg, shape, padding, opacity, target, enabled, rev, pages and
+     *     regions.
      * @throws \InvalidArgumentException When a value is outside its accepted range.
      */
     public function __construct(int $id, int $contextid, slot_key $slot, array $options = []) {
@@ -134,6 +141,35 @@ final class rule {
         $this->target = (string)($options['target'] ?? self::TARGET_ICON);
         $this->enabled = (bool)($options['enabled'] ?? true);
         $this->rev = (int)($options['rev'] ?? 1);
+        $this->pages = audience::normalise((array)($options['pages'] ?? []), audience::PAGES);
+        $this->regions = audience::normalise((array)($options['regions'] ?? []), audience::REGIONS);
+    }
+
+    /**
+     * Kinds of page the rule is limited to.
+     *
+     * @return string[] Page tokens, empty for every page.
+     */
+    public function pages(): array {
+        return $this->pages;
+    }
+
+    /**
+     * Regions of a page the rule is limited to.
+     *
+     * @return string[] Region tokens, empty for every region.
+     */
+    public function regions(): array {
+        return $this->regions;
+    }
+
+    /**
+     * Identity of the rule's pages and regions, which tells apart the variants of one icon in one context.
+     *
+     * @return string Empty for a rule that applies on every page and region.
+     */
+    public function variant(): string {
+        return audience::variant($this->pages, $this->regions);
     }
 
     /**

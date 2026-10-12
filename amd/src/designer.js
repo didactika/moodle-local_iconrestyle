@@ -27,8 +27,9 @@ import * as repository from 'local_iconrestyle/repository';
 import {createState} from 'local_iconrestyle/state';
 import {createGrid} from 'local_iconrestyle/grid';
 import {createPreview} from 'local_iconrestyle/preview';
+import {createVariants} from 'local_iconrestyle/variants';
 import {filterIcons} from 'local_iconrestyle/lib/filter';
-import {colourNeedsArtwork, emptyDraft} from 'local_iconrestyle/lib/draft';
+import {colourNeedsArtwork} from 'local_iconrestyle/lib/draft';
 import {contrastRatio, normalise, parseHex} from 'local_iconrestyle/lib/color';
 
 const MAX_UPLOAD_BASE64 = 360000;
@@ -37,19 +38,21 @@ const SURFACES = {light: {r: 255, g: 255, b: 255}, dark: {r: 33, g: 37, b: 41}};
 /**
  * Start the designer.
  *
- * @param {{contextid: number, strings: Object<string, string>}} config Settings from the server.
+ * The settings and text come from the server in a data attribute of the root element.
  */
-export const init = (config) => {
+export const init = () => {
     const root = document.querySelector(selectors.root);
     if (!root) {
         return;
     }
+    const config = JSON.parse(root.dataset.config);
     const text = (name, n = '') => (config.strings[name] || '').replace('{n}', n);
-    const state = createState(config.contextid);
-    const preview = createPreview(root, config.contextid);
+    const state = createState(config.everywhere);
+    const preview = createPreview(root);
     const find = (selector) => root.querySelector(selector);
     const filters = {query: '', kind: 'all', state: 'all'};
     let selected = null;
+    let active = null;
     let surface = 'light';
     let filtered = [];
 
@@ -106,16 +109,18 @@ export const init = (config) => {
             preview.hide();
             return;
         }
-        const draft = state.effective(selected) || emptyDraft(selected);
+        const draft = state.draftOf(active);
         find(selectors.title).textContent = icon.key;
         let origin = text('origindefault');
-        if (state.isStaged(selected)) {
-            origin = state.effective(selected) ? text('originhere') : text('originreset');
-        } else if (state.savedRule(selected)) {
-            const rule = state.savedRule(selected);
-            origin = rule.own ? text('originhere') : text('origininherited', rule.contextname);
+        if (state.isStaged(active)) {
+            origin = text('originunsaved');
+        } else if (state.isSaved(active)) {
+            origin = text('originhere');
         }
         find(selectors.origin).textContent = origin;
+        find(selectors.action('remove-variant')).hidden = !state.isSaved(active) && !state.isStaged(active) &&
+            active === state.everywhereKey(selected);
+        variants.render();
         const notice = find(selectors.sharedNotice);
         notice.hidden = icon.group < 2;
         notice.textContent = icon.group < 2 ? '' : text('sharedglyph', icon.group);
@@ -138,9 +143,8 @@ export const init = (config) => {
         hint.textContent = hint.hidden ? '' : text('needsartwork');
 
         showContrast(draft);
-        const saved = state.savedRule(selected);
         preview.show(icon);
-        preview.update(icon, saved ? state.effectiveSaved(selected) : null, state.effective(selected));
+        preview.update(icon, state.savedDraft(active), state.isStaged(active) || state.isSaved(active) ? draft : null);
     };
 
     const refreshStaging = () => {
@@ -161,15 +165,16 @@ export const init = (config) => {
 
     const select = (key) => {
         selected = key;
+        active = key ? state.everywhereKey(key) : null;
         refreshInspector();
         grid.render();
     };
 
     const stage = (patch) => {
-        if (!selected) {
+        if (!active) {
             return;
         }
-        state.stage(selected, patch);
+        state.stage(active, patch);
         refresh();
     };
 
@@ -203,6 +208,23 @@ export const init = (config) => {
         find(parts.clear).addEventListener('click', () => stage({[name]: ''}));
     };
 
+    const variants = createVariants(root, {
+        labels: config.labels,
+        everywhere: config.everywhere,
+        text,
+        variants: () => (selected ? state.variants(selected) : []),
+        activeKey: () => active,
+        isStaged: (key) => state.isStaged(key),
+        onPick: (key) => {
+            active = key;
+            refreshInspector();
+        },
+        onAdd: (where) => {
+            active = state.addVariant(selected, where);
+            refresh();
+        },
+    });
+
     bindColour('fg');
     bindColour('bg');
 
@@ -233,7 +255,7 @@ export const init = (config) => {
                 return;
             }
             try {
-                const asset = await repository.addAsset(config.contextid, content);
+                const asset = await repository.addAsset(content);
                 stage({assetid: asset.id, asseturl: asset.url, assetkind: asset.kind, assetmono: asset.monochrome});
             } catch (error) {
                 hint.hidden = false;
@@ -253,8 +275,9 @@ export const init = (config) => {
             case 'remove-artwork':
                 stage({assetid: 0, asseturl: '', assetkind: '', assetmono: false});
                 break;
-            case 'reset-rule':
-                state.reset(selected);
+            case 'remove-variant':
+                state.remove(active);
+                active = state.everywhereKey(selected);
                 refresh();
                 break;
             case 'undo':
@@ -277,7 +300,7 @@ export const init = (config) => {
                     other.classList.toggle('active', active);
                     other.setAttribute('aria-pressed', active ? 'true' : 'false');
                 });
-                showContrast(selected ? state.effective(selected) : null);
+                showContrast(active ? state.draftOf(active) : null);
                 break;
             case 'save':
                 await save();
