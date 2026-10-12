@@ -1,4 +1,4 @@
-@local @javascript @iconrestyle_manual
+@local @local_iconrestyle @javascript @iconrestyle_manual
 Feature: The screenshots of the user manual
   In order to keep the user manual true to the interface
   As a maintainer
