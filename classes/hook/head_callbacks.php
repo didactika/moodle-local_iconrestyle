@@ -46,6 +46,23 @@ final class head_callbacks {
     }
 
     /**
+     * Address of the stylesheet that customises the pages of a context.
+     *
+     * @param \context $context Context of the page.
+     * @return \moodle_url|null Address, or null when no rule applies there.
+     */
+    public static function stylesheet_url(\context $context): ?\moodle_url {
+        $factory = service_factory::instance();
+        $chain = $factory->chain_resolver()->chain($context->path);
+        if ($chain === []) {
+            return null;
+        }
+        $url = new \moodle_url('/local/iconrestyle/styles.php');
+        $url->set_slashargument('/' . $factory->version_hash() . '/' . bundle_service::encode_chain($chain) . '/all.css');
+        return $url;
+    }
+
+    /**
      * Register the stylesheet for the current page when it has rules.
      */
     public static function inject(): void {
@@ -54,14 +71,10 @@ final class head_callbacks {
             if (!self::applicable()) {
                 return;
             }
-            $factory = service_factory::instance();
-            $chain = $factory->chain_resolver()->chain($PAGE->context->path);
-            if ($chain === []) {
-                return;
+            $url = self::stylesheet_url($PAGE->context);
+            if ($url !== null) {
+                $PAGE->requires->css($url);
             }
-            $url = new \moodle_url('/local/iconrestyle/styles.php');
-            $url->set_slashargument('/' . $factory->version_hash() . '/' . bundle_service::encode_chain($chain) . '/all.css');
-            $PAGE->requires->css($url);
         } catch (\Throwable $exception) {
             debugging('local_iconrestyle: ' . $exception->getMessage(), DEBUG_DEVELOPER);
         }

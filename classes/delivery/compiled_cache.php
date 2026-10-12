@@ -41,6 +41,18 @@ class compiled_cache {
     }
 
     /**
+     * Key of one compiled stylesheet.
+     *
+     * @param string $hash Version hash of the installed code.
+     * @param int $contextid Delta owner context.
+     * @param int $rev Effective revision.
+     * @return string Key.
+     */
+    public static function key(string $hash, int $contextid, int $rev): string {
+        return $hash . ':' . $contextid . ':' . $rev;
+    }
+
+    /**
      * Read compiled CSS.
      *
      * @param string $key Cache key.
@@ -52,6 +64,16 @@ class compiled_cache {
     }
 
     /**
+     * Whether compiled CSS is stored, without reading it.
+     *
+     * @param string $key Cache key.
+     * @return bool True when stored.
+     */
+    public function has(string $key): bool {
+        return $this->cache->has(sha1($key));
+    }
+
+    /**
      * Store compiled CSS.
      *
      * @param string $key Cache key.
@@ -59,5 +81,14 @@ class compiled_cache {
      */
     public function set(string $key, string $css): void {
         $this->cache->set(sha1($key), $css);
+    }
+
+    /**
+     * Remove compiled CSS.
+     *
+     * @param string $key Cache key.
+     */
+    public function delete(string $key): void {
+        $this->cache->delete(sha1($key));
     }
 }

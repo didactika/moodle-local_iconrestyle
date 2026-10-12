@@ -30,6 +30,12 @@ namespace local_iconrestyle\rule;
  * Together with the context a rule belongs to this says where the rule applies. An empty list means everywhere.
  */
 final class audience {
+    /** @var string Identity of a rule that is limited to no page and no region. */
+    public const UNLIMITED = '0';
+
+    /** @var string[] Colour modes that every site knows, all meaning every mode. */
+    public const MODES = ['all', 'light', 'dark'];
+
     /** @var string[] Kinds of page a rule can be limited to. */
     public const PAGES = ['dashboard', 'sitehome', 'course', 'activity', 'admin', 'profile', 'calendar', 'grades', 'login'];
 
@@ -55,6 +61,29 @@ final class audience {
     }
 
     /**
+     * Check a colour mode.
+     *
+     * @param string $mode Candidate mode.
+     * @return string The mode.
+     * @throws \InvalidArgumentException When the mode is not accepted.
+     */
+    public static function check_mode(string $mode): string {
+        if (!in_array($mode, self::modes(), true)) {
+            throw new \InvalidArgumentException('Unknown colour mode.');
+        }
+        return $mode;
+    }
+
+    /**
+     * The colour modes a rule can be limited to: every mode, light and dark, and any other mode this Moodle defines.
+     *
+     * @return string[] Modes.
+     */
+    public static function modes(): array {
+        return array_values(array_unique(array_merge(self::MODES, colour_modes::known())));
+    }
+
+    /**
      * Split a stored comma separated list.
      *
      * @param string|null $stored Stored value.
@@ -65,16 +94,17 @@ final class audience {
     }
 
     /**
-     * Short identity of a combination of pages and regions, empty for everywhere.
+     * Short identity of a combination of pages, regions and colour mode, UNLIMITED for everywhere.
      *
      * @param string[] $pages Normalised pages.
      * @param string[] $regions Normalised regions.
+     * @param string $mode Colour mode, all when the rule applies in both.
      * @return string Identity that tells variants of one icon in one context apart.
      */
-    public static function variant(array $pages, array $regions): string {
-        if ($pages === [] && $regions === []) {
-            return '';
+    public static function variant(array $pages, array $regions, string $mode = 'all'): string {
+        if ($pages === [] && $regions === [] && $mode === 'all') {
+            return self::UNLIMITED;
         }
-        return substr(sha1(implode(',', $pages) . '|' . implode(',', $regions)), 0, 16);
+        return substr(sha1(implode(',', $pages) . '|' . implode(',', $regions) . '|' . $mode), 0, 16);
     }
 }

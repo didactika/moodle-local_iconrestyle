@@ -25,7 +25,7 @@
 namespace local_iconrestyle\rule;
 
 /**
- * A colour is a hex value, a theme token or the current text colour.
+ * A colour is a hex value, a custom property of the theme, a legacy theme token or the current text colour.
  *
  * Only validated values can reach generated CSS.
  */
@@ -37,8 +37,14 @@ final class color {
         'activitycommunication', 'activitycontent', 'activityinteractivecontent',
     ];
 
+    /** @var string Pattern of the name of a custom property of the theme, as chosen from the list the theme declares. */
+    private const VARIABLE = '/^--[A-Za-z0-9_-]{1,64}$/';
+
     /** @var string Stored form of the current text colour. */
     private const CURRENT = 'currentcolor';
+
+    /** @var string Stored form of no colour at all, which removes a background. */
+    public const TRANSPARENT = 'transparent';
 
     /** @var string Pattern of rgb() and rgba() with comma or space separators and an optional alpha. */
     private const RGB = '/^rgba?\(\s*(\d{1,3})\s*[,\s]\s*(\d{1,3})\s*[,\s]\s*(\d{1,3})\s*'
@@ -63,16 +69,25 @@ final class color {
     /**
      * Parse any accepted notation.
      *
-     * Accepts #rgb, #rgba, #rrggbb, #rrggbbaa, rgb(), rgba(), hsl(), hsla(), token:name and currentcolor.
+     * Accepts #rgb, #rgba, #rrggbb, #rrggbbaa, rgb(), rgba(), hsl(), hsla(), var:--name, token:name, currentcolor and
+     * transparent.
      *
      * @param string $value Candidate value.
      * @return self Canonical colour.
      * @throws \InvalidArgumentException When the value is not accepted.
      */
     public static function parse(string $value): self {
-        $value = strtolower(trim($value));
-        if ($value === self::CURRENT) {
-            return new self(self::CURRENT);
+        $value = trim($value);
+        if (strncasecmp($value, 'var:', 4) === 0) {
+            $name = substr($value, 4);
+            if (!preg_match(self::VARIABLE, $name)) {
+                throw new \InvalidArgumentException('Invalid custom property name.');
+            }
+            return new self('var:' . $name);
+        }
+        $value = strtolower($value);
+        if ($value === self::CURRENT || $value === self::TRANSPARENT) {
+            return new self($value);
         }
         if (strpos($value, 'token:') === 0) {
             $token = substr($value, 6);
@@ -134,22 +149,27 @@ final class color {
     /**
      * Whether the colour follows the theme instead of being fixed.
      *
-     * @return bool True for tokens and the current text colour.
+     * @return bool True for theme variables, tokens, the current text colour and transparent.
      */
     public function follows_theme(): bool {
-        return $this->stored === self::CURRENT || strpos($this->stored, 'token:') === 0;
+        return $this->stored === self::CURRENT || $this->stored === self::TRANSPARENT ||
+            strpos($this->stored, 'token:') === 0 || strpos($this->stored, 'var:') === 0;
     }
 
     /**
      * Value safe to place in a CSS declaration.
      *
-     * Tokens use the Bootstrap 5 custom property and fall back to the Bootstrap 4 one.
+     * A theme variable becomes the custom property itself. Tokens use the Bootstrap 5 custom property and fall back to the
+     * Bootstrap 4 one.
      *
      * @return string CSS value.
      */
     public function css(): string {
         if ($this->stored === self::CURRENT) {
             return 'currentColor';
+        }
+        if (strpos($this->stored, 'var:') === 0) {
+            return 'var(' . substr($this->stored, 4) . ')';
         }
         if (strpos($this->stored, 'token:') === 0) {
             $token = substr($this->stored, 6);
@@ -178,23 +198,6 @@ final class color {
             $total += $weight * $linear;
         }
         return $total;
-    }
-
-    /**
-     * WCAG contrast ratio between two fixed colours.
-     *
-     * @param self $other Other colour.
-     * @return float|null Ratio from 1 to 21, or null when either follows the theme.
-     */
-    public function contrast_with(self $other): ?float {
-        $first = $this->luminance();
-        $second = $other->luminance();
-        if ($first === null || $second === null) {
-            return null;
-        }
-        $lighter = max($first, $second);
-        $darker = min($first, $second);
-        return ($lighter + 0.05) / ($darker + 0.05);
     }
 
     /**

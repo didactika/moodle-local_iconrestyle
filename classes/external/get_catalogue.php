@@ -57,9 +57,13 @@ class get_catalogue extends api {
 
         $icons = [];
         foreach ($factory->catalogue()->all() as $entry) {
-            $entry['imageurl'] = $entry['kind'] === 'image'
-                ? $PAGE->theme->image_url($entry['name'], $entry['component'])->out(false)
-                : '';
+            $entry['imageurl'] = '';
+            if ($entry['kind'] === 'image') {
+                $entry['imageurl'] = $PAGE->theme->image_url($entry['name'], $entry['component'])->out(false);
+            } else if ($entry['kind'] === 'container' && $entry['sample'] !== '') {
+                $url = $PAGE->theme->image_url('monologo', $entry['sample']);
+                $entry['imageurl'] = $url ? $url->out(false, ['filtericon' => 1]) : '';
+            }
             $icons[] = $entry;
         }
         return ['version' => $factory->version_hash(), 'icons' => $icons];
@@ -75,12 +79,14 @@ class get_catalogue extends api {
             'version' => new value(PARAM_ALPHANUM, 'Key that changes when the installed code or plugins change'),
             'icons' => new listof(new structure([
                 'key' => new value(PARAM_RAW, 'Slot key'),
-                'kind' => new value(PARAM_ALPHA, 'font or image'),
+                'kind' => new value(PARAM_ALPHA, 'font, image or container'),
                 'classes' => new value(PARAM_RAW, 'Class attribute of a font icon'),
                 'imageurl' => new value(PARAM_RAW, 'Address of an image icon'),
                 'component' => new value(PARAM_RAW, 'Component'),
                 'name' => new value(PARAM_RAW, 'Name inside the component'),
                 'group' => new value(PARAM_INT, 'Number of icons that share its glyph, zero when it is alone'),
+                'purpose' => new value(PARAM_ALPHANUMEXT, 'Purpose of an activity slot, empty for icons'),
+                'sample' => new value(PARAM_ALPHANUMEXT, 'Activity module whose icon previews an activity slot, empty for icons'),
             ])),
         ]);
     }

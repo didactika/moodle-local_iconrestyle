@@ -72,6 +72,16 @@ class add_asset extends api {
         } catch (asset_rejected_exception $exception) {
             throw new \moodle_exception('asset_rejected_' . $exception->reason(), 'local_iconrestyle');
         }
+        return self::export($asset);
+    }
+
+    /**
+     * Describe a stored asset for a client.
+     *
+     * @param \local_iconrestyle\asset\asset $asset Asset.
+     * @return array Fields following execute_returns().
+     */
+    public static function export(\local_iconrestyle\asset\asset $asset): array {
         return [
             'id' => $asset->id(),
             'url' => asset_urls::public_url($asset),

@@ -31,6 +31,9 @@ class permissions {
     /** @var string Capability that governs every rule. */
     public const CAPABILITY = 'local/iconrestyle:manage';
 
+    /** @var string Capability that governs taking customisations out of the site and bringing them in. */
+    public const EXCHANGE = 'local/iconrestyle:exchange';
+
     /**
      * Whether a rule may apply in a kind of context at all.
      *
@@ -42,13 +45,12 @@ class permissions {
     }
 
     /**
-     * Whether a user may customise icons.
+     * Require permission to export and import customisations.
      *
-     * @param int|null $userid User, or null for the current user.
-     * @return bool True when allowed.
+     * @throws \required_capability_exception When the user lacks the capability.
      */
-    public function can_manage(?int $userid = null): bool {
-        return has_capability(self::CAPABILITY, \context_system::instance(), $userid);
+    public function require_exchange(): void {
+        require_capability(self::EXCHANGE, \context_system::instance());
     }
 
     /**

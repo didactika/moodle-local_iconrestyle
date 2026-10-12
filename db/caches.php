@@ -30,7 +30,7 @@ $definitions = [
         'simplekeys' => true,
         'simpledata' => true,
         'staticacceleration' => true,
-        'staticaccelerationsize' => 64,
+        'staticaccelerationsize' => 128,
     ],
     'catalogue' => [
         'mode' => cache_store::MODE_APPLICATION,

@@ -105,6 +105,32 @@ class revision_registry {
     }
 
     /**
+     * Every delta stylesheet that has rules, with its effective revision.
+     *
+     * @return int[] Effective revision keyed by context id.
+     */
+    public function active(): array {
+        $result = [];
+        foreach ($this->db->get_records_select(self::TABLE, 'rulecount > 0', null, '', 'contextid, rev') as $record) {
+            $result[(int)$record->contextid] = (int)$record->rev;
+        }
+        return $result;
+    }
+
+    /**
+     * How many delta stylesheets have rules, not counting the one of the whole site.
+     *
+     * @return int Number of categories and courses.
+     */
+    public function count_active(): int {
+        return $this->db->count_records_select(
+            self::TABLE,
+            'rulecount > 0 AND contextid <> :site',
+            ['site' => \context_system::instance()->id]
+        );
+    }
+
+    /**
      * Forget a context for good, because the context itself no longer exists.
      *
      * @param int $contextid Delta owner context.

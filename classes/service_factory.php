@@ -33,15 +33,22 @@ use local_iconrestyle\delivery\bundle_service;
 use local_iconrestyle\delivery\chain_resolver;
 use local_iconrestyle\delivery\compile_lock;
 use local_iconrestyle\delivery\compiled_cache;
+use local_iconrestyle\delivery\delta_sheets;
+use local_iconrestyle\exchange\exporter;
+use local_iconrestyle\exchange\importer;
+use local_iconrestyle\exchange\place_keys;
 use local_iconrestyle\rule\delta_context;
 use local_iconrestyle\rule\permissions;
 use local_iconrestyle\rule\revision_registry;
 use local_iconrestyle\rule\rule;
 use local_iconrestyle\rule\module_scope;
 use local_iconrestyle\rule\rule_cleaner;
+use local_iconrestyle\rule\rule_limits;
 use local_iconrestyle\rule\rule_service;
 use local_iconrestyle\rule\rule_store;
+use local_iconrestyle\slot\activity_map;
 use local_iconrestyle\slot\glyph_signature_factory;
+use local_iconrestyle\slot\icon_files;
 use local_iconrestyle\slot\icon_map;
 use local_iconrestyle\slot\slot_catalogue;
 use local_iconrestyle\style\color_painter;
@@ -54,9 +61,6 @@ use local_iconrestyle\style\stylesheet_compiler;
  * Creates each service once per request, with its collaborators.
  */
 class service_factory {
-    /** @var int Default most rules one delta stylesheet may hold. */
-    public const DEFAULT_MAX_RULES = 500;
-
     /** @var self|null Shared instance. */
     private static $instance = null;
 
@@ -85,10 +89,18 @@ class service_factory {
     /**
      * Hash that keys compiled output to the installed code and plugin set.
      *
+     * It is read from the hash that Moodle stores when an upgrade finishes. Working it out from the plugins takes several
+     * milliseconds, which every page of a site with rules would pay.
+     *
      * @return string Eight hex characters.
      */
     public function version_hash(): string {
-        return substr(\core_component::get_all_versions_hash(), 0, 8);
+        global $CFG;
+        if (!isset($this->services['hash'])) {
+            $all = !empty($CFG->allversionshash) ? $CFG->allversionshash : \core_component::get_all_versions_hash();
+            $this->services['hash'] = substr($all, 0, 8);
+        }
+        return $this->services['hash'];
     }
 
     /**
@@ -168,8 +180,18 @@ class service_factory {
             new icon_map(),
             $this->signatures(),
             \cache::make('local_iconrestyle', 'catalogue'),
-            $this->version_hash()
+            $this->version_hash(),
+            new activity_map()
         );
+    }
+
+    /**
+     * Files of the icons Moodle ships.
+     *
+     * @return icon_files Files.
+     */
+    public function icon_files(): icon_files {
+        return $this->services['icon_files'] ?? $this->services['icon_files'] = new icon_files();
     }
 
     /**
@@ -202,18 +224,29 @@ class service_factory {
     }
 
     /**
+     * The compiled stylesheet of each context that has rules.
+     *
+     * @return delta_sheets Sheets.
+     */
+    public function delta_sheets(): delta_sheets {
+        return $this->services['delta_sheets'] ?? $this->services['delta_sheets'] = new delta_sheets(
+            $this->rules(),
+            $this->compiler(),
+            new compiled_cache(\cache::make('local_iconrestyle', 'compiled')),
+            new compile_lock(),
+            $this->revisions(),
+            $this->version_hash()
+        );
+    }
+
+    /**
      * Bundle service.
      *
      * @return bundle_service Service.
      */
     public function bundles(): bundle_service {
-        return $this->services['bundles'] ?? $this->services['bundles'] = new bundle_service(
-            $this->revisions(),
-            $this->rules(),
-            $this->compiler(),
-            new compiled_cache(\cache::make('local_iconrestyle', 'compiled')),
-            new compile_lock()
-        );
+        return $this->services['bundles'] ?? $this->services['bundles'] =
+            new bundle_service($this->revisions(), $this->delta_sheets());
     }
 
     /**
@@ -226,7 +259,43 @@ class service_factory {
         return $this->services['rule_cleaner'] ?? $this->services['rule_cleaner'] = new rule_cleaner(
             $DB,
             $this->rules(),
-            $this->revisions()
+            $this->revisions(),
+            $this->delta_sheets()
+        );
+    }
+
+    /**
+     * Names of places that mean the same on every site.
+     *
+     * @return place_keys Place keys.
+     */
+    public function place_keys(): place_keys {
+        global $DB;
+        return $this->services['place_keys'] ?? $this->services['place_keys'] = new place_keys($DB);
+    }
+
+    /**
+     * Writer of packages.
+     *
+     * @return exporter Exporter.
+     */
+    public function exporter(): exporter {
+        return $this->services['exporter'] ?? $this->services['exporter'] =
+            new exporter($this->rules(), $this->asset_store(), $this->place_keys());
+    }
+
+    /**
+     * Reader of packages.
+     *
+     * @return importer Importer.
+     */
+    public function importer(): importer {
+        return $this->services['importer'] ?? $this->services['importer'] = new importer(
+            $this->rule_service(),
+            $this->rules(),
+            $this->assets(),
+            $this->place_keys(),
+            $this->catalogue()
         );
     }
 
@@ -237,13 +306,13 @@ class service_factory {
      */
     public function rule_service(): rule_service {
         global $DB;
-        $max = (int)get_config('local_iconrestyle', 'maxrulespercontext');
         return $this->services['rule_service'] ?? $this->services['rule_service'] = new rule_service(
             $DB,
             $this->rules(),
             new delta_context(),
             $this->revisions(),
-            $max > 0 ? $max : self::DEFAULT_MAX_RULES
+            rule_limits::from_config(),
+            $this->delta_sheets()
         );
     }
 }

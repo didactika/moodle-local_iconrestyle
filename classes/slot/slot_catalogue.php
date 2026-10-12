@@ -48,6 +48,9 @@ class slot_catalogue {
     /** @var string Key that changes whenever the installed code or plugins change. */
     private $version;
 
+    /** @var activity_map|null Installed activity modules and their purposes. */
+    private $activities;
+
     /**
      * Create the catalogue.
      *
@@ -55,24 +58,28 @@ class slot_catalogue {
      * @param glyph_signature_factory $signatures Signature source.
      * @param \cache|null $cache Catalogue cache, or null to build every time.
      * @param string $version Key that changes whenever the installed code or plugins change.
+     * @param activity_map|null $activities Installed activity modules, or null to list no activity slots.
      */
     public function __construct(
         icon_map $iconmap,
         glyph_signature_factory $signatures,
         ?\cache $cache,
-        string $version
+        string $version,
+        ?activity_map $activities = null
     ) {
         $this->iconmap = $iconmap;
         $this->signatures = $signatures;
         $this->cache = $cache;
         $this->version = $version;
+        $this->activities = $activities;
     }
 
     /**
      * Every customisable icon.
      *
-     * @return array[] Entries sorted by key. Each has key, kind (font or image), classes for font icons, component and
-     *     name for image icons, and group, the number of icons that share its glyph, which is zero when it is alone.
+     * @return array[] Entries sorted by key. Each has key, kind (font, image or container), classes for font icons and
+     *     boxes, component and name, group, the number of icons that share its glyph, which is zero when it is alone, and
+     *     purpose and sample, which describe the box of an activity slot.
      */
     public function all(): array {
         if ($this->cache) {
@@ -127,6 +134,8 @@ class slot_catalogue {
                 'component' => $slot->component(),
                 'name' => $slot->name(),
                 'group' => 0,
+                'purpose' => '',
+                'sample' => '',
                 'identity' => $signature->identity(),
             ];
             $groups[$signature->identity()][] = $key;
@@ -144,9 +153,14 @@ class slot_catalogue {
                     'component' => $component,
                     'name' => $name,
                     'group' => 0,
+                    'purpose' => '',
+                    'sample' => '',
                     'identity' => '',
                 ];
             }
+        }
+        foreach ($this->activity_entries() as $key => $entry) {
+            $entries[$key] = $entry;
         }
         foreach ($groups as $keys) {
             if (count($keys) > 1) {
@@ -160,6 +174,48 @@ class slot_catalogue {
             unset($entry['identity']);
             return $entry;
         }, $entries));
+    }
+
+    /**
+     * The boxes Moodle draws around activity icons: one for each purpose and one for each installed activity module.
+     *
+     * @return array[] Entries keyed by slot key.
+     */
+    private function activity_entries(): array {
+        if ($this->activities === null) {
+            return [];
+        }
+        $modules = $this->activities->all();
+        $entries = [];
+        foreach (activity_map::PURPOSES as $purpose) {
+            $members = array_keys($modules, $purpose, true);
+            $entries['purpose:' . $purpose] = [
+                'key' => 'purpose:' . $purpose,
+                'kind' => glyph_signature::KIND_CONTAINER,
+                'classes' => 'activityiconcontainer ' . $purpose,
+                'component' => 'purpose',
+                'name' => $purpose,
+                'group' => 0,
+                'purpose' => $purpose,
+                'sample' => $members === [] ? '' : $members[0],
+            ];
+        }
+        foreach ($modules as $module => $purpose) {
+            if (glyph_signature::from_activity_type($module) === null) {
+                continue;
+            }
+            $entries['activity:' . $module] = [
+                'key' => 'activity:' . $module,
+                'kind' => glyph_signature::KIND_CONTAINER,
+                'classes' => 'activityiconcontainer ' . $purpose,
+                'component' => 'activity',
+                'name' => $module,
+                'group' => 0,
+                'purpose' => $purpose,
+                'sample' => $module,
+            ];
+        }
+        return $entries;
     }
 
     /**

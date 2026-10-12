@@ -146,7 +146,7 @@ class search_locations extends api {
     private static function activities(string $text): array {
         global $DB;
         $like = '%' . $DB->sql_like_escape($text) . '%';
-        $sql = 'SELECT c.id, c.fullname
+        $sql = 'SELECT c.id, c.fullname, c.shortname
                   FROM {course} c
                  WHERE c.id <> :site AND (' . $DB->sql_like('c.fullname', ':full', false) . '
                        OR ' . $DB->sql_like('c.shortname', ':short', false) . ')
@@ -162,7 +162,7 @@ class search_locations extends api {
                 $places[] = [
                     'contextid' => (int)\context_module::instance($cm->id)->id,
                     'name' => format_string($cm->name, true, ['context' => \context_system::instance()]),
-                    'detail' => $coursename,
+                    'detail' => $cm->get_module_type_name() . ' · ' . s($course->shortname) . ' · ' . $coursename,
                 ];
             }
         }

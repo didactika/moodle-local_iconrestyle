@@ -31,21 +31,10 @@ $capabilities = [
         'archetypes' => ['manager' => CAP_ALLOW],
         'riskbitmask' => RISK_XSS | RISK_CONFIG,
     ],
-    'local/iconrestyle:viewhistory' => [
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => ['manager' => CAP_ALLOW],
-    ],
     'local/iconrestyle:exchange' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => ['manager' => CAP_ALLOW],
         'riskbitmask' => RISK_XSS | RISK_CONFIG,
-    ],
-    'local/iconrestyle:managelibraries' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => ['manager' => CAP_ALLOW],
-        'riskbitmask' => RISK_CONFIG | RISK_DATALOSS,
     ],
 ];

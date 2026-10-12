@@ -57,19 +57,6 @@ class rule_store {
     }
 
     /**
-     * Rules that belong to any of several contexts.
-     *
-     * @param int[] $contextids Context ids.
-     * @return rule[] Rules.
-     */
-    public function find_in_contexts(array $contextids): array {
-        if ($contextids === []) {
-            return [];
-        }
-        return array_values(array_map([$this, 'to_rule'], $this->db->get_records_list(self::TABLE, 'contextid', $contextids)));
-    }
-
-    /**
      * Every rule of the site, in a stable order.
      *
      * @return rule[] Rules.
@@ -77,6 +64,22 @@ class rule_store {
     public function find_all(): array {
         $records = $this->db->get_records(self::TABLE, null, 'slotkey ASC, target ASC, contextid ASC, variant ASC');
         return array_values(array_map([$this, 'to_rule'], $records));
+    }
+
+    /**
+     * Every rule of the site, one at a time, so that a site with very many rules never holds them all in memory.
+     *
+     * @return \Generator<rule> Rules.
+     */
+    public function each(): \Generator {
+        $records = $this->db->get_recordset(self::TABLE, null, 'slotkey ASC, target ASC, contextid ASC, variant ASC');
+        try {
+            foreach ($records as $record) {
+                yield $this->to_rule($record);
+            }
+        } finally {
+            $records->close();
+        }
     }
 
     /**
@@ -99,7 +102,7 @@ class rule_store {
      * @param string $variant Identity of the rule's pages and regions.
      * @return rule|null Rule or null.
      */
-    public function find(int $contextid, string $slotkey, string $target, string $variant = ''): ?rule {
+    public function find(int $contextid, string $slotkey, string $target, string $variant = audience::UNLIMITED): ?rule {
         $record = $this->db->get_record(
             self::TABLE,
             ['contextid' => $contextid, 'slotkey' => $slotkey, 'target' => $target, 'variant' => $variant]
@@ -128,12 +131,11 @@ class rule_store {
             'assetid' => $rule->assetid(),
             'fg' => $rule->fg() ? $rule->fg()->stored() : null,
             'bg' => $rule->bg() ? $rule->bg()->stored() : null,
-            'shape' => $rule->shape(),
-            'padding' => $rule->padding(),
-            'opacity' => $rule->opacity(),
+            'design' => $rule->design()->json(),
             'target' => $rule->target(),
             'pages' => implode(',', $rule->pages()),
             'regions' => implode(',', $rule->regions()),
+            'mode' => $rule->mode(),
             'variant' => $rule->variant(),
             'enabled' => (int)$rule->enabled(),
             'usermodified' => $userid,
@@ -172,7 +174,7 @@ class rule_store {
      * @param string $variant Identity of the rule's pages and regions.
      * @return bool True when a rule was deleted.
      */
-    public function delete(int $contextid, string $slotkey, string $target, string $variant = ''): bool {
+    public function delete(int $contextid, string $slotkey, string $target, string $variant = audience::UNLIMITED): bool {
         $conditions = ['contextid' => $contextid, 'slotkey' => $slotkey, 'target' => $target, 'variant' => $variant];
         if (!$this->db->record_exists(self::TABLE, $conditions)) {
             return false;
@@ -231,12 +233,11 @@ class rule_store {
             'assetid' => $record->assetid,
             'fg' => $record->fg,
             'bg' => $record->bg,
-            'shape' => $record->shape,
-            'padding' => $record->padding,
-            'opacity' => $record->opacity,
+            'design' => design::from_json($record->design),
             'target' => $record->target,
             'pages' => audience::split($record->pages),
             'regions' => audience::split($record->regions),
+            'mode' => $record->mode,
             'enabled' => (bool)$record->enabled,
             'rev' => (int)$record->rev,
         ]);

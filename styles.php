@@ -47,7 +47,9 @@ if ($chain === null) {
     exit;
 }
 
-$result = service_factory::instance()->bundles()->assemble($chain, $parts[0]);
+$factory = service_factory::instance();
+$result = $factory->bundles()->assemble($chain);
+$result['current'] = $result['current'] && $parts[0] === $factory->version_hash();
 $etag = '"' . sha1($result['css']) . '"';
 
 header('Content-Type: text/css; charset=utf-8');

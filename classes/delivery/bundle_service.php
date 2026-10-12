@@ -25,49 +25,27 @@
 namespace local_iconrestyle\delivery;
 
 use local_iconrestyle\rule\revision_registry;
-use local_iconrestyle\rule\rule_store;
-use local_iconrestyle\style\stylesheet_compiler;
 
 /**
- * Concatenates cached delta stylesheets in cascade order, compiling any that are missing once.
+ * Concatenates the compiled stylesheets of a chain in cascade order. A page that is served from the cache reads nothing from
+ * the database: the revisions and the stylesheets both come from the cache.
  */
 class bundle_service {
     /** @var revision_registry Revision source. */
     private $revisions;
 
-    /** @var rule_store Rule storage. */
-    private $rules;
-
-    /** @var stylesheet_compiler Compiler. */
-    private $compiler;
-
-    /** @var compiled_cache Compiled CSS cache. */
-    private $cache;
-
-    /** @var compile_lock Compile lock. */
-    private $lock;
+    /** @var delta_sheets Compiled stylesheets. */
+    private $sheets;
 
     /**
      * Create the service.
      *
      * @param revision_registry $revisions Revision source.
-     * @param rule_store $rules Rule storage.
-     * @param stylesheet_compiler $compiler Compiler.
-     * @param compiled_cache $cache Compiled CSS cache.
-     * @param compile_lock $lock Compile lock.
+     * @param delta_sheets $sheets Compiled stylesheets.
      */
-    public function __construct(
-        revision_registry $revisions,
-        rule_store $rules,
-        stylesheet_compiler $compiler,
-        compiled_cache $cache,
-        compile_lock $lock
-    ) {
+    public function __construct(revision_registry $revisions, delta_sheets $sheets) {
         $this->revisions = $revisions;
-        $this->rules = $rules;
-        $this->compiler = $compiler;
-        $this->cache = $cache;
-        $this->lock = $lock;
+        $this->sheets = $sheets;
     }
 
     /**
@@ -122,10 +100,9 @@ class bundle_service {
      * Stale revisions are replaced by the current ones, so an old page still renders the latest icons.
      *
      * @param int[] $chain Revision keyed by context id, as found in a URL.
-     * @param string $hash Version hash that keys compiled output to the installed code.
      * @return array CSS under css and whether every revision was current under current.
      */
-    public function assemble(array $chain, string $hash): array {
+    public function assemble(array $chain): array {
         $current = $this->revisions->get_many(array_keys($chain));
         $css = '';
         $iscurrent = true;
@@ -135,33 +112,9 @@ class bundle_service {
                 $iscurrent = false;
             }
             if ($effective > 0) {
-                $css .= $this->delta($contextid, $effective, $hash);
+                $css .= $this->sheets->css($contextid, $effective);
             }
         }
         return ['css' => $css, 'current' => $iscurrent];
-    }
-
-    /**
-     * Read or compile one delta stylesheet.
-     *
-     * @param int $contextid Delta owner context.
-     * @param int $rev Revision.
-     * @param string $hash Version hash.
-     * @return string CSS.
-     */
-    private function delta(int $contextid, int $rev, string $hash): string {
-        $key = $hash . ':' . $contextid . ':' . $rev;
-        $css = $this->cache->get($key);
-        if ($css !== null) {
-            return $css;
-        }
-        return $this->lock->run('delta_' . $contextid . '_' . $rev, function () use ($key, $contextid): string {
-            $css = $this->cache->get($key);
-            if ($css === null) {
-                $css = $this->compiler->compile($this->rules->find_by_delta($contextid));
-                $this->cache->set($key, $css);
-            }
-            return $css;
-        });
     }
 }

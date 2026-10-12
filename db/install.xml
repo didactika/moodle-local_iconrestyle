@@ -13,16 +13,13 @@
         <FIELD NAME="painter" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="color" SEQUENCE="false" COMMENT="Artwork painter: color, mask, image or none."/>
         <FIELD NAME="assetid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Artwork asset, if any."/>
         <FIELD NAME="fg" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Foreground colour or token."/>
-        <FIELD NAME="fgdark" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Foreground colour or token in dark colour mode."/>
         <FIELD NAME="bg" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Background colour or token."/>
-        <FIELD NAME="bgdark" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Background colour or token in dark colour mode."/>
-        <FIELD NAME="shape" TYPE="char" LENGTH="12" NOTNULL="false" SEQUENCE="false" COMMENT="Background shape: none, square, rounded or circle."/>
-        <FIELD NAME="padding" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Padding in hundredths of an em."/>
-        <FIELD NAME="opacity" TYPE="int" LENGTH="3" NOTNULL="false" SEQUENCE="false" COMMENT="Opacity percentage."/>
+        <FIELD NAME="design" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON object of design properties: shape, radius, padding on each side, scale, rotation, border, shadow and opacity."/>
         <FIELD NAME="target" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="icon" SEQUENCE="false" COMMENT="icon, type, purpose or instance."/>
         <FIELD NAME="pages" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated kinds of page the rule is limited to, empty for every page."/>
         <FIELD NAME="regions" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated regions of a page the rule is limited to, empty for every region."/>
-        <FIELD NAME="variant" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="" SEQUENCE="false" COMMENT="Identity of pages and regions, tells variants of one icon in one context apart."/>
+        <FIELD NAME="mode" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="all" SEQUENCE="false" COMMENT="Colour mode the rule is limited to: all, light or dark."/>
+        <FIELD NAME="variant" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Identity of pages, regions and colour mode, tells variants of one icon in one context apart."/>
         <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="rev" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Optimistic lock counter."/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>

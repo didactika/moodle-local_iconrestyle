@@ -63,6 +63,11 @@ final class mask_painter implements painter {
         $colour = $rule->fg() === null ? 'currentColor' : $rule->fg()->css();
         $mask = $url . ' center / contain no-repeat';
         $drawing = ['background-color' => $colour, '-webkit-mask' => $mask, 'mask' => $mask];
+        if ($signature->kind() === glyph_signature::KIND_CONTAINER) {
+            $glyph = glyph_colour::of($rule);
+            $drawing['background-color'] = $glyph === null ? 'currentColor' : $glyph->css();
+            return icon_in_box::blocks($drawing);
+        }
         if ($signature->kind() === glyph_signature::KIND_FONT) {
             return ['::before' => ['content' => '""', 'display' => 'block', 'width' => '100%', 'height' => '1em'] + $drawing];
         }

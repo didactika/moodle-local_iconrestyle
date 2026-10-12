@@ -48,9 +48,6 @@ final class rule {
     /** @var string[] Painters that are accepted. */
     private const PAINTERS = [self::PAINTER_COLOR, self::PAINTER_MASK, self::PAINTER_IMAGE, self::PAINTER_NONE];
 
-    /** @var string[] Shapes that are accepted. */
-    private const SHAPES = ['none', 'square', 'rounded', 'circle'];
-
     /** @var int Rule id, zero when not stored. */
     private $id;
 
@@ -72,14 +69,8 @@ final class rule {
     /** @var color|null Background. */
     private $bg;
 
-    /** @var string|null Shape. */
-    private $shape;
-
-    /** @var int|null Padding in hundredths of an em. */
-    private $padding;
-
-    /** @var int|null Opacity percentage. */
-    private $opacity;
+    /** @var design Design properties. */
+    private $design;
 
     /** @var string Rule target. */
     private $target;
@@ -96,32 +87,23 @@ final class rule {
     /** @var string[] Regions of a page the rule is limited to, empty for every region. */
     private $regions;
 
+    /** @var string Colour mode the rule is limited to: all, light or dark. */
+    private $mode;
+
     /**
      * Create a rule from validated parts.
      *
      * @param int $id Rule id.
      * @param int $contextid Context id, which is where the rule applies: the site, a category, a course or an activity.
      * @param slot_key $slot Slot.
-     * @param array $options Optional painter, assetid, fg, bg, shape, padding, opacity, target, enabled, rev, pages and
-     *     regions.
+     * @param array $options Optional painter, assetid, fg, bg, design (or the flat shape, padding and opacity), target,
+     *     enabled, rev, pages, regions and mode.
      * @throws \InvalidArgumentException When a value is outside its accepted range.
      */
     public function __construct(int $id, int $contextid, slot_key $slot, array $options = []) {
         $painter = (string)($options['painter'] ?? self::PAINTER_COLOR);
         if (!in_array($painter, self::PAINTERS, true)) {
             throw new \InvalidArgumentException('Unknown painter.');
-        }
-        $shape = $options['shape'] ?? null;
-        if ($shape !== null && !in_array($shape, self::SHAPES, true)) {
-            throw new \InvalidArgumentException('Unknown shape.');
-        }
-        $padding = isset($options['padding']) ? (int)$options['padding'] : null;
-        if ($padding !== null && ($padding < 0 || $padding > 300)) {
-            throw new \InvalidArgumentException('Padding out of range.');
-        }
-        $opacity = isset($options['opacity']) ? (int)$options['opacity'] : null;
-        if ($opacity !== null && ($opacity < 0 || $opacity > 100)) {
-            throw new \InvalidArgumentException('Opacity out of range.');
         }
         $assetid = isset($options['assetid']) ? (int)$options['assetid'] : null;
         $needsasset = in_array($painter, [self::PAINTER_MASK, self::PAINTER_IMAGE], true);
@@ -135,14 +117,22 @@ final class rule {
         $this->assetid = $assetid;
         $this->fg = $this->color_option($options['fg'] ?? null);
         $this->bg = $this->color_option($options['bg'] ?? null);
-        $this->shape = $shape;
-        $this->padding = $padding;
-        $this->opacity = $opacity;
+        $this->design = $this->design_option($options);
         $this->target = (string)($options['target'] ?? self::TARGET_ICON);
         $this->enabled = (bool)($options['enabled'] ?? true);
         $this->rev = (int)($options['rev'] ?? 1);
         $this->pages = audience::normalise((array)($options['pages'] ?? []), audience::PAGES);
         $this->regions = audience::normalise((array)($options['regions'] ?? []), audience::REGIONS);
+        $this->mode = audience::check_mode((string)($options['mode'] ?? 'all'));
+    }
+
+    /**
+     * Colour mode the rule is limited to.
+     *
+     * @return string all, light or dark.
+     */
+    public function mode(): string {
+        return $this->mode;
     }
 
     /**
@@ -166,10 +156,10 @@ final class rule {
     /**
      * Identity of the rule's pages and regions, which tells apart the variants of one icon in one context.
      *
-     * @return string Empty for a rule that applies on every page and region.
+     * @return string audience::UNLIMITED for a rule that applies on every page and region.
      */
     public function variant(): string {
-        return audience::variant($this->pages, $this->regions);
+        return audience::variant($this->pages, $this->regions, $this->mode);
     }
 
     /**
@@ -236,30 +226,12 @@ final class rule {
     }
 
     /**
-     * Shape.
+     * Design properties: shape, radius, padding, scale, rotation, border, shadow and opacity.
      *
-     * @return string|null Shape.
+     * @return design Design.
      */
-    public function shape(): ?string {
-        return $this->shape;
-    }
-
-    /**
-     * Padding.
-     *
-     * @return int|null Hundredths of an em.
-     */
-    public function padding(): ?int {
-        return $this->padding;
-    }
-
-    /**
-     * Opacity.
-     *
-     * @return int|null Percentage.
-     */
-    public function opacity(): ?int {
-        return $this->opacity;
+    public function design(): design {
+        return $this->design;
     }
 
     /**
@@ -292,10 +264,38 @@ final class rule {
     /**
      * Whether any container property is set.
      *
-     * @return bool True when background, shape, padding or opacity is styled.
+     * @return bool True when the background or any design property is set.
      */
     public function styles_container(): bool {
-        return $this->bg !== null || $this->shape !== null || $this->padding !== null || $this->opacity !== null;
+        return $this->bg !== null || !$this->design->is_empty();
+    }
+
+    /**
+     * Build the design from the options.
+     *
+     * Accepts a design, its array or its JSON under design, and the flat shape, padding and opacity that rules were first
+     * written with, where padding sets all four sides.
+     *
+     * @param array $options Rule options.
+     * @return design Design.
+     * @throws \InvalidArgumentException When a property is not accepted.
+     */
+    private function design_option(array $options): design {
+        $given = $options['design'] ?? [];
+        if ($given instanceof design) {
+            return $given;
+        }
+        $values = is_string($given) ? design::from_json($given)->to_array() : (array)$given;
+        foreach (['shape', 'opacity'] as $name) {
+            if (isset($options[$name]) && $options[$name] !== '') {
+                $values[$name] = $options[$name];
+            }
+        }
+        if (isset($options['padding']) && $options['padding'] !== '') {
+            $padding = $options['padding'];
+            $values += ['pt' => $padding, 'pr' => $padding, 'pb' => $padding, 'pl' => $padding];
+        }
+        return design::from_array($values);
     }
 
     /**

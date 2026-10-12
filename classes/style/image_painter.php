@@ -62,6 +62,9 @@ final class image_painter implements painter {
             'background-size' => 'contain',
             'background-repeat' => 'no-repeat',
         ];
+        if ($signature->kind() === glyph_signature::KIND_CONTAINER) {
+            return icon_in_box::blocks($drawing);
+        }
         if ($signature->kind() === glyph_signature::KIND_FONT) {
             return ['::before' => ['content' => '""', 'display' => 'block', 'width' => '100%', 'height' => '1em'] + $drawing];
         }

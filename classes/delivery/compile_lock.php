@@ -42,7 +42,14 @@ class compile_lock {
      */
     public function run(string $key, callable $callback) {
         $factory = \core\lock\lock_config::get_lock_factory('local_iconrestyle');
-        $lock = $factory->get_lock($key, self::TIMEOUT);
+        $deadline = microtime(true) + self::TIMEOUT;
+        do {
+            $lock = $factory->get_lock($key, 1);
+            if (!$lock) {
+                // The first processes to ask for a lock that does not exist yet can fail at once, without waiting.
+                usleep(10000);
+            }
+        } while (!$lock && microtime(true) < $deadline);
         try {
             return $callback();
         } finally {

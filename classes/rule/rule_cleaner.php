@@ -37,17 +37,27 @@ class rule_cleaner {
     /** @var revision_registry Revision registry. */
     private $revisions;
 
+    /** @var sheet_store|null Compiled stylesheets, which are dropped with the rules they were made from. */
+    private $sheets;
+
     /**
      * Create the cleaner.
      *
      * @param \moodle_database $db Database used for the transaction.
      * @param rule_store $store Rule storage.
      * @param revision_registry $revisions Revision registry.
+     * @param sheet_store|null $sheets Compiled stylesheets.
      */
-    public function __construct(\moodle_database $db, rule_store $store, revision_registry $revisions) {
+    public function __construct(
+        \moodle_database $db,
+        rule_store $store,
+        revision_registry $revisions,
+        ?sheet_store $sheets = null
+    ) {
         $this->db = $db;
         $this->store = $store;
         $this->revisions = $revisions;
+        $this->sheets = $sheets;
     }
 
     /**
@@ -57,6 +67,7 @@ class rule_cleaner {
      * @return int Number of rules removed.
      */
     public function forget_delta(int $contextid): int {
+        $previous = $this->revisions->get_many([$contextid])[$contextid] ?? 0;
         $transaction = $this->db->start_delegated_transaction();
         try {
             $removed = $this->store->delete_by_delta($contextid) + $this->store->delete_by_context($contextid);
@@ -65,6 +76,9 @@ class rule_cleaner {
             $transaction->rollback($exception);
         }
         $transaction->allow_commit();
+        if ($this->sheets !== null) {
+            $this->sheets->forget($contextid, $previous);
+        }
         return $removed;
     }
 
@@ -76,6 +90,7 @@ class rule_cleaner {
      * @return int Number of rules removed.
      */
     public function forget_module(int $modulecontextid, int $coursecontextid): int {
+        $previous = $this->revisions->get_many([$coursecontextid])[$coursecontextid] ?? 0;
         $transaction = $this->db->start_delegated_transaction();
         try {
             $removed = $this->store->delete_by_context($modulecontextid);
@@ -86,6 +101,9 @@ class rule_cleaner {
             $transaction->rollback($exception);
         }
         $transaction->allow_commit();
+        if ($removed > 0 && $this->sheets !== null) {
+            $this->sheets->forget($coursecontextid, $previous);
+        }
         return $removed;
     }
 }

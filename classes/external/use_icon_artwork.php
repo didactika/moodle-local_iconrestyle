@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Web service: create or change a rule.
+ * Turns the file of an icon that Moodle ships into artwork.
  *
  * @package local_iconrestyle
  * @copyright 2026 Didactika.org
@@ -24,48 +24,55 @@
  */
 namespace local_iconrestyle\external;
 
-use local_iconrestyle\rule\rule_conflict_exception;
+use local_iconrestyle\asset\asset_rejected_exception;
 use local_iconrestyle\service_factory;
+use local_iconrestyle\slot\slot_key;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/compat.php');
 
 /**
- * Validates every value, checks the capability of the context and stores the rule in one transaction.
+ * An image icon cannot be recoloured as it is, so its own file becomes the artwork and the colour is painted through it.
  */
-class save_rule extends api {
+class use_icon_artwork extends api {
     /**
      * Parameters.
      *
      * @return parameters Description.
      */
     public static function execute_parameters(): parameters {
-        return new parameters(['rule' => rule_payload::input()]);
+        return new parameters(['slotkey' => new value(PARAM_RAW, 'Slot key of an image icon')]);
     }
 
     /**
-     * Save a rule.
+     * Store the file of an icon as artwork.
      *
-     * @param array $rule Rule fields.
-     * @return array The stored rule.
-     * @throws \moodle_exception When the rule changed since the editor read it.
+     * @param string $slotkey Slot key of an image icon.
+     * @return array The asset.
+     * @throws \moodle_exception When the icon has no file of its own or the file is refused.
      */
-    public static function execute(array $rule): array {
+    public static function execute(string $slotkey): array {
         global $USER;
-        $params = self::validate_parameters(self::execute_parameters(), ['rule' => $rule]);
+        $params = self::validate_parameters(self::execute_parameters(), ['slotkey' => $slotkey]);
         self::validate_context(\context_system::instance());
         $factory = service_factory::instance();
         $factory->permissions()->require_manage();
-
         try {
-            $stored = $factory->rule_service()->save(rule_payload::to_rule($params['rule']), (int)$USER->id);
-        } catch (rule_conflict_exception $exception) {
-            throw new \moodle_exception('ruleconflict', 'local_iconrestyle');
+            $slot = slot_key::parse($params['slotkey']);
         } catch (\InvalidArgumentException $exception) {
             throw new \invalid_parameter_exception($exception->getMessage());
         }
-        return rule_payload::export($stored);
+        $bytes = $factory->icon_files()->contents($slot);
+        if ($bytes === null) {
+            throw new \moodle_exception('noiconfile', 'local_iconrestyle');
+        }
+        try {
+            $asset = $factory->assets()->add($bytes, (int)$USER->id);
+        } catch (asset_rejected_exception $exception) {
+            throw new \moodle_exception('asset_rejected_' . $exception->reason(), 'local_iconrestyle');
+        }
+        return add_asset::export($asset);
     }
 
     /**
@@ -74,6 +81,6 @@ class save_rule extends api {
      * @return structure Description.
      */
     public static function execute_returns(): structure {
-        return rule_payload::output();
+        return add_asset::execute_returns();
     }
 }

@@ -25,6 +25,7 @@
 namespace local_iconrestyle\external;
 
 use local_iconrestyle\asset\asset_urls;
+use local_iconrestyle\rule\design;
 use local_iconrestyle\rule\rule;
 use local_iconrestyle\rule\rule_conflict_exception;
 use local_iconrestyle\service_factory;
@@ -49,13 +50,12 @@ class rule_payload {
             'contextid' => new value(PARAM_INT, 'Where the rule applies: the site, a category, a course or an activity'),
             'pages' => new listof(new value(PARAM_ALPHA, 'Kind of page'), 'Pages the rule is limited to', VALUE_DEFAULT, []),
             'regions' => new listof(new value(PARAM_ALPHA, 'Region'), 'Regions the rule is limited to', VALUE_DEFAULT, []),
+            'mode' => new value(PARAM_ALPHA, 'Colour mode: all, light or dark', VALUE_DEFAULT, 'all'),
             'painter' => new value(PARAM_ALPHA, 'color, mask, image or none', VALUE_DEFAULT, 'color'),
             'assetid' => new value(PARAM_INT, 'Artwork asset, zero for none', VALUE_DEFAULT, 0),
             'fg' => new value(PARAM_RAW, 'Foreground colour or token, empty for none', VALUE_DEFAULT, ''),
             'bg' => new value(PARAM_RAW, 'Background colour or token, empty for none', VALUE_DEFAULT, ''),
-            'shape' => new value(PARAM_ALPHA, 'none, square, rounded or circle, empty for none', VALUE_DEFAULT, ''),
-            'padding' => new value(PARAM_INT, 'Padding in hundredths of an em, -1 for none', VALUE_DEFAULT, -1),
-            'opacity' => new value(PARAM_INT, 'Opacity percentage, -1 for none', VALUE_DEFAULT, -1),
+            'design' => new value(PARAM_RAW, 'Design properties as a JSON object, empty for none', VALUE_DEFAULT, ''),
             'enabled' => new value(PARAM_BOOL, 'Whether the rule is applied', VALUE_DEFAULT, true),
             'rev' => new value(PARAM_INT, 'Revision the editor read, zero for a new rule', VALUE_DEFAULT, 0),
         ]);
@@ -75,15 +75,14 @@ class rule_payload {
             'contextkind' => new value(PARAM_ALPHA, 'site, category, course or activity'),
             'pages' => new listof(new value(PARAM_ALPHA, 'Kind of page'), 'Pages the rule is limited to'),
             'regions' => new listof(new value(PARAM_ALPHA, 'Region'), 'Regions the rule is limited to'),
+            'mode' => new value(PARAM_ALPHA, 'Colour mode: all, light or dark'),
             'painter' => new value(PARAM_ALPHA, 'Painter'),
             'assetid' => new value(PARAM_INT, 'Artwork asset, zero for none'),
             'asseturl' => new value(PARAM_RAW, 'Address of the artwork, empty for none'),
             'assetkind' => new value(PARAM_ALPHA, 'svg, png or webp, empty for none'),
             'fg' => new value(PARAM_RAW, 'Foreground, empty for none'),
             'bg' => new value(PARAM_RAW, 'Background, empty for none'),
-            'shape' => new value(PARAM_ALPHA, 'Shape, empty for none'),
-            'padding' => new value(PARAM_INT, 'Padding, -1 for none'),
-            'opacity' => new value(PARAM_INT, 'Opacity, -1 for none'),
+            'design' => new value(PARAM_RAW, 'Design properties as a JSON object, empty for none'),
             'enabled' => new value(PARAM_BOOL, 'Whether the rule is applied'),
             'rev' => new value(PARAM_INT, 'Revision for optimistic locking'),
         ]);
@@ -104,8 +103,13 @@ class rule_payload {
             if (!$context || !$factory->permissions()->supports($context)) {
                 throw new \InvalidArgumentException('Rules cannot apply in this context.');
             }
-            if (!$factory->catalogue()->find($input['slotkey'])) {
+            $entry = $factory->catalogue()->find($input['slotkey']);
+            if (!$entry) {
                 throw new \InvalidArgumentException('Unknown icon.');
+            }
+            if ($entry['kind'] === 'container') {
+                $own = in_array($input['painter'], [rule::PAINTER_MASK, rule::PAINTER_IMAGE], true);
+                $input['painter'] = $input['assetid'] > 0 ? ($own ? $input['painter'] : rule::PAINTER_MASK) : rule::PAINTER_NONE;
             }
             if ($input['assetid'] > 0 && !$factory->asset_store()->find($input['assetid'])) {
                 throw new \InvalidArgumentException('Unknown artwork.');
@@ -115,16 +119,16 @@ class rule_payload {
                 'assetid' => $input['assetid'] > 0 ? $input['assetid'] : null,
                 'fg' => $input['fg'],
                 'bg' => $input['bg'],
-                'shape' => $input['shape'] === '' ? null : $input['shape'],
-                'padding' => $input['padding'] >= 0 ? $input['padding'] : null,
-                'opacity' => $input['opacity'] >= 0 ? $input['opacity'] : null,
+                'design' => design::from_json($input['design']),
                 'enabled' => $input['enabled'],
                 'rev' => $input['rev'],
                 'pages' => $input['pages'],
                 'regions' => $input['regions'],
+                'mode' => $input['mode'],
             ];
             $slot = slot_key::parse($input['slotkey']);
-            $variant = (new rule(0, $context->id, $slot, ['pages' => $input['pages'], 'regions' => $input['regions']]))->variant();
+            $audience = ['pages' => $input['pages'], 'regions' => $input['regions'], 'mode' => $input['mode']];
+            $variant = (new rule(0, $context->id, $slot, $audience))->variant();
             $existing = $factory->rules()->find($context->id, $input['slotkey'], rule::TARGET_ICON, $variant);
             if ($lock && $existing && $existing->rev() !== (int)$input['rev']) {
                 throw new rule_conflict_exception('The rule changed since it was read.');
@@ -153,15 +157,14 @@ class rule_payload {
             'contextkind' => self::kind_of($context),
             'pages' => $rule->pages(),
             'regions' => $rule->regions(),
+            'mode' => $rule->mode(),
             'painter' => $rule->painter(),
             'assetid' => $asset ? $asset->id() : 0,
             'asseturl' => $asset ? asset_urls::public_url($asset) : '',
             'assetkind' => $asset ? $asset->kind() : '',
             'fg' => $rule->fg() ? $rule->fg()->stored() : '',
             'bg' => $rule->bg() ? $rule->bg()->stored() : '',
-            'shape' => (string)$rule->shape(),
-            'padding' => $rule->padding() ?? -1,
-            'opacity' => $rule->opacity() ?? -1,
+            'design' => $rule->design()->json() ?? '',
             'enabled' => $rule->enabled(),
             'rev' => $rule->rev(),
         ];

@@ -26,6 +26,7 @@ namespace local_iconrestyle\style;
 
 use local_iconrestyle\rule\module_scope;
 use local_iconrestyle\rule\rule;
+use local_iconrestyle\slot\glyph_signature;
 use local_iconrestyle\slot\glyph_signature_factory;
 
 /**
@@ -89,7 +90,8 @@ class stylesheet_compiler {
             if ($signature === null) {
                 continue;
             }
-            $blocks = $rule->styles_container() ? $this->container->paint($rule, $signature) : [];
+            $isbox = $signature->kind() === glyph_signature::KIND_CONTAINER;
+            $blocks = $rule->styles_container() || $isbox ? $this->container->paint($rule, $signature) : [];
             if (isset($this->artwork[$rule->painter()])) {
                 $blocks = $this->merge($blocks, $this->artwork[$rule->painter()]->paint($rule, $signature));
             }

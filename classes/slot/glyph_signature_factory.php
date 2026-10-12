@@ -47,8 +47,11 @@ class glyph_signature_factory {
      * @return glyph_signature|null Signature, or null for slots without icon markup.
      */
     public function for_slot(slot_key $slot): ?glyph_signature {
-        if ($slot->kind() !== slot_key::KIND_ICON) {
-            return null;
+        if ($slot->kind() === slot_key::KIND_PURPOSE) {
+            return glyph_signature::from_purpose($slot->name());
+        }
+        if ($slot->kind() === slot_key::KIND_ACTIVITY) {
+            return glyph_signature::from_activity_type($slot->name());
         }
         $mapped = $this->iconmap->all()[(string)$slot] ?? null;
         if ($mapped !== null) {
@@ -58,26 +61,5 @@ class glyph_signature_factory {
             }
         }
         return glyph_signature::from_image($slot->component(), $slot->name());
-    }
-
-    /**
-     * Slots that share one glyph with another slot.
-     *
-     * @return string[][] Slot keys grouped by signature identity, only groups with more than one slot.
-     */
-    public function shared_groups(): array {
-        $groups = [];
-        foreach (array_keys($this->iconmap->all()) as $key) {
-            if (!slot_key::is_valid($key)) {
-                continue;
-            }
-            $signature = $this->for_slot(slot_key::parse($key));
-            if ($signature !== null && $signature->kind() === glyph_signature::KIND_FONT) {
-                $groups[$signature->identity()][] = $key;
-            }
-        }
-        return array_filter($groups, function (array $slots): bool {
-            return count($slots) > 1;
-        });
     }
 }

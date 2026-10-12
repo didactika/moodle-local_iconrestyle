@@ -39,17 +39,17 @@ $functions = [
         'type' => 'read',
         'ajax' => true,
     ],
-    'local_iconrestyle_save_rule' => [
-        'classname' => 'local_iconrestyle\external\save_rule',
+    'local_iconrestyle_save_rules' => [
+        'classname' => 'local_iconrestyle\external\save_rules',
         'methodname' => 'execute',
-        'description' => 'Create or change an icon rule.',
+        'description' => 'Create, change and delete several icon rules in one step.',
         'type' => 'write',
         'ajax' => true,
     ],
-    'local_iconrestyle_delete_rule' => [
-        'classname' => 'local_iconrestyle\external\delete_rule',
+    'local_iconrestyle_use_icon_artwork' => [
+        'classname' => 'local_iconrestyle\external\use_icon_artwork',
         'methodname' => 'execute',
-        'description' => 'Delete an icon rule.',
+        'description' => 'Use the file of an icon that Moodle ships as artwork, so the icon can be recoloured.',
         'type' => 'write',
         'ajax' => true,
     ],
@@ -58,6 +58,29 @@ $functions = [
         'methodname' => 'execute',
         'description' => 'Sanitise and store uploaded icon artwork.',
         'type' => 'write',
+        'ajax' => true,
+    ],
+    'local_iconrestyle_get_stylesheet_url' => [
+        'classname' => 'local_iconrestyle\external\get_stylesheet_url',
+        'methodname' => 'execute',
+        'description' => 'Get the address of the stylesheet that the pages of the site load.',
+        'type' => 'read',
+        'ajax' => true,
+    ],
+    'local_iconrestyle_export_rules' => [
+        'classname' => 'local_iconrestyle\external\export_rules',
+        'methodname' => 'execute',
+        'description' => 'Export every icon rule of the site as a package that other sites can import.',
+        'type' => 'read',
+        'capabilities' => 'local/iconrestyle:exchange',
+        'ajax' => true,
+    ],
+    'local_iconrestyle_import_rules' => [
+        'classname' => 'local_iconrestyle\external\import_rules',
+        'methodname' => 'execute',
+        'description' => 'Import icon rules from a package, or say what importing it would do.',
+        'type' => 'write',
+        'capabilities' => 'local/iconrestyle:exchange',
         'ajax' => true,
     ],
     'local_iconrestyle_search_locations' => [

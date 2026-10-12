@@ -34,6 +34,9 @@ final class glyph_signature {
     /** @var string Image icon element. */
     public const KIND_IMAGE = 'image';
 
+    /** @var string Coloured box Moodle draws around an activity icon. */
+    public const KIND_CONTAINER = 'container';
+
     /** @var string[] Font Awesome families that name their glyphs explicitly. */
     private const NAMED_FAMILIES = ['fa-regular', 'fa-brands', 'fa-light', 'fa-thin', 'fa-duotone', 'fa-sharp'];
 
@@ -121,6 +124,26 @@ final class glyph_signature {
     }
 
     /**
+     * Build the signature of the box around every activity icon of one purpose.
+     *
+     * @param string $purpose Purpose such as assessment.
+     * @return self|null Signature, or null when the name cannot be a class.
+     */
+    public static function from_purpose(string $purpose): ?self {
+        return preg_match('/^[a-z0-9_]+$/', $purpose) ? new self(self::KIND_CONTAINER, [], [], 'purpose', $purpose) : null;
+    }
+
+    /**
+     * Build the signature of the box around the icon of one kind of activity.
+     *
+     * @param string $modname Name of the activity module such as assign.
+     * @return self|null Signature, or null when the name cannot be a class.
+     */
+    public static function from_activity_type(string $modname): ?self {
+        return preg_match('/^[a-z0-9_]+$/', $modname) ? new self(self::KIND_CONTAINER, [], [], 'activity', $modname) : null;
+    }
+
+    /**
      * Kind of element.
      *
      * @return string One of the KIND constants.
@@ -135,8 +158,8 @@ final class glyph_signature {
      * @return string Identity.
      */
     public function identity(): string {
-        if ($this->kind === self::KIND_IMAGE) {
-            return 'image:' . $this->component . '/' . $this->image;
+        if ($this->kind === self::KIND_IMAGE || $this->kind === self::KIND_CONTAINER) {
+            return $this->kind . ':' . $this->component . '/' . $this->image;
         }
         return 'font:' . implode(' ', $this->required) . '|' . implode(' ', $this->excluded);
     }
@@ -173,6 +196,17 @@ final class glyph_signature {
      * @return string[] Selectors.
      */
     public function selectors(string $prefix): array {
+        if ($this->kind === self::KIND_CONTAINER) {
+            if ($this->component === 'purpose') {
+                return [$prefix . '.activityiconcontainer.' . $this->image];
+            }
+            // Moodle marks the type of an activity on the list item of the course page, and on the box itself everywhere else:
+            // in the activity chooser, in the header of the activity, in the help of the chooser and in the question banks.
+            return [
+                $prefix . '.modtype_' . $this->image . ' .activityiconcontainer',
+                $prefix . '.activityiconcontainer.modicon_' . $this->image,
+            ];
+        }
         if ($this->kind === self::KIND_FONT) {
             $selector = $prefix . '.icon';
             foreach ($this->required as $class) {

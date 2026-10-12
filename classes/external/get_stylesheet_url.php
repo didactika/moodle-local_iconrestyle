@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Web service: remove a rule so the icon inherits again.
+ * The address of the stylesheet that the pages of the site load.
  *
  * @package local_iconrestyle
  * @copyright 2026 Didactika.org
@@ -24,6 +24,7 @@
  */
 namespace local_iconrestyle\external;
 
+use local_iconrestyle\hook\head_callbacks;
 use local_iconrestyle\service_factory;
 
 defined('MOODLE_INTERNAL') || die();
@@ -31,30 +32,29 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/compat.php');
 
 /**
- * Deleting a rule lets the rules that are less specific, or Moodle's own icon, show through again.
+ * The designer asks for it after saving, so every icon on its own page shows what was just saved without a reload.
  */
-class delete_rule extends api {
+class get_stylesheet_url extends api {
     /**
      * Parameters.
      *
      * @return parameters Description.
      */
     public static function execute_parameters(): parameters {
-        return new parameters(['id' => new value(PARAM_INT, 'Rule id')]);
+        return new parameters([]);
     }
 
     /**
-     * Delete a rule.
+     * Address of the stylesheet of the site.
      *
-     * @param int $id Rule id.
-     * @return bool True when a rule was deleted.
+     * @return string Address, empty when no rule applies.
      */
-    public static function execute(int $id): bool {
-        $params = self::validate_parameters(self::execute_parameters(), ['id' => $id]);
+    public static function execute(): string {
+        self::validate_parameters(self::execute_parameters(), []);
         self::validate_context(\context_system::instance());
-        $factory = service_factory::instance();
-        $factory->permissions()->require_manage();
-        return $factory->rule_service()->delete_by_id($params['id']);
+        service_factory::instance()->permissions()->require_manage();
+        $url = head_callbacks::stylesheet_url(\context_system::instance());
+        return $url === null ? '' : $url->out(false);
     }
 
     /**
@@ -63,6 +63,6 @@ class delete_rule extends api {
      * @return value Description.
      */
     public static function execute_returns(): value {
-        return new value(PARAM_BOOL, 'Whether a rule was deleted');
+        return new value(PARAM_RAW, 'Address of the stylesheet, empty when no rule applies');
     }
 }
