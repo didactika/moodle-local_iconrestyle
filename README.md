@@ -6,12 +6,12 @@
 
 *Give every icon of your Moodle its own look, from one designer, without touching the theme*
 
-[![Release](https://img.shields.io/github/v/release/didactika/moodle-local_iconrestyle?filter=v4.*&style=flat-square)](https://github.com/didactika/moodle-local_iconrestyle/releases)
-[![Moodle](https://img.shields.io/badge/Moodle-4.0%E2%80%935.2-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
-[![PHP](https://img.shields.io/badge/PHP-7.4+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
+[![Release](https://img.shields.io/github/v/release/didactika/moodle-local_iconrestyle?filter=v5.3.*&style=flat-square)](https://github.com/didactika/moodle-local_iconrestyle/releases)
+[![Moodle](https://img.shields.io/badge/Moodle-5.3-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
+[![PHP](https://img.shields.io/badge/PHP-8.3+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
 [![License](https://img.shields.io/badge/License-GPL_v3-blue?style=flat-square)](LICENSE)
 
-[Overview](#overview) • [Installation](#installation) • [Usage](#usage) • [User manual](#user-manual) • [Configuration](#configuration) • [Command line](#command-line) • [Performance](#performance) • [Troubleshooting](#troubleshooting)
+[Overview](#overview) • [Technology](#technology) • [Installation](#installation) • [Usage](#usage) • [User manual](#user-manual) • [Configuration](#configuration) • [Command line](#command-line) • [Performance](#performance) • [Troubleshooting](#troubleshooting)
 
 </div>
 
@@ -31,9 +31,13 @@ Icon Restyle (**local_iconrestyle**) changes how Moodle draws its icons without 
 - **Export and import** between sites, of everything or only the icons you choose, with a review step before anything changes.
 - **Safe and fast**: every value is typed and range-checked, a stylesheet is compiled once however many visitors ask for it, and limits stop a site from growing the stylesheets past what a browser handles well.
 
+## Technology
+
+The designer is a React 19 application written in TypeScript, mounted by Moodle's own `core/react_autoinit` from a component that implements `core\output\react_component_renderable`. The source is in `js/esm/src` and the build that Moodle serves is committed in `js/esm/build`; rebuild it with `npx grunt esm` from the root of Moodle. The server side (rules, limits, delivery, export and import) is the same as in the maintenance line for Moodle 4.0 to 5.2.
+
 ## Installation
 
-**Requirements:** Moodle 4.0 to 5.2 on this branch, PHP 7.4 or newer and the database requirements of the selected Moodle release. A separate line of the plugin targets Moodle 5.3 and later with a React interface.
+**Requirements:** Moodle 5.3, PHP 8.3 or newer and the database requirements of the selected Moodle release. This distribution's release is **5.3.0**. Moodle 4.0 to 5.2 have a maintenance line of their own (`MOODLE_400_STABLE`) with the same features and an interface written in AMD and Mustache.
 
 **From a release:** download the matching release ZIP, open **Site administration → Plugins → Install plugins**, upload the package and follow the prompts.
 
@@ -41,11 +45,11 @@ Icon Restyle (**local_iconrestyle**) changes how Moodle draws its icons without 
 
 ```bash
 cd /path/to/moodle
-git clone --branch MOODLE_400_STABLE https://github.com/didactika/moodle-local_iconrestyle.git local/iconrestyle
+git clone --branch main https://github.com/didactika/moodle-local_iconrestyle.git public/local/iconrestyle
 php admin/cli/upgrade.php --non-interactive
 ```
 
-From Moodle 5.1 the plugin directory is `public/local/iconrestyle`.
+The plugin directory in Moodle 5.3 is `public/local/iconrestyle`.
 
 ## Usage
 

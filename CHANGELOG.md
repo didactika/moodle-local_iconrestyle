@@ -21,6 +21,10 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+### Changed
+
+- The designer is a React and TypeScript application for Moodle 5.3, mounted by `core/react_autoinit`, in place of the AMD modules and Mustache templates of the Moodle 4.0 to 5.2 line. It keeps the same features, markup contract and styles.
+
 ### Added
 
 - A user manual with screenshots (`docs/user-manual`), written in the format of a GitHub wiki, a performance report of the mass benchmarks (`docs/performance-report.md`) and an icon for the plugin in the colours of Didactika.
