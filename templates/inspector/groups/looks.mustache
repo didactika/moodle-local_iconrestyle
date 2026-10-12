@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_iconrestyle/inspector/groups/looks
+
+    The looks group of the style tab: ready-made looks as tiles.
+
+    Example context (json):
+    {}
+}}
+<details class="irs-group" open>
+    <summary>{{#str}}grouplooks, local_iconrestyle{{/str}}</summary>
+    <div class="irs-looks" data-looks>
+        <button type="button" class="irs-look irs-look-flat" data-action="look" data-look="flat"
+            data-kinds="container" title="{{#str}}presetflathelp, local_iconrestyle{{/str}}">
+            <span class="irs-look-sample" aria-hidden="true"></span>
+            <span class="irs-look-name">{{#str}}presetflat, local_iconrestyle{{/str}}</span>
+        </button>
+        <button type="button" class="irs-look irs-look-box" data-action="look" data-look="box"
+            data-kinds="container" title="{{#str}}presetboxhelp, local_iconrestyle{{/str}}">
+            <span class="irs-look-sample" aria-hidden="true"></span>
+            <span class="irs-look-name">{{#str}}presetbox, local_iconrestyle{{/str}}</span>
+        </button>
+        <button type="button" class="irs-look irs-look-pill" data-action="look" data-look="pill"
+            data-kinds="container" title="{{#str}}lookpillhelp, local_iconrestyle{{/str}}">
+            <span class="irs-look-sample" aria-hidden="true"></span>
+            <span class="irs-look-name">{{#str}}lookpill, local_iconrestyle{{/str}}</span>
+        </button>
+        <button type="button" class="irs-look irs-look-tile" data-action="look" data-look="tile"
+            data-kinds="font image" title="{{#str}}looktilehelp, local_iconrestyle{{/str}}">
+            <span class="irs-look-sample" aria-hidden="true"></span>
+            <span class="irs-look-name">{{#str}}looktile, local_iconrestyle{{/str}}</span>
+        </button>
+        <button type="button" class="irs-look irs-look-badge" data-action="look" data-look="badge"
+            data-kinds="font image" title="{{#str}}lookbadgehelp, local_iconrestyle{{/str}}">
+            <span class="irs-look-sample" aria-hidden="true"></span>
+            <span class="irs-look-name">{{#str}}lookbadge, local_iconrestyle{{/str}}</span>
+        </button>
+        <button type="button" class="irs-look irs-look-outline" data-action="look" data-look="outline"
+            data-kinds="font image" title="{{#str}}lookoutlinehelp, local_iconrestyle{{/str}}">
+            <span class="irs-look-sample" aria-hidden="true"></span>
+            <span class="irs-look-name">{{#str}}lookoutline, local_iconrestyle{{/str}}</span>
+        </button>
+    </div>
+    <p class="irs-hint">{{#str}}lookshint, local_iconrestyle{{/str}}</p>
+</details>

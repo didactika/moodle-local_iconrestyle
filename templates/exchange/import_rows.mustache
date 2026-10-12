@@ -1,0 +1,47 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_iconrestyle/exchange/import_rows
+
+    The icons of a package, each with a box to choose it, what would happen to it and how many rules it has.
+
+    Context variables required for this template:
+    * rows - the icons: slot, rules, isnew, updates, skipped, disabled and checked
+    * more - text that says the list was cut, empty when it was not
+    * none - whether no icon matches
+
+    Example context (json):
+    {
+        "rows": [
+            {"slot": "core:a/setting", "rules": 4, "isnew": false, "updates": true, "skipped": false, "disabled": false, "checked": true},
+            {"slot": "core:t/delete", "rules": 1, "isnew": true, "updates": false, "skipped": false, "disabled": false, "checked": true}
+        ],
+        "more": "",
+        "none": false
+    }
+}}
+{{#rows}}
+<label class="irs-review-row{{#disabled}} irs-disabled{{/disabled}}"><input type="checkbox" data-region="import-row" value="{{slot}}"{{#checked}} checked{{/checked}}{{#disabled}} disabled{{/disabled}}>
+    <span class="irs-review-name">{{slot}}</span>
+    <span class="irs-review-rules">{{#str}}importrules, local_iconrestyle, {{rules}}{{/str}}</span>
+    {{#isnew}}<span class="irs-state irs-state-new">{{#str}}importrownew, local_iconrestyle{{/str}}</span>{{/isnew}}
+    {{#updates}}<span class="irs-state irs-state-updates">{{#str}}importrowupdates, local_iconrestyle{{/str}}</span>{{/updates}}
+    {{#skipped}}<span class="irs-state irs-state-skipped">{{#str}}importrowskipped, local_iconrestyle{{/str}}</span>{{/skipped}}
+</label>
+{{/rows}}
+{{#more}}<p class="irs-theme-note">{{more}}</p>{{/more}}
+{{#none}}<p class="irs-theme-note">{{#str}}importnoresults, local_iconrestyle{{/str}}</p>{{/none}}

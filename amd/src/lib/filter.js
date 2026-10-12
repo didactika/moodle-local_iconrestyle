@@ -29,18 +29,49 @@
  */
 const words = (text) => String(text).toLowerCase().split(/[\s/:_-]+/).filter((word) => word !== '');
 
+const NONE = new Set();
+
+/**
+ * Put icons in the order the person asked for.
+ *
+ * @param {Array} icons Icons, already filtered.
+ * @param {string} sort catalogue, name, component or modified.
+ * @param {Set<string>} modified Keys of the icons that have customisations.
+ * @returns {Array} The same icons in a new array, in order. The catalogue order is the one they already have.
+ */
+export const sortIcons = (icons, sort, modified) => {
+    if (sort === 'name') {
+        return [...icons].sort((a, b) => a.name.localeCompare(b.name) || a.component.localeCompare(b.component));
+    }
+    if (sort === 'component') {
+        return [...icons].sort((a, b) => a.component.localeCompare(b.component) || a.name.localeCompare(b.name));
+    }
+    if (sort === 'modified') {
+        return [...icons].sort((a, b) => Number(modified.has(b.key)) - Number(modified.has(a.key)));
+    }
+    return icons;
+};
+
 /**
  * Filter icons.
  *
  * Every word must appear in the key, so "forum mono" finds mod_forum:monologo.
  *
  * @param {Array<{key: string, kind: string, group: number}>} icons Catalogue entries.
- * @param {{query: string, kind: string, state: string, modified: Set<string>}} options Filters. Kind is all, font or image.
- *     State is all, modified or shared.
+ * @param {object} options Filters: query, kind (all, font, image or container), state (all, modified or shared), modified (a set
+ *     of keys), kinds, components, purposes, places and modes (any of them) and traits (all of them must be met, among
+ *     them untouched, modified and shared) as arrays, and traitsOf(key), which gives the traits of a customised icon.
  * @returns {Array} Entries that pass every filter, in catalogue order.
  */
-export const filterIcons = (icons, {query = '', kind = 'all', state = 'all', modified = new Set()} = {}) => {
+export const filterIcons = (icons, options = {}) => {
+    const {
+        query = '', kind = 'all', state = 'all', kinds = [], modified = new Set(), components = [], purposes = [], traits = [],
+        places = [], modes = [], traitsOf = () => NONE,
+    } = options;
     const wanted = words(query);
+    const status = ['untouched', 'modified', 'shared'];
+    const all = traits.filter((trait) => !status.includes(trait));
+    const needTraits = all.length > 0 || places.length > 0 || modes.length > 0;
     return icons.filter((icon) => {
         if (kind !== 'all' && icon.kind !== kind) {
             return false;
@@ -50,6 +81,26 @@ export const filterIcons = (icons, {query = '', kind = 'all', state = 'all', mod
         }
         if (state === 'shared' && icon.group < 2) {
             return false;
+        }
+        if (kinds.length > 0 && !kinds.includes(icon.kind)) {
+            return false;
+        }
+        if (components.length > 0 && !components.includes(icon.component)) {
+            return false;
+        }
+        if (purposes.length > 0 && !purposes.includes(icon.purpose)) {
+            return false;
+        }
+        if ((traits.includes('untouched') && modified.has(icon.key)) || (traits.includes('modified') && !modified.has(icon.key)) ||
+            (traits.includes('shared') && icon.group < 2)) {
+            return false;
+        }
+        if (needTraits) {
+            const have = traitsOf(icon.key);
+            const anyOf = (prefix, list) => list.length === 0 || list.some((name) => have.has(`${prefix}:${name}`));
+            if (!all.every((trait) => have.has(trait)) || !anyOf('place', places) || !anyOf('mode', modes)) {
+                return false;
+            }
         }
         const haystack = icon.key.toLowerCase();
         return wanted.every((word) => haystack.includes(word));

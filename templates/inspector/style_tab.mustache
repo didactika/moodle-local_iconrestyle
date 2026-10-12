@@ -1,0 +1,41 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_iconrestyle/inspector/style_tab
+
+    The style tab of the editing panel, made of groups of properties.
+
+    Example context (json):
+    {}
+}}
+<div class="irs-tabpanel" role="tabpanel" id="irs-panel-style" aria-labelledby="irs-tab-style" data-region="tab-style">
+    {{> local_iconrestyle/inspector/groups/looks}}
+
+    {{> local_iconrestyle/inspector/groups/colour}}
+
+    {{> local_iconrestyle/inspector/groups/artwork}}
+
+    {{> local_iconrestyle/inspector/groups/shape}}
+
+    {{> local_iconrestyle/inspector/groups/spacing}}
+
+    {{> local_iconrestyle/inspector/groups/transform}}
+
+    {{> local_iconrestyle/inspector/groups/effects}}
+
+    {{> local_iconrestyle/inspector/groups/filters}}
+</div>

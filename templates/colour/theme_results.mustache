@@ -1,0 +1,63 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_iconrestyle/colour/theme_results
+
+    The choices of the theme colour list: fixed choices, the colours the theme declares that match the search, and the
+    variable that was typed when the theme does not declare it.
+
+    Context variables required for this template:
+    * specials - choices that are not theme variables, each with value and label
+    * items - theme colours, each with name, value (what is stored) and shown (the colour the theme gives it)
+    * more - whether there are more matches than are shown
+    * custom - the variable that was typed, with name and value, or null
+    * none - whether there is nothing to show
+
+    Example context (json):
+    {
+        "specials": [{"value": "transparent", "label": "None (no colour)"}],
+        "items": [{"name": "--bs-primary", "value": "var:--bs-primary", "shown": "#0f6cbf"}],
+        "more": false,
+        "custom": null,
+        "none": false
+    }
+}}
+{{#specials}}
+    <button type="button" class="irs-theme-item" data-value="{{value}}">
+        <span class="irs-swatch irs-swatch-none" aria-hidden="true"></span>
+        <span class="irs-theme-name">{{label}}</span>
+    </button>
+{{/specials}}
+{{#items}}
+    <button type="button" class="irs-theme-item" data-value="{{value}}">
+        <span class="irs-swatch" style="background: var({{name}})" aria-hidden="true"></span>
+        <span class="irs-theme-name">{{name}}</span>
+        <span class="irs-theme-value">{{shown}}</span>
+    </button>
+{{/items}}
+{{#custom}}
+    <button type="button" class="irs-theme-item" data-value="{{value}}">
+        <span class="irs-swatch" style="background: var({{name}})" aria-hidden="true"></span>
+        <span class="irs-theme-name">{{#str}}themecolourcustom, local_iconrestyle, {{name}}{{/str}}</span>
+    </button>
+{{/custom}}
+{{#more}}
+    <p class="irs-theme-note">{{#str}}themecoloursmore, local_iconrestyle{{/str}}</p>
+{{/more}}
+{{#none}}
+    <p class="irs-theme-note">{{#str}}nothemecolours, local_iconrestyle{{/str}}</p>
+{{/none}}

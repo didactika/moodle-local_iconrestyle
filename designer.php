@@ -30,12 +30,13 @@ use local_iconrestyle\output\designer_page;
 use local_iconrestyle\service_factory;
 
 admin_externalpage_setup('local_iconrestyle_designer');
+$PAGE->set_pagelayout('report');
+$PAGE->add_body_class('local-iconrestyle-designer');
 service_factory::instance()->permissions()->require_manage();
 
 $page = new designer_page();
-$PAGE->requires->js_call_amd('local_iconrestyle/designer', 'init');
+$PAGE->requires->js_call_amd('local_iconrestyle/designer/index', 'init');
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('designer', 'local_iconrestyle'));
-echo $OUTPUT->render_from_template('local_iconrestyle/designer', $page->export_for_template($OUTPUT));
+echo $OUTPUT->render_from_template('local_iconrestyle/designer/page', $page->export_for_template($OUTPUT));
 echo $OUTPUT->footer();

@@ -1,0 +1,45 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_iconrestyle/places/variant_chips
+
+    The variants of the selected icon, one chip for each place where it applies.
+
+    Context variables required for this template:
+    * variants - the variants, each with key, label, active and removable
+
+    Example context (json):
+    {
+        "variants": [
+            {"key": "core:a/setting#1||", "label": "Everywhere", "active": true, "removable": false},
+            {"key": "core:a/setting#7|admin|", "label": "Faculty of Arts · Administration pages", "active": false,
+                "removable": true}
+        ]
+    }
+}}
+{{#variants}}
+<span class="irs-chip{{#active}} irs-active{{/active}}{{#removable}} irs-has-x{{/removable}}">
+    <button type="button" class="irs-chip-label" data-action="pick-variant" data-key="{{key}}"
+        aria-pressed="{{#active}}true{{/active}}{{^active}}false{{/active}}">{{label}}</button>
+    {{#removable}}
+    <button type="button" class="irs-x" data-action="remove-chip" data-key="{{key}}"
+        aria-label="{{#str}}removeplace, local_iconrestyle, {{label}}{{/str}}" title="{{#str}}removeplace, local_iconrestyle, {{label}}{{/str}}">
+        {{> local_iconrestyle/common/icon_close}}
+    </button>
+    {{/removable}}
+</span>
+{{/variants}}
