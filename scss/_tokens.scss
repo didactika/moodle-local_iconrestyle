@@ -25,6 +25,7 @@
     --irs-accent: var(--bs-primary, var(--primary, #0f6cbf));
     --irs-accent-soft: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
     --irs-accent-text: var(--irs-accent);
+    --irs-accent-ring: var(--irs-accent-soft);
     --irs-on-accent: #fff;
     --irs-danger: var(--bs-danger, var(--danger, #ca3120));
     --irs-danger-soft: var(--bs-danger-bg-subtle, #f8d7da);
@@ -44,6 +45,7 @@
     .irs {
         --irs-accent-soft: color-mix(in srgb, var(--irs-accent) 14%, var(--irs-surface));
         --irs-accent-text: color-mix(in srgb, var(--irs-accent) 80%, var(--irs-text));
+        --irs-accent-ring: color-mix(in srgb, var(--irs-accent) 25%, transparent);
         --irs-danger-soft: color-mix(in srgb, var(--irs-danger) 14%, var(--irs-surface));
         --irs-danger-text: color-mix(in srgb, var(--irs-danger) 80%, var(--irs-text));
         --irs-success-soft: color-mix(in srgb, var(--irs-success) 16%, var(--irs-surface));

@@ -22,6 +22,7 @@
     --irs-accent: var(--bs-primary, var(--primary, #0f6cbf));
     --irs-accent-soft: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
     --irs-accent-text: var(--irs-accent);
+    --irs-accent-ring: var(--irs-accent-soft);
     --irs-on-accent: #fff;
     --irs-danger: var(--bs-danger, var(--danger, #ca3120));
     --irs-danger-soft: var(--bs-danger-bg-subtle, #f8d7da);
@@ -42,6 +43,7 @@
     .irs {
         --irs-accent-soft: color-mix(in srgb, var(--irs-accent) 14%, var(--irs-surface));
         --irs-accent-text: color-mix(in srgb, var(--irs-accent) 80%, var(--irs-text));
+        --irs-accent-ring: color-mix(in srgb, var(--irs-accent) 25%, transparent);
         --irs-danger-soft: color-mix(in srgb, var(--irs-danger) 14%, var(--irs-surface));
         --irs-danger-text: color-mix(in srgb, var(--irs-danger) 80%, var(--irs-text));
         --irs-success-soft: color-mix(in srgb, var(--irs-success) 16%, var(--irs-surface));
@@ -1224,6 +1226,11 @@
     font-size: 0.875rem;
 }
 
+.irs .irs-search .form-control:focus {
+    border-color: var(--irs-accent);
+    box-shadow: 0 0 0 0.2rem var(--irs-accent-ring);
+}
+
 .irs .irs-filter.irs-active,
 .irs .irs-search .form-control.irs-active {
     border-color: var(--irs-accent);
@@ -1999,18 +2006,19 @@
 }
 
 .irs .irs-count-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 1.25rem;
-    height: 1.25rem;
-    padding: 0 0.3125rem;
-    border-radius: 999px;
+    position: absolute;
+    top: -0.45rem;
+    right: -0.45rem;
+    min-width: 1.15rem;
+    height: 1.15rem;
+    padding: 0 0.3rem;
+    border-radius: 1rem;
     background: var(--irs-accent);
     color: var(--irs-on-accent);
-    font-size: 0.6875rem;
-    font-weight: 700;
-    line-height: 1;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.15rem;
+    text-align: center;
 }
 
 .irs .irs-count-badge[hidden] {
@@ -2031,11 +2039,20 @@
     font-weight: 600;
 }
 
+.irs .irs-filtersbtn {
+    position: relative;
+}
+
 .irs .irs-filtersbtn[aria-expanded=true],
 .irs .irs-filtersbtn.irs-active {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
     color: var(--irs-accent-text);
+}
+
+.irs .irs-filtersbtn[aria-expanded=true],
+.irs .irs-filtersbtn:focus-visible {
+    box-shadow: 0 0 0 0.2rem var(--irs-accent-ring);
 }
 
 .irs .irs-filters-panel {

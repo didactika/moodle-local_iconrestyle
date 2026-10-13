@@ -21,29 +21,20 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
-## [4.0.3] - 2026-10-13
+## [4.0.3] - 2026-10-14
+
+### Fixed
+
+- Colours that did not come from the theme. On Moodle 4.x, which is Bootstrap 4 and names its colours `--primary` and `--primary-light`, the import review, the form of places and the selection bar fell back to a fixed blue (`var(--bs-primary, #0f6cbf)`), so a piece of a teal theme had a teal fill, a blue border and blue text. Every colour of the plugin now comes from one set of tokens (`scss/_tokens.scss`) that reads the theme (`--bs-*` on Moodle 5, `--primary`, `--danger`... on Moodle 4) and ends in the colour Boost has; the soft fills, the text on them, the border and the states (new, updates, danger, success, warning) are mixed from the colour of the theme with `color-mix()` where the browser has it, so they are one hue and follow the theme and the colour mode. Check boxes and radio buttons of the designer take the colour of the theme too, and the white of a text on the colour of the theme no longer turns dark in dark mode.
+- A look that applies to every colour mode, made before the site had colour modes, kept being served after the designer showed its light or dark variant empty or removed: the pages in the other modes, and any property the new variant did not set, still showed it, while the preview showed only the open variant. The designer now opens a mode with the look that the pages show in it, and the first change or removal in a mode gives every mode its own copy of that look, so each mode can be changed or removed on its own. It is the fix of release 5.3.1 of the Moodle 5.3 line, here for Moodle 5.0 to 5.2, the only ones of this line that have colour modes.
+- The lists that open under a button or a field (the theme colours of a colour field, the filters and the menu of the toolbar) stayed where they were opened while the page, or the panel that holds the field, scrolled. They now follow their button or field as it moves, and close when it scrolls out of sight.
+- The number of filters that are on is a badge on the corner of the Filters button, as in the service manager, so the button no longer grows when a filter is applied. The open or applied Filters button and the focused search field use the colour of the theme for the border and the focus ring.
 
 ### Changed
 
 - The web service classes use the `core_external` names and a plugin class, `local_iconrestyle\compat\external_aliases`, declares them as aliases on Moodle 4.0 and 4.1, in place of the `compat.php` file that every class loaded with a manual `require_once`.
 - The kinds of icon that a look applies to are written separated by a comma in the template (`data-kinds="font,image"`).
 - The `Content-Length` of the stylesheet and of an artwork is computed before the header is written.
-
-## [4.0.2] - 2026-10-13
-
-### Fixed
-
-- Colours that did not come from the theme. On Moodle 4.x, which is Bootstrap 4 and names its colours `--primary` and `--primary-light`, the import review, the form of places and the selection bar fell back to a fixed blue (`var(--bs-primary, #0f6cbf)`), so a piece of a teal theme had a teal fill, a blue border and blue text. Every colour of the plugin now comes from one set of tokens (`scss/_tokens.scss`) that reads the theme (`--bs-*` on Moodle 5, `--primary`, `--danger`... on Moodle 4) and ends in the colour Boost has; the soft fills, the text on them, the border and the states (new, updates, danger, success, warning) are mixed from the colour of the theme with `color-mix()` where the browser has it, so they are one hue and follow the theme and the colour mode. Check boxes and radio buttons of the designer take the colour of the theme too, and the white of a text on the colour of the theme no longer turns dark in dark mode.
-
-### Fixed
-
-- A look that applies to every colour mode, made before the site had colour modes, kept being served after the designer showed its light or dark variant empty or removed: the pages in the other modes, and any property the new variant did not set, still showed it, while the preview showed only the open variant. The designer now opens a mode with the look that the pages show in it, and the first change or removal in a mode gives every mode its own copy of that look, so each mode can be changed or removed on its own. It is the fix of release 5.3.1 of the Moodle 5.3 line, here for Moodle 5.0 to 5.2, the only ones of this line that have colour modes.
-
-## [4.0.2] - 2026-10-14
-
-### Fixed
-
-- The lists that open under a button or a field (the theme colours of a colour field, the filters and the menu of the toolbar) stayed where they were opened while the page, or the panel that holds the field, scrolled. They now follow their button or field as it moves, and close when it scrolls out of sight.
 
 ## [4.0.1] - 2026-10-13
 

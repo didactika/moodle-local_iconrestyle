@@ -58,6 +58,11 @@
         }
     }
 
+    .irs-search .form-control:focus {
+        border-color: var(--irs-accent);
+        box-shadow: 0 0 0 0.2rem var(--irs-accent-ring);
+    }
+
     .irs-filter.irs-active,
     .irs-search .form-control.irs-active {
         border-color: var(--irs-accent);
@@ -74,7 +79,7 @@
         border-radius: 999px;
         font-size: 0.8125rem;
 
-        option {
+        & option {
             background-color: var(--irs-surface);
             color: var(--irs-text);
             font-weight: 400;
@@ -220,7 +225,7 @@
             font-size: 0.6875rem;
         }
 
-        hr {
+        & hr {
             margin: 0.25rem 0;
         }
     }
@@ -285,7 +290,7 @@
             left: 0;
         }
 
-        em {
+        & em {
             margin-left: auto;
             padding: 0 0.5rem;
             border-radius: 999px;
