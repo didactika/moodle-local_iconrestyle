@@ -21,86 +21,18 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
-## [4.0.3] - 2026-10-14
+## [1.0.0-m400] - 2026-10-11
+
+First release of the Moodle 4.0 to 5.2 line, on `MOODLE_400_STABLE`. The Moodle 5.3 line is on `main` (1.0.0-m503).
 
 ### Added
 
-- The designer lists every image icon that Moodle can show: the files of every pix folder of core, of its subsystems, of every plugin and of the themes, at any depth and in any of the formats that Moodle serves (SVG, PNG, GIF, JPEG, WebP and ICO). The list only had the SVG and PNG files at the first level of the pix folder, which left out around seven hundred icons of a default site.
-- The colour mode and moon icons of the designer are registered in Moodle's icon map (`local_iconrestyle:colour_mode` and `local_iconrestyle:moon`), so they are drawn with the pix helper and appear among the icons that can be restyled; a Font Awesome class written in a template and absent from the map is not found by the designer.
-- Every icon of the designer is an icon of Moodle (the ones that Font Awesome draws, through `pix` on Moodle 4.x), so a site can restyle them; none is drawn as an SVG written by hand any more. The placeholders that hold the place while the designer loads are at least a hundred squares.
-- The designer shows grey blocks where the bar and the icons will be while it loads, instead of a blank page: before the component is there on Moodle 5.3, and over the empty list until the icons are drawn on Moodle 4.x.
-
-### Fixed
-
-- The web service functions check the capability themselves with `require_capability()` in the method that runs them, with the context that they validated, instead of through a helper, so the check is where a reader and a reviewer look for it. The headers of the length of the stylesheet and of the artwork are written from a name and a value.
-- A restyled icon was not replaced when the markup that draws it did not carry the class `icon` that Moodle writes, and when it was replaced it could be blank because the picture took the width of an element that had none. An icon is found by its glyph class whatever else its markup carries, and the picture has a size of its own.
-- The designer follows the room it has and not the size of the window: when a drawer of Moodle (the blocks, the bookmarks) is open the list and the panel of an icon go one above the other as soon as the content is narrow, and the bar over the list no longer overlaps them.
-- The search field and the pills of the bar (Back, Filters, Select) have the same, stronger border, and the field follows the colour of the theme when it has text or the focus.
-- The funnel of the Filters button and the reload icon that resets the filters are icons of Moodle, drawn by its icon system, instead of SVG written by hand, so a site can restyle them.
-- Colours that did not come from the theme. On Moodle 4.x, which is Bootstrap 4 and names its colours `--primary` and `--primary-light`, the import review, the form of places and the selection bar fell back to a fixed blue (`var(--bs-primary, #0f6cbf)`), so a piece of a teal theme had a teal fill, a blue border and blue text. Every colour of the plugin now comes from one set of tokens (`scss/_tokens.scss`) that reads the theme (`--bs-*` on Moodle 5, `--primary`, `--danger`... on Moodle 4) and ends in the colour Boost has; the soft fills, the text on them, the border and the states (new, updates, danger, success, warning) are mixed from the colour of the theme with `color-mix()` where the browser has it, so they are one hue and follow the theme and the colour mode. Check boxes and radio buttons of the designer take the colour of the theme too, and the white of a text on the colour of the theme no longer turns dark in dark mode.
-- A look that applies to every colour mode, made before the site had colour modes, kept being served after the designer showed its light or dark variant empty or removed: the pages in the other modes, and any property the new variant did not set, still showed it, while the preview showed only the open variant. The designer now opens a mode with the look that the pages show in it, and the first change or removal in a mode gives every mode its own copy of that look, so each mode can be changed or removed on its own. It is the fix of release 5.3.1 of the Moodle 5.3 line, here for Moodle 5.0 to 5.2, the only ones of this line that have colour modes.
-- The lists that open under a button or a field (the theme colours of a colour field, the filters and the menu of the toolbar) stayed where they were opened while the page, or the panel that holds the field, scrolled. They now follow their button or field as it moves, and close when it scrolls out of sight.
-- The number of filters that are on is a badge on the corner of the Filters button, as in the service manager, so the button no longer grows when a filter is applied. The open or applied Filters button and the focused search field use the colour of the theme for the border and the focus ring.
-
-### Changed
-
-- The web service classes use the `core_external` names and a plugin class, `local_iconrestyle\compat\external_aliases`, declares them as aliases on Moodle 4.0 and 4.1, in place of the `compat.php` file that every class loaded with a manual `require_once`.
-- The kinds of icon that a look applies to are written separated by a comma in the template (`data-kinds="font,image"`).
-- The `Content-Length` of the stylesheet and of an artwork is computed before the header is written.
-
-## [4.0.1] - 2026-10-13
-
-### Fixed
-
-- A look given to one kind of activity (`activity:folder`) showed in the preview of the designer but not on the pages of the site whenever its purpose (`purpose:content`) had a look of its own. The selector of a purpose and the one of an activity type are equally specific, and the stylesheet wrote the rules in the alphabetical order of their slots, so the purpose came last and won. The rules of one stylesheet are now written icons first, then purposes, then activity types, so the narrower choice wins. The version changes so that every stylesheet is compiled again with the new order.
-
-## [4.0.0] - 2026-10-13
-
-### Changed
-
-- Releases are published automatically from `main` and the `MOODLE_*_STABLE` branches, the latest release is always the one of `main`, and the version ends with the lowest Moodle version of the line as a numeric string (`'2026101301.<line>'`).
-- The pipeline tests the two ends of the supported range and the LTS releases between them, and a run that a newer push supersedes is cancelled.
-- The styles are authored as nested SCSS (`styles.scss` and `scss/`) and compiled into `styles.css` by `tools/build-styles.mjs`, which the pipeline checks.
-- Copying to another colour mode is a button with an icon in the selection bar.
-- Filter chips and rows show what a click would choose when the pointer is over them.
-
-### Added
-
-- A user manual with screenshots and a start page that guides the reading, and a performance report of the mass benchmarks, both in the wiki of the repository, and an icon for the plugin in the colours of Didactika.
-- A benchmark for importing a package of any size one line at a time (B-06).
-- Settings for what the designer starts from: the parts of a look that are copied, whether copying between modes replaces, and how an import starts. They are only starting points; each person can change them every time.
-- More ways to customise an icon: a gradient behind it, an outline with its own colour and offset, skew, a shadow that follows the glyph, three more shadows for the box (inner, lifted, hard), sepia, invert, blending with the background and a hover effect (grow, shrink, lift, tilt, fade). All typed, range checked, counted in the cost of the design and part of the looks that can be copied.
-- A *Filters* panel next to the search: component, purpose, what an icon customises, where it applies, colour mode and sorting, with a badge that counts the filters that are on and an icon that clears them.
-- Copying every look of the icons that are chosen from one colour mode to another in one step, from the selection bar.
-- Choosing icons in the grid: a *Select* button exports only the icons chosen (Shift+click chooses a run), and the copy button in the header of the editing panel copies the look of the open icon, part by part, to the icons chosen in the grid, as one undo step. Export and import take a list of icons, and so does `cli/export.php --slots`.
-- The import reviews the package before it changes anything: a summary, a switch between adding and replacing, a searchable list of its icons with what would happen to each, and a live report for the choice made.
-- Export and import of customisations: a text package with one JSON object on each line, rules that name their places (site, category by id number or path, course by short name, activity by id number) instead of carrying database ids, artwork carried once and sanitised again on import. The designer previews what an import would do before it does it, in a mode that adds or replaces; the command line does the same for any size. One `rules_changed` event is triggered for each change that is saved.
-- Privacy provider: the plugin says that it only remembers who last changed a rule and who added artwork, exports that and, when a user is erased, keeps the configuration and forgets who made it.
-- Scale: every change is checked against limits before anything is written (rules, stylesheet size, effect cost, contexts with rules, how many parents with rules a page can load) and refused whole; a stylesheet is compiled once however many visitors ask for it at once, kept once for each context and prepared by a scheduled task and by `cli/warm.php` after a purge or an upgrade; a rule limited to many pages and regions writes its selectors as lists, so it needs four prefixes instead of up to sixty-three.
-- A single request saves everything that changed, in one transaction, and answers with the address of the new stylesheet. The designer never has two saves in flight and waits for a quiet moment before saving.
-- The colours of the theme: any colour of the active theme can be chosen from a searchable list of the custom properties the stylesheets of the page declare, and any custom property can be typed.
-- Benchmarks with budgets (`tests/performance/`) and a compile-storm tool that starts many operating system processes at once.
-
-- Rule storage with optimistic locking and a per-context rule limit. A rule applies in the whole site, a category, a course or an activity, and can be limited to kinds of page and page regions chosen from fixed lists.
-- Rendering engine that derives each icon's markup from the running Moodle's icon map and compiles rules to CSS: recolour for font icons, background, shape, padding and opacity for any icon.
-- Per-context stylesheets delivered as one immutable bundle after the theme stylesheet, with cache revisions that only grow and single-flight compilation.
-- Site setting to disable the plugin, rule limit setting and capabilities for each scope.
-- Artwork intake: uploaded SVG is rebuilt from an allow-list (scripts, event handlers, external references, entities and document type declarations are refused or removed) and raster images are decoded and written again, then stored once by content hash.
-- Mask and image painters that replace an icon's artwork with an uploaded file, recolourable through a mask, on font icons and on image icons.
-- `asset.php` serves artwork by content hash with immutable caching, a restrictive content security policy and cross-origin access for CDN deployments.
-- One icon designer under Site administration > Appearance: a searchable, filterable and virtualised catalogue of every customisable icon, several variants per icon each limited to a place (the whole site, a category, a course or an activity found by name, kinds of page and page regions), an inspector for artwork, foreground and background colour, shape, padding and opacity, a live preview of the edited icon, the original or both on light and dark surfaces, and automatic saving with undo and redo.
-- Web services behind the designer to read the catalogue and every rule, save and delete rules, add artwork, compile unsaved rules for the preview and search categories, courses and activities by name, each checked against the capability.
-- Customisations apply on every page, the designer included. The preview columns draw inside isolated shadow trees, so the "Moodle default" column still shows the untouched icon.
-- Works on sites with caching disabled, using the cache object Moodle returns in that case.
-- Design properties beyond colour, all typed and validated: shape and exact corner radius, padding on each side, scale, rotation, border (width, style, colour), shadow (presets and colour) and opacity, with quick looks and a link button that moves the four padding sides together.
-- Colour mode: a rule can apply only in dark or light mode, from the places modal or with one click on "Add a dark mode look".
-- Image icons are recoloured with their own file as artwork, fetched automatically when a colour is set, and the glyph inside an activity box takes any colour.
-- Every change is saved on its own, with a visible state, undo and redo on Ctrl+Z, Ctrl+Y and buttons, and an actions menu with icons that also leads back to the settings and the site administration.
-- A preview that shows the edited icon with a switch to the original or to both side by side, and a live card in the grid for the icon that is open.
-- After each save the designer swaps in the new site stylesheet, so every icon on its own page shows the saved look at once, and the grid scrolls without cards jumping.
-- Margin on each side, flips and six colour filters (brightness, contrast, saturation, grayscale, hue rotation, blur), and scale as a zoom so that a large icon takes its room.
-- A designer that fits the window with a compact live preview that is always visible, a panel that only exists while an icon is open, tabs, collapsible groups and a modal with a multi-select autocomplete to add places.
-- Activity boxes: the colour Moodle gives each activity purpose, or one kind of activity, can be kept, removed, replaced or put in a box (shape, padding, opacity), with a light or dark glyph, from the same designer and with the same places, pages and regions as any icon.
-- A single capability, `local/iconrestyle:manage`, governs every rule: there are no designers, navigation entries or capabilities in categories, courses or activities.
-- Rules are removed when their category, course or activity is deleted, and the stylesheet of the course is refreshed when an activity goes.
-- The complete schema ships in `db/install.xml`; the first release has no upgrade steps.
+- A designer in the site administration that lists every icon of Moodle (Font Awesome icons, every image icon of core, its subsystems, the plugins and the themes, and the boxes of activities) in a searchable and filterable grid that stays fast with thousands of icons. The interface is written in AMD modules and Mustache templates, with the same features as the 5.3 line.
+- Colour, gradient, shape and corner radius, border and outline, padding and margin on each side, scale, rotation, skew and flips, shadows, blending, a hover effect, opacity and colour filters for each icon, saved on their own with no save button.
+- Replacement of any icon by an SVG, PNG or WebP file of your own, sanitised, with recolouring of single-colour files.
+- Theme colours: any colour that the active theme declares can be picked (Bootstrap 4 and 5 names), and the icon follows the theme and its colour modes.
+- Places: a look can apply to the whole site, a category, a course or an activity, to some kinds of page, to some parts of a page and to one colour mode; the most specific look wins.
+- Work in bulk: filters by type, status, component, purpose, place and colour mode, selection of many icons, copy of a look to many icons and copy of one colour mode to another.
+- Export and import between sites, of everything or of the icons you choose, with a review step; command line tools to warm the cache, export and import.
+- Customisations are delivered to each page as one cached stylesheet compiled once, with limits on rules, stylesheet size and effect cost, so replaced icons need no JavaScript and no database query on a page view.
+- Placeholders while the designer loads, a layout that follows the room it has when a drawer of Moodle is open, and the colour mode and moon icons of the designer registered in the icon map of Moodle.
