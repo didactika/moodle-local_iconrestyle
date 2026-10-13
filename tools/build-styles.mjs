@@ -60,6 +60,8 @@ tree.walk(node => {
     }
     node.raws.before = (node.raws.before || '').replace(/[ \t]*$/, ' '.repeat(depth * 4));
     if (node.type === 'rule') {
+        // LibSass keeps the quotes of an attribute value and Dart Sass drops them; the stylesheet has them dropped.
+        node.selector = node.selector.replace(/\[([^\]=~|^$*]+)([~|^$*]?=)\s*(["'])([A-Za-z0-9_-]+)\3\s*\]/g, '[$1$2$4]');
         node.selector = postcss.list.comma(node.selector).join(',\n' + ' '.repeat(depth * 4));
     }
     if (node.nodes) {
