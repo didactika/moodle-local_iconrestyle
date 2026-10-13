@@ -21,8 +21,12 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-10-13
+
 ### Changed
 
+- Releases are published automatically from `main` and the `MOODLE_*_STABLE` branches, the latest release is always the one of `main`, and the version ends with the lowest Moodle version of the line as a numeric string (`'2026101301.<line>'`).
+- The pipeline tests the two ends of the supported range and the LTS releases between them, and a run that a newer push supersedes is cancelled.
 - The styles are authored as nested SCSS (`styles.scss` and `scss/`) and compiled into `styles.css` by `tools/build-styles.mjs`, which the pipeline checks.
 - Copying to another colour mode is a button with an icon in the selection bar.
 - Filter chips and rows show what a click would choose when the pointer is over them.
