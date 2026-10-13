@@ -104,7 +104,7 @@ final class artwork_painters_test extends \advanced_testcase {
         $this->assertStringContainsString("fa-gear:not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin)" .
             ":not(.fa-duotone):not(.fa-sharp) {\n  background-color: #eeeeee;\n  border-radius: 50%;\n}\n", $css);
         $this->assertStringContainsString(
-            ":not(.fa-sharp)::before {\n  content: \"\";\n  display: block;\n  width: 100%;\n  height: 1em;\n" .
+            ":not(.fa-sharp)::before {\n  content: \"\";\n  display: inline-block;\n  width: 1em;\n  height: 1em;\n  vertical-align: -0.125em;\n" .
             "  background-color: #ff0000;\n  -webkit-mask: url(\"data:image/svg+xml;base64,",
             $css
         );
@@ -127,7 +127,7 @@ final class artwork_painters_test extends \advanced_testcase {
         $css = $this->compiler()->compile([$this->rule('core:i/groupn', [
             'painter' => 'mask', 'assetid' => $this->assetid, 'fg' => 'token:primary', 'bg' => '#eeeeee',
         ])]);
-        $this->assertStringContainsString('body img.icon[src*="/image.php/"][src*="/core/"][src$="/i/groupn"]', $css);
+        $this->assertStringContainsString('body img[src*="/image.php/"][src*="/core/"][src$="/i/groupn"]', $css);
         $this->assertStringContainsString("  background-color: var(--bs-primary, var(--primary));\n", $css);
         $this->assertStringNotContainsString('#eeeeee', $css, 'An image icon cannot also carry a background colour');
         $this->assertStringContainsString("  object-fit: none;\n  object-position: -9999px 0;\n", $css);
