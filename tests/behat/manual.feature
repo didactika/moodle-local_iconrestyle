@@ -29,7 +29,8 @@ Feature: The screenshots of the user manual
     And I wait "2" seconds
 
   Scenario: The designer and the menu of the bar
-    When I mark the page with:
+    When I capture the page as "designer"
+    And I mark the page with:
       | selector                       | number | where     |
       | [data-action='history-back']   | 1      | top-left  |
       | [data-region='search']         | 2      | top-left  |

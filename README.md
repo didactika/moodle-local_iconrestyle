@@ -17,7 +17,7 @@
 
 Icon Restyle (**local_iconrestyle**) changes how Moodle draws its icons without touching the theme or the core. A designer in the site administration lists every icon that can be customised. Choose one, change its colour, shape, spacing, effects or replace it with a file of your own, and the whole site shows it. Customisations are stored per place and delivered to each page as one cached stylesheet, so replaced icons need no JavaScript on the pages of your users and add no database query to a page view once the cache is warm.
 
-![The icon designer](https://raw.githubusercontent.com/wiki/didactika/moodle-local_iconrestyle/images/designer-overview.png)
+![The icon designer](https://raw.githubusercontent.com/wiki/didactika/moodle-local_iconrestyle/images/designer.png)
 
 ## Overview
 
