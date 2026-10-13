@@ -25,6 +25,7 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ### Added
 
+- The designer lists every image icon that Moodle can show: the files of every pix folder of core, of its subsystems, of every plugin and of the themes, at any depth and in any of the formats that Moodle serves (SVG, PNG, GIF, JPEG, WebP and ICO). The list only had the SVG and PNG files at the first level of the pix folder, which left out around seven hundred icons of a default site.
 - The colour mode and moon icons of the designer are registered in Moodle's icon map (`local_iconrestyle:colour_mode` and `local_iconrestyle:moon`), so they are drawn with the pix helper and appear among the icons that can be restyled; a Font Awesome class written in a template and absent from the map is not found by the designer.
 - Every icon of the designer is an icon of Moodle (the ones that Font Awesome draws, through `pix` on Moodle 4.x), so a site can restyle them; none is drawn as an SVG written by hand any more. The placeholders that hold the place while the designer loads are at least a hundred squares.
 - The designer shows grey blocks where the bar and the icons will be while it loads, instead of a blank page: before the component is there on Moodle 5.3, and over the empty list until the icons are drawn on Moodle 4.x.
