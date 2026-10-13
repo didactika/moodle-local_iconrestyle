@@ -23,6 +23,10 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [4.0.3] - 2026-10-14
 
+### Added
+
+- The designer shows grey blocks where the bar and the icons will be while it loads, instead of a blank page: before the component is there on Moodle 5.3, and over the empty list until the icons are drawn on Moodle 4.x.
+
 ### Fixed
 
 - The designer follows the room it has and not the size of the window: when a drawer of Moodle (the blocks, the bookmarks) is open the list and the panel of an icon go one above the other as soon as the content is narrow, and the bar over the list no longer overlaps them.

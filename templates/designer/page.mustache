@@ -51,7 +51,12 @@
             </div>
             {{> local_iconrestyle/selection/bar}}
             <p class="irs-empty" data-region="empty" hidden>{{#str}}noicons, local_iconrestyle{{/str}}</p>
-            <p class="irs-loading" data-region="loading">{{#str}}loading, local_iconrestyle{{/str}}</p>
+            <div class="irs-loading irs-sk-over" data-region="loading" role="status">
+                <div class="irs-sk-grid" aria-hidden="true">
+                    <span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span><span class="irs-sk irs-sk-cell"></span>
+                </div>
+                <span class="irs-sk-label">{{#str}}loading, local_iconrestyle{{/str}}</span>
+            </div>
         </section>
 
         {{> local_iconrestyle/inspector/panel}}
