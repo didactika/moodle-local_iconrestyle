@@ -87,13 +87,13 @@ jobs:
 
           # NOTE ON SEMANTICS: Moodle defines $plugin->supported as an
           # inclusive RANGE, [lowest, highest], so [400, 502] means every
-          # Moodle version from 4.0 to 5.2. The matrix therefore holds EVERY
-          # version of MOODLE_PHP_TABLE that lies between the lowest and the
-          # highest value written there, both included (400, 401, 402, 403,
-          # 404, 405, 500, 501 and 502 for that range), each with the PHP
-          # versions Moodle supports for it. Keep the table complete: a
-          # missing intermediate row would silently drop that version from
-          # the tests.
+          # Moodle version from 4.0 to 5.2. Testing all of them would multiply
+          # the matrix for little gain, so the matrix holds the two ENDS of the
+          # range and every LTS release (MOODLE_LTS below) that lies between
+          # them, each with the PHP versions Moodle supports for it: for
+          # [400, 502] that is 400, 401, 405 and 502. Add the code of a new LTS
+          # release to MOODLE_LTS when Moodle announces it.
+          MOODLE_LTS='["401", "405"]'
           supported_raw=$(grep -oP '\$plugin->supported\s*=\s*\[\K[^\]]+' version.php || true)
           if [ -z "$supported_raw" ]; then
             echo "::error::Could not find \$plugin->supported = [...] in version.php."
@@ -118,8 +118,8 @@ jobs:
               exit 1
             fi
           done
-          versions=$(echo "$MOODLE_PHP_TABLE" | jq -r --argjson lo "$lowest" --argjson hi "$highest" \
-            'keys | map(select((tonumber) >= $lo and (tonumber) <= $hi)) | sort_by(tonumber) | .[]' | tr -d '\r')
+          versions=$(jq -rn --argjson lo "$lowest" --argjson hi "$highest" --argjson lts "$MOODLE_LTS" \
+            '([($lo | tostring), ($hi | tostring)] + ($lts | map(select((tonumber) > $lo and (tonumber) < $hi)))) | unique | sort_by(tonumber) | .[]' | tr -d '\r')
 
           entries='[]'
           for v in $versions; do
