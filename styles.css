@@ -2005,11 +2005,6 @@
     flex: none;
 }
 
-.irs .irs-filtersbtn .icon,
-.irs .irs-filter-head .icon {
-    margin: 0;
-}
-
 .irs .irs-count-badge {
     position: absolute;
     top: -0.45rem;

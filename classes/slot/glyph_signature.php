@@ -173,7 +173,7 @@ final class glyph_signature {
      * @return bool True when the element matches.
      */
     public function matches(array $classes): bool {
-        if ($this->kind !== self::KIND_FONT || !in_array('icon', $classes, true)) {
+        if ($this->kind !== self::KIND_FONT) {
             return false;
         }
         foreach ($this->required as $class) {
@@ -208,7 +208,10 @@ final class glyph_signature {
             ];
         }
         if ($this->kind === self::KIND_FONT) {
-            $selector = $prefix . '.icon';
+            // An element is an icon because of its glyph class, whatever else the markup that draws it carries: the class icon is the one
+            // that Moodle writes, not one that an icon needs to be drawn, so it is not asked for. The attribute keeps the weight of the
+            // class that used to be here, so the rule is not weaker than the ones of a theme.
+            $selector = $prefix . '[class]';
             foreach ($this->required as $class) {
                 $selector .= '.' . $class;
             }
@@ -220,7 +223,7 @@ final class glyph_signature {
         $component = self::escape_value($this->component);
         $path = self::escape_value($this->image);
         $encoded = self::escape_value(rawurlencode($this->image));
-        $base = $prefix . 'img.icon';
+        $base = $prefix . 'img';
         return [
             $base . '[src*="/image.php/"][src*="/' . $component . '/"][src$="/' . $path . '"]',
             $base . '[src*="component=' . $component . '"][src$="image=' . $encoded . '"]',

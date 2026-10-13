@@ -142,7 +142,7 @@ export default function FiltersPanel({icons, filters, modes, text, onChange}: Fi
     }}>
         <button type="button" className={`irs-pillbtn irs-filtersbtn${total > 0 ? ' irs-active' : ''}`} data-action="filters-toggle"
             aria-haspopup="true" aria-expanded={open} title={text('filtbutton')} ref={button} onClick={toggle}>
-            <i className="icon fa-solid fa-filter" aria-hidden="true" /><span>{text('filtbutton')}</span>
+            <i className="fa-solid fa-filter" aria-hidden="true" /><span>{text('filtbutton')}</span>
             <span className="irs-count-badge" data-region="filters-count" hidden={total === 0}>{total > 0 ? total : ''}</span>
         </button>
         <div className="irs-filters-panel" data-region="filters-panel" ref={panel} role="dialog" aria-label={text('filtbutton')} hidden={!open}
@@ -154,7 +154,7 @@ export default function FiltersPanel({icons, filters, modes, text, onChange}: Fi
                     onClick={() => onChange({
                         kinds: [], components: [], purposes: [], traits: [], places: [], modes: [], sort: 'catalogue',
                     })}>
-                    <i className="icon fa-solid fa-rotate-right" aria-hidden="true" />
+                    <i className="fa-solid fa-rotate-right" aria-hidden="true" />
                 </button>
             </div>
             <section className="irs-filter-section">

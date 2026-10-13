@@ -39,12 +39,13 @@ final class glyph_signature_test extends \basic_testcase {
         $this->assertSame(glyph_signature::KIND_FONT, $signature->kind());
         $this->assertTrue($signature->matches(['icon', 'fa', 'fa-gear', 'fa-fw']));
         $this->assertTrue($signature->matches(['icon', 'fa-solid', 'fa-gear', 'fa-fw', 'text-info']));
+        $this->assertTrue($signature->matches(['fa-solid', 'fa-gear']), 'the class icon is not needed to be an icon');
         $this->assertFalse($signature->matches(['icon', 'fa-regular', 'fa-gear']));
         $this->assertFalse($signature->matches(['icon', 'fa-brands', 'fa-gear']));
         $this->assertFalse($signature->matches(['icon', 'fa', 'fa-pen']));
         $this->assertFalse($signature->matches(['fa', 'fa-gear']));
         $this->assertSame(
-            ['body .icon.fa-gear:not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin):not(.fa-duotone):not(.fa-sharp)'],
+            ['body [class].fa-gear:not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin):not(.fa-duotone):not(.fa-sharp)'],
             $signature->selectors('body ')
         );
     }
@@ -56,7 +57,7 @@ final class glyph_signature_test extends \basic_testcase {
         $signature = glyph_signature::from_font_classes('fa-regular fa-bookmark');
         $this->assertTrue($signature->matches(['icon', 'fa-regular', 'fa-bookmark', 'fa-fw']));
         $this->assertFalse($signature->matches(['icon', 'fa', 'fa-bookmark']));
-        $this->assertSame(['body .icon.fa-regular.fa-bookmark'], $signature->selectors('body '));
+        $this->assertSame(['body [class].fa-regular.fa-bookmark'], $signature->selectors('body '));
     }
 
     /**
@@ -98,9 +99,9 @@ final class glyph_signature_test extends \basic_testcase {
     public function test_image_selectors(): void {
         $selectors = glyph_signature::from_image('moodle', 'a/setting')->selectors('body ');
         $this->assertCount(3, $selectors);
-        $this->assertSame('body img.icon[src*="/image.php/"][src*="/core/"][src$="/a/setting"]', $selectors[0]);
-        $this->assertSame('body img.icon[src*="component=core"][src$="image=a%2Fsetting"]', $selectors[1]);
-        $this->assertSame('body img.icon[src*="component=core"][src*="image=a%2Fsetting&"]', $selectors[2]);
+        $this->assertSame('body img[src*="/image.php/"][src*="/core/"][src$="/a/setting"]', $selectors[0]);
+        $this->assertSame('body img[src*="component=core"][src$="image=a%2Fsetting"]', $selectors[1]);
+        $this->assertSame('body img[src*="component=core"][src*="image=a%2Fsetting&"]', $selectors[2]);
         $this->assertFalse(glyph_signature::from_image('core', 'a/setting')->matches(['icon']));
     }
 }

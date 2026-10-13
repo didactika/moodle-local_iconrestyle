@@ -12,13 +12,6 @@
         flex: none;
     }
 
-    // The icons carry the class that Moodle gives its icons, which is how the settings of a site restyle them; the margin that class
-    // brings is not wanted here.
-    .irs-filtersbtn .icon,
-    .irs-filter-head .icon {
-        margin: 0;
-    }
-
     .irs-count-badge {
         position: absolute;
         top: -0.45rem;

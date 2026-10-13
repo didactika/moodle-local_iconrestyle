@@ -392,13 +392,13 @@ final class services_test extends \advanced_testcase {
     public function test_preview(): void {
         global $DB;
         $css = $this->clean(preview_css::class, preview_css::execute([$this->input(['fg' => '#e83e8c'])]));
-        $this->assertStringStartsWith('.irs-preview-new .icon.fa-', $css);
+        $this->assertStringStartsWith('.irs-preview-new [class].fa-', $css);
         $this->assertStringContainsString('color: #e83e8c;', $css);
         $this->assertStringNotContainsString('body ', $css);
         $this->assertSame(0, $DB->count_records('local_iconrestyle_rule'));
 
         $current = preview_css::execute([$this->input(['fg' => '#e83e8c'])], 'current');
-        $this->assertStringStartsWith('.irs-preview-current .icon.fa-', $current);
+        $this->assertStringStartsWith('.irs-preview-current [class].fa-', $current);
 
         foreach ([[array_fill(0, 201, $this->input([])), 'new'], [[], 'body']] as $case) {
             try {

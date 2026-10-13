@@ -162,7 +162,7 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
         ref: button,
         onClick: toggle,
         children: [
-          /* @__PURE__ */ jsxDEV("i", { className: "icon fa-solid fa-filter", "aria-hidden": "true" }, void 0, false, {
+          /* @__PURE__ */ jsxDEV("i", { className: "fa-solid fa-filter", "aria-hidden": "true" }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
             lineNumber: 145,
             columnNumber: 13
@@ -170,7 +170,7 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
           /* @__PURE__ */ jsxDEV("span", { children: text("filtbutton") }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
             lineNumber: 145,
-            columnNumber: 73
+            columnNumber: 68
           }, this),
           /* @__PURE__ */ jsxDEV("span", { className: "irs-count-badge", "data-region": "filters-count", hidden: total === 0, children: total > 0 ? total : "" }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
@@ -223,7 +223,7 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
                   modes: [],
                   sort: "catalogue"
                 }),
-                children: /* @__PURE__ */ jsxDEV("i", { className: "icon fa-solid fa-rotate-right", "aria-hidden": "true" }, void 0, false, {
+                children: /* @__PURE__ */ jsxDEV("i", { className: "fa-solid fa-rotate-right", "aria-hidden": "true" }, void 0, false, {
                   fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
                   lineNumber: 157,
                   columnNumber: 21

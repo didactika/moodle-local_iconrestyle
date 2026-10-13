@@ -29,6 +29,7 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ### Fixed
 
+- A restyled icon was not replaced when the markup that draws it did not carry the class `icon` that Moodle writes, and when it was replaced it could be blank because the picture took the width of an element that had none. An icon is found by its glyph class whatever else its markup carries, and the picture has a size of its own.
 - The designer follows the room it has and not the size of the window: when a drawer of Moodle (the blocks, the bookmarks) is open the list and the panel of an icon go one above the other as soon as the content is narrow, and the bar over the list no longer overlaps them.
 - The search field and the pills of the bar (Back, Filters, Select) have the same, stronger border, and the field follows the colour of the theme when it has text or the focus.
 - The funnel of the Filters button and the reload icon that resets the filters are icons of Moodle, drawn by its icon system, instead of SVG written by hand, so a site can restyle them.
