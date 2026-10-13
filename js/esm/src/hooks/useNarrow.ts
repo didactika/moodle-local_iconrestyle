@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * Whether the designer has little room, which is not the same as the window being small: a drawer of Moodle that is open takes room
  * from the page and leaves the window as it was.
  *

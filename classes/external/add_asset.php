@@ -60,8 +60,9 @@ class add_asset extends external_api {
     public static function execute(string $content): array {
         global $USER;
         $params = self::validate_parameters(self::execute_parameters(), ['content' => $content]);
-        self::validate_context(\context_system::instance());
-        service_factory::instance()->permissions()->require_manage();
+        $context = \context_system::instance();
+        self::validate_context($context);
+        require_capability('local/iconrestyle:manage', $context);
 
         $bytes = strlen($params['content']) <= self::MAX_BASE64 ? base64_decode($params['content'], true) : false;
         if ($bytes === false || $bytes === '') {

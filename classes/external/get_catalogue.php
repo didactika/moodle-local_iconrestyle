@@ -52,9 +52,10 @@ class get_catalogue extends external_api {
     public static function execute(): array {
         global $PAGE;
         self::validate_parameters(self::execute_parameters(), []);
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage();
+        require_capability('local/iconrestyle:manage', $context);
 
         $icons = [];
         foreach ($factory->catalogue()->all() as $entry) {

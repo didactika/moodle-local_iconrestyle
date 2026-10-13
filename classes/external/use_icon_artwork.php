@@ -55,9 +55,10 @@ class use_icon_artwork extends external_api {
     public static function execute(string $slotkey): array {
         global $USER;
         $params = self::validate_parameters(self::execute_parameters(), ['slotkey' => $slotkey]);
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage();
+        require_capability('local/iconrestyle:manage', $context);
         try {
             $slot = slot_key::parse($params['slotkey']);
         } catch (\InvalidArgumentException $exception) {

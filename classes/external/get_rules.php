@@ -50,9 +50,10 @@ class get_rules extends external_api {
      */
     public static function execute(): array {
         self::validate_parameters(self::execute_parameters(), []);
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage();
+        require_capability('local/iconrestyle:manage', $context);
 
         return ['rules' => array_map([rule_payload::class, 'export'], $factory->rules()->find_all())];
     }
