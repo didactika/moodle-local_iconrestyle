@@ -224,6 +224,30 @@
         }
     }
 
+    // An icon of Moodle: a square that takes the colour and the size of the text, and none of the margin that Moodle gives its own.
+    .irs-glyph {
+        display: inline-flex;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        width: 1em;
+        height: 1em;
+        font-size: 1rem;
+        line-height: 1;
+
+        &.irs-glyph-lg {
+            font-size: 1.125rem;
+        }
+
+        .icon {
+            width: 1em;
+            max-width: none;
+            height: 1em;
+            margin: 0;
+            font-size: inherit;
+        }
+    }
+
     .irs-pillbtn {
         display: inline-flex;
         align-items: center;

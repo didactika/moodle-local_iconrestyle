@@ -39,12 +39,11 @@
         flex: 0 1 17rem;
         min-width: 9rem;
 
-        & svg {
+        & .irs-glyph {
             position: absolute;
             top: 50%;
             left: 0.625rem;
-            width: 1rem;
-            height: 1rem;
+            font-size: 1rem;
             color: var(--irs-muted);
             transform: translateY(-50%);
             pointer-events: none;
@@ -278,11 +277,8 @@
         background: transparent;
         cursor: pointer;
 
-        & svg {
-            &:last-child {
-                width: 0.875rem;
-                height: 0.875rem;
-            }
+        & .irs-glyph:last-child {
+            font-size: 0.875rem;
         }
     }
 
