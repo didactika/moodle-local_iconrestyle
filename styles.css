@@ -1699,6 +1699,7 @@
     height: 100%;
     margin: 0;
     opacity: 0.0001;
+    z-index: 1;
     cursor: pointer;
 }
 
