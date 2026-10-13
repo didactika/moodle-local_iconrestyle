@@ -53,6 +53,7 @@
         & input {
             height: 2rem;
             padding: 0.125rem 0.75rem 0.125rem 2rem;
+            border: 1px solid var(--irs-border-strong);
             border-radius: 999px;
             font-size: 0.875rem;
         }
@@ -74,6 +75,7 @@
     .irs-filter {
         width: auto;
         height: 2rem;
+        border-color: var(--irs-border-strong);
         padding-top: 0.125rem;
         padding-bottom: 0.125rem;
         border-radius: 999px;
