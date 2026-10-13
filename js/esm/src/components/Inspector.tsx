@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The editing panel of the open icon: its title, the preview, the tabs, what is edited and the button that removes the variant.
  *
  * @module     local_iconrestyle/components/Inspector

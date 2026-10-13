@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * Finds the colours the active theme declares as CSS custom properties.
  *
  * @module     local_iconrestyle/lib/themevars

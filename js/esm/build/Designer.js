@@ -1,4 +1,7 @@
 import{useCallback as Be,useEffect as I,useMemo as ge,useReducer as he,useRef as A,useState as P}from"react";import Ke from"./components/FiltersPanel";import We from"./components/Grid";import De from"./components/ImportModal";import qe from"./components/Inspector";import ze from"./components/places/PlacesModal";import Ue from"./components/PreviewPanel";import _e from"./components/SelectionBar";import He from"./components/Toolbar";import{createAutosave as Ye}from"./engine/autosave";import{download as Ge}from"./engine/download";import{createState as Qe}from"./engine/state";import{applyStylesheet as ve}from"./engine/stylesheet";import{createText as Xe}from"./engine/text";import{addToast as f}from"./engine/toast";import{usePageColourMode as $e}from"./hooks/usePageColourMode";import{usePreviewCss as je}from"./hooks/usePreviewCss";import{useSelection as Je}from"./hooks/useSelection";import{appearanceOf as we,needsOwnArtwork as ye,pickLook as Ze}from"./lib/draft";import{filterIcons as et,sortIcons as tt}from"./lib/filter";import{NO_ARTWORK as ot}from"./lib/presets";import{deriveView as nt}from"./lib/view";import*as Y from"./services/api";import{jsx as y,jsxs as Q}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The icon designer: one grid of every icon that can be customised, a panel to edit the open one and the tools to filter,
  * choose, copy, export and import.
  *

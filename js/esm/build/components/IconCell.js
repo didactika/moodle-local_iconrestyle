@@ -1,4 +1,7 @@
 import{jsx as s}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * One icon as Moodle draws it, at one size, in the preview and on the cards of the grid.
  *
  * @module     local_iconrestyle/components/IconCell

@@ -1,4 +1,7 @@
 import{useState as c}from"react";import{IconClose as k,IconPlus as w}from"../common/Icons";import*as g from"../../services/api";import{NO_ARTWORK as f}from"../../lib/presets";import{jsx as r,jsxs as s}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The artwork of an icon: a file of the person's own that replaces the icon of Moodle.
  *
  * @module     local_iconrestyle/components/inspector/ArtworkGroup

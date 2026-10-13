@@ -2,6 +2,9 @@ var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 import { jsxDEV } from "react/jsx-dev-runtime";
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The modal that adds places to the open icon: a place, the kinds of page and the regions of the page, and a colour mode.
  *
  * @module     local_iconrestyle/components/places/PlacesModal

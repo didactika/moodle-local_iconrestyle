@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * Compiles the look of a draft that is not saved yet, so the preview and the card of the open icon can show it.
  *
  * The server compiles it, so what the preview shows is what the site will show. A request goes out a moment after the last

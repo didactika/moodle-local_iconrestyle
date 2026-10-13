@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The live preview of the open icon: how Moodle draws it, how it looks with the draft, or both, on a light or a dark surface.
  *
  * @module     local_iconrestyle/components/PreviewPanel

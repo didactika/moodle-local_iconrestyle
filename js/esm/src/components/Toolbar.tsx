@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The toolbar above the grid: back, search, filters, selection, the count, the save status, undo and redo and the actions menu.
  *
  * @module     local_iconrestyle/components/Toolbar

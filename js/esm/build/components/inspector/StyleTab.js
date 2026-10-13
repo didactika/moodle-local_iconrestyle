@@ -1,4 +1,7 @@
 import C from"./ArtworkGroup";import E from"./ColourField";import L from"./SelectField";import T from"./SidesField";import I from"./SliderField";import{SELECTS as D,SELECT_LABELS as R,SHAPES as O,SIDES as w,SIDE_STRINGS as A,SLIDERS as g}from"./config";import{CLEAR_DESIGN as F,LOOKS as p,LOOK_STRINGS as h}from"../../lib/presets";import{jsx as o,jsxs as l}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The style tab of the editing panel: quick looks, colour, artwork, shape, spacing, transform, effects and filters.
  *
  * @module     local_iconrestyle/components/inspector/StyleTab

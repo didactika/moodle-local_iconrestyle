@@ -1,4 +1,7 @@
 import{jsx as o,jsxs as n}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The small line icons of the designer, drawn as inline SVG so they take the colour of the text around them.
  *
  * @module     local_iconrestyle/components/common/Icons

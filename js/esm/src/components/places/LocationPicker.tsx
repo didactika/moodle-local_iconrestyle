@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * Chooses categories, courses or activities by name: what is typed is searched on the server and the places found are offered.
  *
  * @module     local_iconrestyle/components/places/LocationPicker

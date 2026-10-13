@@ -1,4 +1,7 @@
 import{useEffect as z,useLayoutEffect as G,useMemo as U,useRef as C,useState as g}from"react";import{IconChevron as V}from"../common/Icons";import*as r from"../../lib/themevars";import{jsx as o,jsxs as y}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * A list of the colours the active theme declares, that looks and works like a select and can be searched by typing.
  *
  * The colours are read from the page: every custom property that the stylesheets declare on the root of the page and whose

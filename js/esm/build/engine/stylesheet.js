@@ -1,4 +1,7 @@
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * Keeps the stylesheet of the site, which this page also loads, in step with what was just saved.
  *
  * @module     local_iconrestyle/engine/stylesheet

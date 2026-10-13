@@ -1,4 +1,7 @@
 import{jsx as t,jsxs as i}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * A property that takes one of a fixed list of values, or Moodle's own.
  *
  * @module     local_iconrestyle/components/inspector/SelectField

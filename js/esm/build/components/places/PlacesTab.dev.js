@@ -2,6 +2,9 @@ var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 import { jsxDEV } from "react/jsx-dev-runtime";
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The places where the open icon has a look, as chips, with the buttons that add more and copy the look to other colour modes.
  *
  * @module     local_iconrestyle/components/places/PlacesTab

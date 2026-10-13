@@ -1,4 +1,7 @@
 import{useState as o}from"react";import S from"../common/Modal";import R from"./LocationPicker";import{jsx as s,jsxs as l}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The modal that adds places to the open icon: a place, the kinds of page and the regions of the page, and a colour mode.
  *
  * @module     local_iconrestyle/components/places/PlacesModal

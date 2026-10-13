@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * A property with a slider, a number box and a cross that puts it back to Moodle's own value.
  *
  * @module     local_iconrestyle/components/inspector/SliderField

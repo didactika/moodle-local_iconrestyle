@@ -1,4 +1,7 @@
 import{useEffect as N,useRef as p,useState as L}from"react";import{IconAlert as M,IconBack as T,IconCheck as U,IconDownload as K,IconMore as D,IconRedo as x,IconRefresh as B,IconSearch as F,IconSelect as H,IconUndo as C,IconUpload as P}from"./common/Icons";import{jsx as t,jsxs as s}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The toolbar above the grid: back, search, filters, selection, the count, the save status, undo and redo and the actions menu.
  *
  * @module     local_iconrestyle/components/Toolbar

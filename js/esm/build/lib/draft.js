@@ -1,4 +1,7 @@
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The editable form of a rule, kept apart from the server's own response so it can be compared and staged.
  *
  * A rule is an icon, a place where it applies (the site, a category, a course or an activity, optionally limited to some

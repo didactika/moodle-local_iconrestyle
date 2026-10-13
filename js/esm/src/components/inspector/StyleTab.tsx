@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The style tab of the editing panel: quick looks, colour, artwork, shape, spacing, transform, effects and filters.
  *
  * @module     local_iconrestyle/components/inspector/StyleTab

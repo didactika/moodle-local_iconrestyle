@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * A list of the colours the active theme declares, that looks and works like a select and can be searched by typing.
  *
  * The colours are read from the page: every custom property that the stylesheets declare on the root of the page and whose

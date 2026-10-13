@@ -1,6 +1,9 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * Saves the changes of the designer on its own, without ever sending two requests at once.
  *
  * A click, a choice or an undo is saved at once. What the person is still typing or dragging waits a third of a second

@@ -1,4 +1,7 @@
 import{useState as f}from"react";import{IconLinked as F,IconUnlinked as x}from"../common/Icons";import{jsx as a,jsxs as s}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * A property with a value for each side, which can be linked so that the four sides move together.
  *
  * @module     local_iconrestyle/components/inspector/SidesField

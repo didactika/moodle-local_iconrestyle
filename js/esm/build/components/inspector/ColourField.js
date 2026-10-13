@@ -1,4 +1,7 @@
 import{useMemo as w,useState as x}from"react";import E from"./ThemeColourSelect";import{IconClose as O}from"../common/Icons";import{normalise as m,parseHex as H,toHex as L}from"../../lib/color";import*as y from"../../lib/themevars";import{jsx as i,jsxs as g}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * One colour control: a picker, a hex box with a cross that clears it, and a searchable list of the colours of the theme.
  *
  * @module     local_iconrestyle/components/inspector/ColourField

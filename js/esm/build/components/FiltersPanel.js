@@ -1,4 +1,7 @@
 import{useEffect as O,useMemo as A,useRef as P,useState as y}from"react";import{IconFilter as D,IconFilterClear as G}from"./common/Icons";import{Fragment as U,jsx as t,jsxs as n}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The filters panel: one button with the number of filters that are on, and a panel to choose them.
  *
  * Besides the search of the toolbar, the icons can be narrowed by type, by status, by component, by purpose, by what they

@@ -2,6 +2,9 @@ var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The filters panel: one button with the number of filters that are on, and a panel to choose them.
  *
  * Besides the search of the toolbar, the icons can be narrowed by type, by status, by component, by purpose, by what they
