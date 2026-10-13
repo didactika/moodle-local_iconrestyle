@@ -96,7 +96,7 @@ class designer_page implements react_component_renderable, \renderable {
             '<span class="irs-sk irs-sk-pill" style="width:5rem"></span>' .
             '<span class="irs-sk irs-sk-pill" style="width:14rem"></span>' .
             str_repeat('<span class="irs-sk irs-sk-pill" style="width:6rem"></span>', 2) . '</div>';
-        $grid = '<div class="irs-sk-grid">' . str_repeat('<span class="irs-sk irs-sk-cell"></span>', 40) . '</div>';
+        $grid = '<div class="irs-sk-grid">' . str_repeat('<span class="irs-sk irs-sk-cell"></span>', 120) . '</div>';
         return '<div class="irs" aria-hidden="true"><div class="irs-layout"><section class="irs-browser">' . $bar . $grid .
             '</section></div></div><span class="sr-only visually-hidden" role="status">' .
             get_string('loading', 'local_iconrestyle') . '</span>';

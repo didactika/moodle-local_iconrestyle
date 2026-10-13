@@ -25,6 +25,7 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ### Added
 
+- Every icon of the designer is an icon of Moodle (the ones that Font Awesome draws, through `pix` on Moodle 4.x), so a site can restyle them; none is drawn as an SVG written by hand any more. The placeholders that hold the place while the designer loads are at least a hundred squares.
 - The designer shows grey blocks where the bar and the icons will be while it loads, instead of a blank page: before the component is there on Moodle 5.3, and over the empty list until the icons are drawn on Moodle 4.x.
 
 ### Fixed

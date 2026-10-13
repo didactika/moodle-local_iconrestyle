@@ -448,7 +448,7 @@ export default function Designer(props: DesignerProps) {
                 <p className="irs-empty" data-region="empty" hidden={!loaded || filtered.length > 0}>{text('noicons')}</p>
                 <div className="irs-loading irs-sk-over" data-region="loading" role="status" hidden={loaded}>
                     <div className="irs-sk-grid" aria-hidden="true">
-                        {Array.from({length: 40}, (_, index) => <span key={index} className="irs-sk irs-sk-cell" />)}
+                        {Array.from({length: 120}, (_, index) => <span key={index} className="irs-sk irs-sk-cell" />)}
                     </div>
                     <span className="irs-sk-label">{text('loading')}</span>
                 </div>

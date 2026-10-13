@@ -508,10 +508,10 @@ function Designer(props) {
           columnNumber: 17
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "irs-loading irs-sk-over", "data-region": "loading", role: "status", hidden: loaded, children: [
-          /* @__PURE__ */ jsxDEV("div", { className: "irs-sk-grid", "aria-hidden": "true", children: Array.from({ length: 40 }, (_, index) => /* @__PURE__ */ jsxDEV("span", { className: "irs-sk irs-sk-cell" }, index, false, {
+          /* @__PURE__ */ jsxDEV("div", { className: "irs-sk-grid", "aria-hidden": "true", children: Array.from({ length: 120 }, (_, index) => /* @__PURE__ */ jsxDEV("span", { className: "irs-sk irs-sk-cell" }, index, false, {
             fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
             lineNumber: 451,
-            columnNumber: 65
+            columnNumber: 66
           }, this)) }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
             lineNumber: 450,
