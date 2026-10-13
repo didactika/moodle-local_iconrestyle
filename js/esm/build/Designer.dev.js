@@ -507,7 +507,22 @@ function Designer(props) {
           lineNumber: 448,
           columnNumber: 17
         }, this),
-        /* @__PURE__ */ jsxDEV("p", { className: "irs-loading", "data-region": "loading", hidden: loaded, children: text("loading") }, void 0, false, {
+        /* @__PURE__ */ jsxDEV("div", { className: "irs-loading irs-sk-over", "data-region": "loading", role: "status", hidden: loaded, children: [
+          /* @__PURE__ */ jsxDEV("div", { className: "irs-sk-grid", "aria-hidden": "true", children: Array.from({ length: 40 }, (_, index) => /* @__PURE__ */ jsxDEV("span", { className: "irs-sk irs-sk-cell" }, index, false, {
+            fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
+            lineNumber: 451,
+            columnNumber: 65
+          }, this)) }, void 0, false, {
+            fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
+            lineNumber: 450,
+            columnNumber: 21
+          }, this),
+          /* @__PURE__ */ jsxDEV("span", { className: "irs-sk-label", children: text("loading") }, void 0, false, {
+            fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
+            lineNumber: 453,
+            columnNumber: 21
+          }, this)
+        ] }, void 0, true, {
           fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
           lineNumber: 449,
           columnNumber: 17
@@ -545,7 +560,7 @@ function Designer(props) {
         false,
         {
           fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-          lineNumber: 451,
+          lineNumber: 456,
           columnNumber: 13
         },
         this
@@ -574,7 +589,7 @@ function Designer(props) {
       false,
       {
         fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-        lineNumber: 459,
+        lineNumber: 464,
         columnNumber: 24
       },
       this
@@ -594,7 +609,7 @@ function Designer(props) {
       false,
       {
         fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-        lineNumber: 466,
+        lineNumber: 471,
         columnNumber: 20
       },
       this

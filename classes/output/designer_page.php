@@ -84,6 +84,25 @@ class designer_page implements react_component_renderable, \renderable {
     }
 
     /**
+     * What holds the place of the designer until its component is there: the bar and the cards as grey blocks.
+     *
+     * Moodle writes an empty element and the script fills it in once it has loaded, which leaves the page blank for a moment. The
+     * placeholder is written inside that element and is replaced when the component mounts.
+     *
+     * @return string The HTML.
+     */
+    public static function placeholder(): string {
+        $bar = '<div class="irs-sk-bar">' .
+            '<span class="irs-sk irs-sk-pill" style="width:5rem"></span>' .
+            '<span class="irs-sk irs-sk-pill" style="width:14rem"></span>' .
+            str_repeat('<span class="irs-sk irs-sk-pill" style="width:6rem"></span>', 2) . '</div>';
+        $grid = '<div class="irs-sk-grid">' . str_repeat('<span class="irs-sk irs-sk-cell"></span>', 40) . '</div>';
+        return '<div class="irs" aria-hidden="true"><div class="irs-layout"><section class="irs-browser">' . $bar . $grid .
+            '</section></div></div><span class="sr-only visually-hidden" role="status">' .
+            get_string('loading', 'local_iconrestyle') . '</span>';
+    }
+
+    /**
      * Every string of the plugin, in the language of the person, with the places of the values written the way the script fills.
      *
      * A value that stands alone is written {n} and the fields of an object {name}, so the script has one way to put them in.

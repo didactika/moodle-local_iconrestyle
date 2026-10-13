@@ -446,7 +446,12 @@ export default function Designer(props: DesignerProps) {
                     onMove={select} onFirstRender={() => mark('irs:rendered')} />
                 <SelectionBar selection={selection} modeLabels={view.selectionModes} text={text} />
                 <p className="irs-empty" data-region="empty" hidden={!loaded || filtered.length > 0}>{text('noicons')}</p>
-                <p className="irs-loading" data-region="loading" hidden={loaded}>{text('loading')}</p>
+                <div className="irs-loading irs-sk-over" data-region="loading" role="status" hidden={loaded}>
+                    <div className="irs-sk-grid" aria-hidden="true">
+                        {Array.from({length: 40}, (_, index) => <span key={index} className="irs-sk irs-sk-cell" />)}
+                    </div>
+                    <span className="irs-sk-label">{text('loading')}</span>
+                </div>
             </section>
             <Inspector icon={icon} draft={draft} customised={customised} removable={view.removable} variants={view.variants}
                 otherModes={view.others.length} ranges={ranges} specials={specials} copying={selection.mode === 'copy'}
