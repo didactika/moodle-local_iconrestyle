@@ -25,6 +25,9 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ### Fixed
 
+- The designer follows the room it has and not the size of the window: when a drawer of Moodle (the blocks, the bookmarks) is open the list and the panel of an icon go one above the other as soon as the content is narrow, and the bar over the list no longer overlaps them.
+- The search field and the pills of the bar (Back, Filters, Select) have the same, stronger border, and the field follows the colour of the theme when it has text or the focus.
+- The funnel of the Filters button and the reload icon that resets the filters are icons of Moodle, drawn by its icon system, instead of SVG written by hand, so a site can restyle them.
 - The lists that open under a button or a field (the theme colours of a colour field, the filters and the menu of the toolbar) stayed where they were opened while the page, or the panel that holds the field, scrolled. They now follow their button or field as it moves, and close when it scrolls out of sight.
 - The number of filters that are on is a badge on the corner of the Filters button, as in the service manager, so the button no longer grows when a filter is applied. The open or applied Filters button and the focused search field use the colour of the theme for the border and the focus ring.
 

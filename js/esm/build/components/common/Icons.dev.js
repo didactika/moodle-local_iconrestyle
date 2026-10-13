@@ -159,255 +159,225 @@ const IconDownload = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { 
   lineNumber: 50,
   columnNumber: 35
 }), "IconDownload");
-const IconFilter = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { children: /* @__PURE__ */ jsxDEV("polygon", { points: "22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" }, void 0, false, {
-  fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 55,
-  columnNumber: 38
-}) }, void 0, false, {
-  fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 55,
-  columnNumber: 33
-}), "IconFilter");
-const IconFilterClear = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { children: [
-  /* @__PURE__ */ jsxDEV("path", { d: "M13 14.5V20l-3 1.5v-7L3 4h14" }, void 0, false, {
-    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 57,
-    columnNumber: 5
-  }),
-  /* @__PURE__ */ jsxDEV("line", { x1: "16", y1: "8", x2: "22", y2: "14" }, void 0, false, {
-    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 58,
-    columnNumber: 5
-  }),
-  /* @__PURE__ */ jsxDEV("line", { x1: "22", y1: "8", x2: "16", y2: "14" }, void 0, false, {
-    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 59,
-    columnNumber: 5
-  })
-] }, void 0, true, {
-  fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 56,
-  columnNumber: 38
-}), "IconFilterClear");
 const IconLinked = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { className: "irs-icon-linked", children: [
   /* @__PURE__ */ jsxDEV("path", { d: "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 62,
+    lineNumber: 56,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("path", { d: "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 63,
+    lineNumber: 57,
     columnNumber: 5
   })
 ] }, void 0, true, {
   fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 61,
+  lineNumber: 55,
   columnNumber: 33
 }), "IconLinked");
 const IconUnlinked = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { className: "irs-icon-unlinked", children: [
   /* @__PURE__ */ jsxDEV("path", { d: "M18.84 12.25l1.72-1.71a5 5 0 0 0-7.07-7.07l-1.72 1.71" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 66,
+    lineNumber: 60,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("path", { d: "M5.17 11.75l-1.71 1.71a5 5 0 0 0 7.07 7.07l1.71-1.71" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 67,
+    lineNumber: 61,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("line", { x1: "8", y1: "2", x2: "8", y2: "5" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 68,
+    lineNumber: 62,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("line", { x1: "2", y1: "8", x2: "5", y2: "8" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 69,
+    lineNumber: 63,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("line", { x1: "16", y1: "19", x2: "16", y2: "22" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 70,
+    lineNumber: 64,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("line", { x1: "19", y1: "16", x2: "22", y2: "16" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 71,
+    lineNumber: 65,
     columnNumber: 5
   })
 ] }, void 0, true, {
   fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 65,
+  lineNumber: 59,
   columnNumber: 35
 }), "IconUnlinked");
 const IconMore = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { size: 18, children: [
   /* @__PURE__ */ jsxDEV("circle", { cx: "12", cy: "12", r: "1" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 74,
+    lineNumber: 68,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("circle", { cx: "19", cy: "12", r: "1" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 75,
+    lineNumber: 69,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("circle", { cx: "5", cy: "12", r: "1" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 76,
+    lineNumber: 70,
+    columnNumber: 5
+  })
+] }, void 0, true, {
+  fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
+  lineNumber: 67,
+  columnNumber: 31
+}), "IconMore");
+const IconPlus = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { children: [
+  /* @__PURE__ */ jsxDEV("line", { x1: "12", y1: "5", x2: "12", y2: "19" }, void 0, false, {
+    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
+    lineNumber: 72,
+    columnNumber: 36
+  }),
+  /* @__PURE__ */ jsxDEV("line", { x1: "5", y1: "12", x2: "19", y2: "12" }, void 0, false, {
+    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
+    lineNumber: 72,
+    columnNumber: 75
+  })
+] }, void 0, true, {
+  fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
+  lineNumber: 72,
+  columnNumber: 31
+}), "IconPlus");
+const IconRedo = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { size: 18, children: [
+  /* @__PURE__ */ jsxDEV("polyline", { points: "23 4 23 10 17 10" }, void 0, false, {
+    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
+    lineNumber: 74,
+    columnNumber: 5
+  }),
+  /* @__PURE__ */ jsxDEV("path", { d: "M20.49 15a9 9 0 1 1-2.12-9.36L23 10" }, void 0, false, {
+    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
+    lineNumber: 75,
     columnNumber: 5
   })
 ] }, void 0, true, {
   fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
   lineNumber: 73,
   columnNumber: 31
-}), "IconMore");
-const IconPlus = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { children: [
-  /* @__PURE__ */ jsxDEV("line", { x1: "12", y1: "5", x2: "12", y2: "19" }, void 0, false, {
-    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 78,
-    columnNumber: 36
-  }),
-  /* @__PURE__ */ jsxDEV("line", { x1: "5", y1: "12", x2: "19", y2: "12" }, void 0, false, {
-    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 78,
-    columnNumber: 75
-  })
-] }, void 0, true, {
-  fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 78,
-  columnNumber: 31
-}), "IconPlus");
-const IconRedo = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { size: 18, children: [
-  /* @__PURE__ */ jsxDEV("polyline", { points: "23 4 23 10 17 10" }, void 0, false, {
-    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 80,
-    columnNumber: 5
-  }),
-  /* @__PURE__ */ jsxDEV("path", { d: "M20.49 15a9 9 0 1 1-2.12-9.36L23 10" }, void 0, false, {
-    fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 81,
-    columnNumber: 5
-  })
-] }, void 0, true, {
-  fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 79,
-  columnNumber: 31
 }), "IconRedo");
 const IconRefresh = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { size: 18, children: [
   /* @__PURE__ */ jsxDEV("polyline", { points: "23 4 23 10 17 10" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 84,
+    lineNumber: 78,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("path", { d: "M20.49 15a9 9 0 1 1-2.12-9.36L23 10" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 85,
+    lineNumber: 79,
     columnNumber: 5
   })
 ] }, void 0, true, {
   fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 83,
+  lineNumber: 77,
   columnNumber: 34
 }), "IconRefresh");
 const IconSearch = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { size: 18, children: [
   /* @__PURE__ */ jsxDEV("circle", { cx: "11", cy: "11", r: "7" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 87,
+    lineNumber: 81,
     columnNumber: 48
   }),
   /* @__PURE__ */ jsxDEV("line", { x1: "21", y1: "21", x2: "16.65", y2: "16.65" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 87,
+    lineNumber: 81,
     columnNumber: 80
   })
 ] }, void 0, true, {
   fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 87,
+  lineNumber: 81,
   columnNumber: 33
 }), "IconSearch");
 const IconSelect = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { children: [
   /* @__PURE__ */ jsxDEV("rect", { x: "3", y: "3", width: "18", height: "18", rx: "4" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 89,
+    lineNumber: 83,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("polyline", { points: "8 12.5 11 15.5 16.5 9" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 90,
+    lineNumber: 84,
     columnNumber: 5
   })
 ] }, void 0, true, {
   fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 88,
+  lineNumber: 82,
   columnNumber: 33
 }), "IconSelect");
 const IconTrash = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { children: [
   /* @__PURE__ */ jsxDEV("polyline", { points: "3 6 5 6 21 6" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 93,
+    lineNumber: 87,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("path", { d: "M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 94,
+    lineNumber: 88,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("path", { d: "M10 11v6" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 95,
+    lineNumber: 89,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("path", { d: "M14 11v6" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 96,
+    lineNumber: 90,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("path", { d: "M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 97,
+    lineNumber: 91,
     columnNumber: 5
   })
 ] }, void 0, true, {
   fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 92,
+  lineNumber: 86,
   columnNumber: 32
 }), "IconTrash");
 const IconUndo = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { size: 18, children: [
   /* @__PURE__ */ jsxDEV("polyline", { points: "1 4 1 10 7 10" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 100,
+    lineNumber: 94,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("path", { d: "M3.51 15a9 9 0 1 0 2.13-9.36L1 10" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 101,
+    lineNumber: 95,
     columnNumber: 5
   })
 ] }, void 0, true, {
   fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 99,
+  lineNumber: 93,
   columnNumber: 31
 }), "IconUndo");
 const IconUpload = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Svg, { size: 18, children: [
   /* @__PURE__ */ jsxDEV("path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 104,
+    lineNumber: 98,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("polyline", { points: "17 8 12 3 7 8" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 105,
+    lineNumber: 99,
     columnNumber: 5
   }),
   /* @__PURE__ */ jsxDEV("line", { x1: "12", y1: "3", x2: "12", y2: "15" }, void 0, false, {
     fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-    lineNumber: 106,
+    lineNumber: 100,
     columnNumber: 5
   })
 ] }, void 0, true, {
   fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
-  lineNumber: 103,
+  lineNumber: 97,
   columnNumber: 33
 }), "IconUpload");
 export {
@@ -419,8 +389,6 @@ export {
   IconColourMode,
   IconCopy,
   IconDownload,
-  IconFilter,
-  IconFilterClear,
   IconLinked,
   IconMore,
   IconPlus,

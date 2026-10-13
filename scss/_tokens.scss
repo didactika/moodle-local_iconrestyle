@@ -21,6 +21,7 @@
     --irs-text: var(--bs-body-color, #212529);
     --irs-surface: var(--bs-body-bg, #fff);
     --irs-border: var(--bs-border-color, var(--border-color, #dee2e6));
+    --irs-border-strong: color-mix(in srgb, var(--irs-text) 42%, var(--irs-surface));
     --irs-muted: var(--bs-secondary-color, #6c757d);
     --irs-accent: var(--bs-primary, var(--primary, #0f6cbf));
     --irs-accent-soft: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));

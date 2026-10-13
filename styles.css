@@ -18,6 +18,7 @@
     --irs-text: var(--bs-body-color, #212529);
     --irs-surface: var(--bs-body-bg, #fff);
     --irs-border: var(--bs-border-color, var(--border-color, #dee2e6));
+    --irs-border-strong: color-mix(in srgb, var(--irs-text) 42%, var(--irs-surface));
     --irs-muted: var(--bs-secondary-color, #6c757d);
     --irs-accent: var(--bs-primary, var(--primary, #0f6cbf));
     --irs-accent-soft: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
@@ -96,19 +97,20 @@
     grid-template-columns: minmax(0, 1fr) minmax(23rem, 30rem);
 }
 
-@media (max-width: 62rem) {
+.irs.irs-narrow {
+    height: auto;
+}
 
-    .irs {
-        height: auto;
-    }
+.irs.irs-narrow .irs-panel {
+    max-height: none;
+}
 
-    .irs .irs-layout.irs-open {
-        grid-template-columns: minmax(0, 1fr);
-    }
+.irs.irs-narrow .irs-layout.irs-open {
+    grid-template-columns: minmax(0, 1fr);
+}
 
-    .irs .irs-grid {
-        height: 50vh;
-    }
+.irs.irs-narrow .irs-grid {
+    height: 50vh;
 }
 
 .irs .irs-browser {
@@ -247,13 +249,6 @@
     border-radius: var(--irs-radius);
     background: var(--irs-surface);
     box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
-}
-
-@media (max-width: 62rem) {
-
-    .irs .irs-panel {
-        max-height: none;
-    }
 }
 
 .irs .irs-panel-head {
@@ -703,7 +698,7 @@
     align-items: center;
     gap: 0.375rem;
     padding: 0.375rem 0.875rem;
-    border: 1px solid var(--irs-border);
+    border: 1px solid var(--irs-border-strong);
     border-radius: 999px;
     background: var(--irs-surface);
     color: inherit;
@@ -1222,6 +1217,7 @@
 .irs .irs-search input {
     height: 2rem;
     padding: 0.125rem 0.75rem 0.125rem 2rem;
+    border: 1px solid var(--irs-border-strong);
     border-radius: 999px;
     font-size: 0.875rem;
 }
@@ -1242,6 +1238,7 @@
 .irs .irs-filter {
     width: auto;
     height: 2rem;
+    border-color: var(--irs-border-strong);
     padding-top: 0.125rem;
     padding-bottom: 0.125rem;
     border-radius: 999px;
@@ -2006,6 +2003,11 @@
 .irs .irs-filters {
     position: relative;
     flex: none;
+}
+
+.irs .irs-filtersbtn .icon,
+.irs .irs-filter-head .icon {
+    margin: 0;
 }
 
 .irs .irs-count-badge {

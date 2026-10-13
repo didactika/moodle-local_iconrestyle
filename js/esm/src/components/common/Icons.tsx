@@ -52,12 +52,6 @@ export const IconDownload = () => <Svg size={18}>
     <polyline points="7 10 12 15 17 10" />
     <line x1="12" y1="15" x2="12" y2="3" />
 </Svg>;
-export const IconFilter = () => <Svg><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></Svg>;
-export const IconFilterClear = () => <Svg>
-    <path d="M13 14.5V20l-3 1.5v-7L3 4h14" />
-    <line x1="16" y1="8" x2="22" y2="14" />
-    <line x1="22" y1="8" x2="16" y2="14" />
-</Svg>;
 export const IconLinked = () => <Svg className="irs-icon-linked">
     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />

@@ -18,7 +18,6 @@ import { Fragment, jsxDEV } from "react/jsx-dev-runtime";
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFollowAnchor } from "../hooks/useFollowAnchor";
-import { IconFilter, IconFilterClear } from "./common/Icons";
 const SHOWN = 80;
 const STATUS = ["untouched", "modified", "shared"];
 const DETAIL = ["colour", "shape", "spacing", "transform", "effects", "artwork", "limited"];
@@ -107,7 +106,7 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
           false,
           {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 129,
+            lineNumber: 128,
             columnNumber: 9
           },
           this
@@ -118,17 +117,17 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
             " ",
             /* @__PURE__ */ jsxDEV("small", { children: extra }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 131,
+              lineNumber: 130,
               columnNumber: 55
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 131,
+            lineNumber: 130,
             columnNumber: 52
           }, this)
         ] }, void 0, true, {
           fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-          lineNumber: 131,
+          lineNumber: 130,
           columnNumber: 9
         }, this)
       ]
@@ -137,7 +136,7 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
     true,
     {
       fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-      lineNumber: 127,
+      lineNumber: 126,
       columnNumber: 82
     },
     this
@@ -163,19 +162,19 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
         ref: button,
         onClick: toggle,
         children: [
-          /* @__PURE__ */ jsxDEV(IconFilter, {}, void 0, false, {
+          /* @__PURE__ */ jsxDEV("i", { className: "icon fa-solid fa-filter", "aria-hidden": "true" }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 146,
+            lineNumber: 145,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("span", { children: text("filtbutton") }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 146,
-            columnNumber: 27
+            lineNumber: 145,
+            columnNumber: 73
           }, this),
           /* @__PURE__ */ jsxDEV("span", { className: "irs-count-badge", "data-region": "filters-count", hidden: total === 0, children: total > 0 ? total : "" }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 147,
+            lineNumber: 146,
             columnNumber: 13
           }, this)
         ]
@@ -184,7 +183,7 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
       true,
       {
         fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-        lineNumber: 144,
+        lineNumber: 143,
         columnNumber: 9
       },
       this
@@ -203,7 +202,7 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
           /* @__PURE__ */ jsxDEV("div", { className: "irs-filter-head", children: [
             /* @__PURE__ */ jsxDEV("h2", { className: "irs-filter-heading", children: text("filtbutton") }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 152,
+              lineNumber: 151,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV(
@@ -224,9 +223,9 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
                   modes: [],
                   sort: "catalogue"
                 }),
-                children: /* @__PURE__ */ jsxDEV(IconFilterClear, {}, void 0, false, {
+                children: /* @__PURE__ */ jsxDEV("i", { className: "icon fa-solid fa-rotate-right", "aria-hidden": "true" }, void 0, false, {
                   fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                  lineNumber: 158,
+                  lineNumber: 157,
                   columnNumber: 21
                 }, this)
               },
@@ -234,20 +233,20 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
               false,
               {
                 fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                lineNumber: 153,
+                lineNumber: 152,
                 columnNumber: 17
               },
               this
             )
           ] }, void 0, true, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 151,
+            lineNumber: 150,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("section", { className: "irs-filter-section", children: [
             /* @__PURE__ */ jsxDEV("h3", { className: "irs-filter-title", children: text("filttype") }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 162,
+              lineNumber: 161,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "irs-filter-chips", children: [
@@ -256,34 +255,34 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
               chip("kinds", "container", text("kindactivity"))
             ] }, void 0, true, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 163,
+              lineNumber: 162,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 161,
+            lineNumber: 160,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("section", { className: "irs-filter-section", children: [
             /* @__PURE__ */ jsxDEV("h3", { className: "irs-filter-title", children: text("filtstatus") }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 170,
+              lineNumber: 169,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "irs-filter-chips", children: STATUS.map((value) => chip("traits", value, text(`filttrait${value === "untouched" ? "untouched" : value}`))) }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 171,
+              lineNumber: 170,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 169,
+            lineNumber: 168,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("section", { className: "irs-filter-section", children: [
             /* @__PURE__ */ jsxDEV("h3", { className: "irs-filter-title", children: text("filtsort") }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 176,
+              lineNumber: 175,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV(
@@ -296,7 +295,7 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
                 onChange: (event) => onChange({ sort: event.target.value }),
                 children: ["catalogue", "name", "component", "modified"].map((value) => /* @__PURE__ */ jsxDEV("option", { value, children: text(`filtsort${value}`) }, value, false, {
                   fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                  lineNumber: 179,
+                  lineNumber: 178,
                   columnNumber: 84
                 }, this))
               },
@@ -304,84 +303,84 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
               false,
               {
                 fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                lineNumber: 177,
+                lineNumber: 176,
                 columnNumber: 17
               },
               this
             )
           ] }, void 0, true, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 175,
+            lineNumber: 174,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("section", { className: "irs-filter-section", children: [
             /* @__PURE__ */ jsxDEV("h3", { className: "irs-filter-title", children: text("filtcustom") }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 185,
+              lineNumber: 184,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "irs-filter-chips", children: DETAIL.map((value) => chip("traits", value, text(`filttrait${value}`))) }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 186,
+              lineNumber: 185,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 184,
+            lineNumber: 183,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("section", { className: "irs-filter-section", children: [
             /* @__PURE__ */ jsxDEV("h3", { className: "irs-filter-title", children: text("filtplace") }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 191,
+              lineNumber: 190,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "irs-filter-chips", children: ["site", "category", "course", "activity"].map((value) => chip("places", value, text(`filtplace${value}`))) }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 192,
+              lineNumber: 191,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 190,
+            lineNumber: 189,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("section", { className: "irs-filter-section", "data-region": "filters-mode-section", hidden: !hasModes, children: [
             /* @__PURE__ */ jsxDEV("h3", { className: "irs-filter-title", children: text("filtmode") }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 197,
+              lineNumber: 196,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "irs-filter-chips", children: Object.keys(modes).map((value) => chip("modes", value, modes[value])) }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 198,
+              lineNumber: 197,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 196,
+            lineNumber: 195,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("section", { className: "irs-filter-section", "data-region": "filters-purpose-section", hidden: purposes.length === 0, children: [
             /* @__PURE__ */ jsxDEV("h3", { className: "irs-filter-title", children: text("filtpurpose") }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 203,
+              lineNumber: 202,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV("div", { className: "irs-filter-chips", "data-region": "filters-purposes", children: purposes.map((value) => chip("purposes", value, capital(value), counts.purposes.get(value))) }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 204,
+              lineNumber: 203,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 202,
+            lineNumber: 201,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("section", { className: "irs-filter-section", children: [
             /* @__PURE__ */ jsxDEV("h3", { className: "irs-filter-title", children: text("filtcomponent") }, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 209,
+              lineNumber: 208,
               columnNumber: 17
             }, this),
             /* @__PURE__ */ jsxDEV(
@@ -400,7 +399,7 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
               false,
               {
                 fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                lineNumber: 210,
+                lineNumber: 209,
                 columnNumber: 17
               },
               this
@@ -420,44 +419,44 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
                   false,
                   {
                     fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                    lineNumber: 215,
+                    lineNumber: 214,
                     columnNumber: 25
                   },
                   this
                 ),
                 /* @__PURE__ */ jsxDEV("span", { className: "irs-filter-name", children: name }, void 0, false, {
                   fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                  lineNumber: 217,
+                  lineNumber: 216,
                   columnNumber: 25
                 }, this),
                 /* @__PURE__ */ jsxDEV("span", { className: "irs-filter-count", children: counts.components.get(name) }, void 0, false, {
                   fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                  lineNumber: 218,
+                  lineNumber: 217,
                   columnNumber: 25
                 }, this)
               ] }, name, true, {
                 fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                lineNumber: 214,
+                lineNumber: 213,
                 columnNumber: 58
               }, this)),
               found.length > SHOWN && /* @__PURE__ */ jsxDEV("p", { className: "irs-theme-note", children: text("filtmore", SHOWN) }, void 0, false, {
                 fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                lineNumber: 220,
+                lineNumber: 219,
                 columnNumber: 46
               }, this),
               found.length === 0 && /* @__PURE__ */ jsxDEV("p", { className: "irs-theme-note", children: text("importnoresults") }, void 0, false, {
                 fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-                lineNumber: 221,
+                lineNumber: 220,
                 columnNumber: 44
               }, this)
             ] }, void 0, true, {
               fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-              lineNumber: 213,
+              lineNumber: 212,
               columnNumber: 17
             }, this)
           ] }, void 0, true, {
             fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-            lineNumber: 208,
+            lineNumber: 207,
             columnNumber: 13
           }, this)
         ]
@@ -466,14 +465,14 @@ function FiltersPanel({ icons, filters, modes, text, onChange }) {
       true,
       {
         fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-        lineNumber: 149,
+        lineNumber: 148,
         columnNumber: 9
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/iconrestyle/js/esm/src/components/FiltersPanel.tsx",
-    lineNumber: 139,
+    lineNumber: 138,
     columnNumber: 12
   }, this);
 }
