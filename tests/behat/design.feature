@@ -14,7 +14,7 @@ Feature: Design properties reach the real icons
     And the icon "core:a/setting" should have "border-top-style" "dashed"
     And the icon "core:a/setting" should have "border-top-color" "rgb(10, 107, 61)"
     And the icon "core:a/setting" should have "border-top-left-radius" "10px"
-    And the icon "core:a/setting" should have "padding-top" "8px"
+    And the icon "core:a/setting" should have "padding-top" of "0.5" em
     And the icon "core:a/setting" should have "padding-bottom" "0px"
 
   Scenario: Padding is set on one side only from the designer
@@ -29,7 +29,7 @@ Feature: Design properties reach the real icons
     And I set the field with xpath "//input[@data-prop='pt']" to "0.5"
     And the changes are saved
     When I am on site homepage
-    Then the icon "core:a/setting" should have "padding-top" "8px"
+    Then the icon "core:a/setting" should have "padding-top" of "0.5" em
     And the icon "core:a/setting" should have "padding-bottom" "0px"
 
   Scenario: Linked padding sets every side together
@@ -43,9 +43,9 @@ Feature: Design properties reach the real icons
     And I set the field with xpath "//input[@data-prop='pt']" to "0.25"
     And the changes are saved
     When I am on site homepage
-    Then the icon "core:a/setting" should have "padding-top" "4px"
-    And the icon "core:a/setting" should have "padding-left" "4px"
-    And the icon "core:a/setting" should have "padding-bottom" "4px"
+    Then the icon "core:a/setting" should have "padding-top" of "0.25" em
+    And the icon "core:a/setting" should have "padding-left" of "0.25" em
+    And the icon "core:a/setting" should have "padding-bottom" of "0.25" em
 
   Scenario: An image icon is recoloured with its own file, without uploading anything
     Given I log in as "admin"
@@ -106,8 +106,8 @@ Feature: Design properties reach the real icons
       | core:a/setting | {"mt":50,"ml":-25,"flipx":1,"brightness":150,"blur":2} |
     And I log in as "admin"
     When I am on site homepage
-    Then the icon "core:a/setting" should have "margin-top" "8px"
-    And the icon "core:a/setting" should have "margin-left" "-4px"
+    Then the icon "core:a/setting" should have "margin-top" of "0.5" em
+    And the icon "core:a/setting" should have "margin-left" of "-0.25" em
     And the icon "core:a/setting" should have "transform" "matrix(-1, 0, 0, 1, 0, 0)"
     And the icon "core:a/setting" should have "filter" "brightness(1.5) blur(2px)"
 
@@ -123,6 +123,6 @@ Feature: Design properties reach the real icons
     And I set the field with xpath "//input[@data-prop='mb']" to "0.5"
     And the changes are saved
     And I am on site homepage
-    Then the icon "core:a/setting" should have "margin-bottom" "8px"
+    Then the icon "core:a/setting" should have "margin-bottom" of "0.5" em
     And the icon "core:a/setting" should have "margin-top" "0px"
     And the icon "core:a/setting" should have "padding-bottom" "0px"
