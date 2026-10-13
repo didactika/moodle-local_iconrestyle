@@ -43,7 +43,7 @@ final class glyph_signature_test extends \basic_testcase {
         $this->assertFalse($signature->matches(['icon', 'fa-regular', 'fa-gear']));
         $this->assertFalse($signature->matches(['icon', 'fa-brands', 'fa-gear']));
         $this->assertFalse($signature->matches(['icon', 'fa', 'fa-pen']));
-        $this->assertFalse($signature->matches(['fa', 'fa-gear']));
+        $this->assertTrue($signature->matches(['fa', 'fa-gear']), 'an icon is found by its glyph class');
         $this->assertSame(
             ['body [class].fa-gear:not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin):not(.fa-duotone):not(.fa-sharp)'],
             $signature->selectors('body ')
