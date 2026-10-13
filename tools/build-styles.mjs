@@ -35,6 +35,10 @@ try {
 }
 // LibSass treats min() and max() as Sass arithmetic; the source writes Min() and Max() to keep them as plain CSS.
 compiled = compiled.replace(/\bMin\(/g, 'min(').replace(/\bMax\(/g, 'max(');
+// LibSass keeps the escapes of a string as they were written and Dart Sass turns them into the characters, so the escapes are
+// decoded first and written again by the step below, the same on both engines.
+compiled = compiled.replace(/"((?:[^"\\]|\\.)*)"/g, (match, inner) => '"' + inner.replace(/\\([0-9a-fA-F]{1,6}) ?/g,
+    (escape, hex) => String.fromCodePoint(parseInt(hex, 16))) + '"');
 // The engines disagree on how they write characters outside ASCII; the stylesheet keeps them as CSS escapes.
 compiled = compiled.replace(/[^\x00-\x7f]/g, (character, offset) => {
     const next = compiled[offset + character.length] || '';
