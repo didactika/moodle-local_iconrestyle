@@ -6,7 +6,7 @@
 
 *Give every icon of your Moodle its own look, from one designer, without touching the theme*
 
-[![Release](https://img.shields.io/github/v/release/didactika/moodle-local_iconrestyle?filter=v5.3.*&style=flat-square)](https://github.com/didactika/moodle-local_iconrestyle/releases)
+[![Release](https://img.shields.io/github/v/release/didactika/moodle-local_iconrestyle?filter=v*-m503&style=flat-square)](https://github.com/didactika/moodle-local_iconrestyle/releases)
 [![Moodle](https://img.shields.io/badge/Moodle-5.3-f98012?style=flat-square&logo=moodle&logoColor=white)](https://moodle.org)
 [![PHP](https://img.shields.io/badge/PHP-8.3+-777bb4?style=flat-square&logo=php&logoColor=white)](https://www.php.net)
 [![License](https://img.shields.io/badge/License-GPL_v3-blue?style=flat-square)](LICENSE)
@@ -37,7 +37,7 @@ The designer is a React 19 application written in TypeScript, mounted by Moodle'
 
 ## Installation
 
-**Requirements:** Moodle 5.3, PHP 8.3 or newer and the database requirements of the selected Moodle release. This distribution's release is **5.3.0**. Moodle 4.0 to 5.2 have a maintenance line of their own (`MOODLE_400_STABLE`) with the same features and an interface written in AMD and Mustache.
+**Requirements:** Moodle 5.3, PHP 8.3 or newer and the database requirements of the selected Moodle release. Moodle 4.0 to 5.2 have a maintenance line of their own (`MOODLE_400_STABLE`) with the same features and an interface written in AMD and Mustache.
 
 **From a release:** download the matching release ZIP, open **Site administration → Plugins → Install plugins**, upload the package and follow the prompts.
 
