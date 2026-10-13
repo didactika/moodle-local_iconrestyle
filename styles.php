@@ -48,19 +48,21 @@ if ($chain === null) {
 }
 
 $factory = service_factory::instance();
-$result = $factory->bundles()->assemble($chain);
-$result['current'] = $result['current'] && $parts[0] === $factory->version_hash();
-$etag = '"' . sha1($result['css']) . '"';
+$bundles = $factory->bundles();
+$state = $bundles->effective($chain);
+$current = $state['current'] && $parts[0] === $factory->version_hash();
+$etag = '"' . bundle_service::etag($factory->version_hash(), $state['chain']) . '"';
 
 header('Content-Type: text/css; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('ETag: ' . $etag);
-header('Cache-Control: ' . ($result['current'] ? 'public, max-age=31536000, immutable' : 'no-cache'));
+header('Cache-Control: ' . ($current ? 'public, max-age=31536000, immutable' : 'no-cache'));
 
 if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && trim($_SERVER['HTTP_IF_NONE_MATCH']) === $etag) {
     http_response_code(304);
     exit;
 }
 
-header('Content-Length: ' . strlen($result['css']));
-echo $result['css'];
+$css = $bundles->css($state['chain']);
+header('Content-Length: ' . strlen($css));
+echo $css;

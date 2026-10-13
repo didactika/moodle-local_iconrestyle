@@ -17,7 +17,7 @@
 
 Icon Restyle (**local_iconrestyle**) changes how Moodle draws its icons without touching the theme or the core. A designer in the site administration lists every icon that can be customised. Choose one, change its colour, shape, spacing, effects or replace it with a file of your own, and the whole site shows it. Customisations are stored per place and delivered to each page as one cached stylesheet, so replaced icons need no JavaScript on the pages of your users and add no database query to a page view once the cache is warm.
 
-![The icon designer](docs/user-manual/images/designer-overview.png)
+![The icon designer](https://raw.githubusercontent.com/wiki/didactika/moodle-local_iconrestyle/images/designer-overview.png)
 
 ## Overview
 
@@ -54,12 +54,11 @@ From Moodle 5.1 the plugin directory is `public/local/iconrestyle`.
 3. Change what you want in the panel. The preview shows it at once and it is saved on its own; there is no save button.
 4. To limit the look to a category, a course, an activity, some pages or a colour mode, use the **Places** tab.
 
-Every control is explained, with screenshots, in the user manual.
+Every control is explained, with screenshots, in the [user manual](https://github.com/didactika/moodle-local_iconrestyle/wiki).
 
 ## User manual
 
-- **[User manual](docs/user-manual/Home.md)**: getting started, the designer, finding icons, editing, places and colour modes, copying looks, export and import, administration and troubleshooting.
-- The pages are written in the format of a GitHub wiki, with its `_Sidebar.md`, so they can be published as the wiki of the repository by copying `docs/user-manual` into it.
+- **[User manual](https://github.com/didactika/moodle-local_iconrestyle/wiki)**: a wiki with a start page that says what to read first, then getting started, the designer, finding icons, editing, places and colour modes, copying looks, export and import, administration and troubleshooting.
 - The screenshots are taken from the real designer by `tests/behat/manual.feature`; run it with `--tags=@iconrestyle_manual` to refresh them.
 
 ## Configuration
@@ -103,7 +102,7 @@ Capabilities that change what every page renders carry the XSS risk flag. Icons 
 
 A page whose stylesheets are cached adds no database query and about twenty microseconds of work, however many courses, categories and rules the site has: the work depends on the contexts on the path of the page, not on the size of the site. What keeps a very large site fast is that every stylesheet is compiled once however many visitors ask for it at the same moment, each context keeps only its newest stylesheet in the cache, a rule limited to many pages and regions writes its selectors as lists, and the settings above stop the stylesheets, their number and the cost of the effects from growing past what a browser handles well.
 
-The benchmarks are part of the test suite, with budgets that fail the build when they are exceeded (`tests/performance`). The measurements on a large site are in the [performance report](docs/performance-report.md).
+The benchmarks are part of the test suite, with budgets that fail the build when they are exceeded (`tests/performance`). The measurements on a large site are in the [performance report](https://github.com/didactika/moodle-local_iconrestyle/wiki/Performance-report).
 
 ## Troubleshooting
 
@@ -114,7 +113,7 @@ The benchmarks are part of the test suite, with budgets that fail the build when
 | Two icons change together | They share one glyph in Moodle and cannot be styled apart; the panel says so. |
 | An import leaves rules out | The report lists why: a place or an icon that this site does not have, or refused artwork. |
 
-More in the [troubleshooting chapter](docs/user-manual/Troubleshooting.md).
+More in the [troubleshooting chapter](https://github.com/didactika/moodle-local_iconrestyle/wiki/Troubleshooting).
 
 ## Development
 

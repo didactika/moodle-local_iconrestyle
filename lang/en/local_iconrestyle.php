@@ -61,6 +61,7 @@ $string['borderwidth'] = 'Border width';
 $string['boxcolour'] = 'Box colour';
 $string['brightness'] = 'Brightness';
 $string['cachedef_catalogue'] = 'Customisable icons of this site';
+$string['cachedef_chains'] = 'Icon stylesheets that apply to a page';
 $string['cachedef_compiled'] = 'Compiled icon stylesheets';
 $string['cachedef_ctxrev'] = 'Icon stylesheet revisions by context';
 $string['cancel'] = 'Cancel';

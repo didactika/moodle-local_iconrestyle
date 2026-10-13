@@ -52,13 +52,19 @@ final class head_callbacks {
      * @return \moodle_url|null Address, or null when no rule applies there.
      */
     public static function stylesheet_url(\context $context): ?\moodle_url {
+        global $CFG;
         $factory = service_factory::instance();
-        $chain = $factory->chain_resolver()->chain($context->path);
-        if ($chain === []) {
+        $encoded = $factory->chain_addresses()->encoded($context->path);
+        if ($encoded === '') {
             return null;
         }
+        $argument = '/' . $factory->version_hash() . '/' . $encoded . '/all.css';
+        // The argument is made of hexadecimal digits, dots and dashes, so it needs no encoding as part of the path.
+        if (!empty($CFG->slasharguments)) {
+            return new \moodle_url('/local/iconrestyle/styles.php' . $argument);
+        }
         $url = new \moodle_url('/local/iconrestyle/styles.php');
-        $url->set_slashargument('/' . $factory->version_hash() . '/' . bundle_service::encode_chain($chain) . '/all.css');
+        $url->set_slashargument($argument);
         return $url;
     }
 

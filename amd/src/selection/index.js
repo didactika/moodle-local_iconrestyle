@@ -76,7 +76,6 @@ export const createSelection = (root, options) => {
         const switcher = bar.querySelector(selectors.modes);
         switcher.hidden = switcher.hidden || modeNames.length < 2;
         switcher.disabled = picked.size === 0;
-        window.requestAnimationFrame(() => root.style.setProperty('--irs-selbar', `${bar.offsetHeight}px`));
     };
 
     const markStart = () => {

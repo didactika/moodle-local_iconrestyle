@@ -30,6 +30,7 @@ use local_iconrestyle\asset\asset_urls;
 use local_iconrestyle\asset\raster_reencoder;
 use local_iconrestyle\asset\svg_sanitizer;
 use local_iconrestyle\delivery\bundle_service;
+use local_iconrestyle\delivery\chain_addresses;
 use local_iconrestyle\delivery\chain_resolver;
 use local_iconrestyle\delivery\compile_lock;
 use local_iconrestyle\delivery\compiled_cache;
@@ -111,7 +112,7 @@ class service_factory {
     public function revisions(): revision_registry {
         global $DB;
         return $this->services['revisions'] ?? $this->services['revisions'] =
-            new revision_registry($DB, \cache::make('local_iconrestyle', 'ctxrev'));
+            new revision_registry($DB, \cache::make('local_iconrestyle', 'ctxrev'), \cache::make('local_iconrestyle', 'chains'));
     }
 
     /**
@@ -122,6 +123,20 @@ class service_factory {
     public function rules(): rule_store {
         global $DB;
         return $this->services['rules'] ?? $this->services['rules'] = new rule_store($DB);
+    }
+
+    /**
+     * Stylesheets that apply to a context path, kept for the pages that come after.
+     *
+     * @return chain_addresses Addresses.
+     */
+    public function chain_addresses(): chain_addresses {
+        return $this->services['addresses'] ?? $this->services['addresses'] = new chain_addresses(
+            \cache::make('local_iconrestyle', 'chains'),
+            function (): chain_resolver {
+                return $this->chain_resolver();
+            }
+        );
     }
 
     /**
