@@ -21,6 +21,12 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [4.0.1] - 2026-10-13
+
+### Fixed
+
+- A look given to one kind of activity (`activity:folder`) showed in the preview of the designer but not on the pages of the site whenever its purpose (`purpose:content`) had a look of its own. The selector of a purpose and the one of an activity type are equally specific, and the stylesheet wrote the rules in the alphabetical order of their slots, so the purpose came last and won. The rules of one stylesheet are now written icons first, then purposes, then activity types, so the narrower choice wins. The version changes so that every stylesheet is compiled again with the new order.
+
 ## [4.0.0] - 2026-10-13
 
 ### Changed
