@@ -21,6 +21,12 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [5.3.2] - 2026-10-13
+
+### Fixed
+
+- Colours that did not come from the theme. On Moodle 4.x, which is Bootstrap 4 and names its colours `--primary` and `--primary-light`, the import review, the form of places and the selection bar fell back to a fixed blue (`var(--bs-primary, #0f6cbf)`), so a piece of a teal theme had a teal fill, a blue border and blue text. Every colour of the plugin now comes from one set of tokens (`scss/_tokens.scss`) that reads the theme (`--bs-*` on Moodle 5, `--primary`, `--danger`... on Moodle 4) and ends in the colour Boost has; the soft fills, the text on them, the border and the states (new, updates, danger, success, warning) are mixed from the colour of the theme with `color-mix()` where the browser has it, so they are one hue and follow the theme and the colour mode. Check boxes and radio buttons of the designer take the colour of the theme too, and the white of a text on the colour of the theme no longer turns dark in dark mode.
+
 ## [5.3.1] - 2026-10-13
 
 ### Fixed

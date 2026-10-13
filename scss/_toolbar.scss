@@ -30,7 +30,7 @@
 
         &:hover {
             background: var(--irs-accent-soft);
-            color: var(--irs-accent);
+            color: var(--irs-accent-text);
         }
     }
 
@@ -62,7 +62,7 @@
     .irs-search .form-control.irs-active {
         border-color: var(--irs-accent);
         background-color: var(--irs-accent-soft);
-        color: var(--irs-accent);
+        color: var(--irs-accent-text);
         font-weight: 600;
     }
 
@@ -76,7 +76,7 @@
 
         option {
             background-color: var(--irs-surface);
-            color: var(--bs-body-color, inherit);
+            color: var(--irs-text);
             font-weight: 400;
         }
     }
@@ -103,7 +103,7 @@
         &[data-state="saved"] {
             .irs-status-saved {
                 display: inline-flex;
-                color: var(--bs-success, #198754);
+                color: var(--irs-success);
             }
         }
 
@@ -116,7 +116,7 @@
         &[data-state="error"] {
             .irs-status-error {
                 display: inline-flex;
-                color: var(--bs-danger, #b02a37);
+                color: var(--irs-danger);
             }
         }
     }
@@ -159,7 +159,7 @@
         &:hover {
             &:not(:disabled) {
                 background: var(--irs-accent-soft);
-                color: var(--irs-accent);
+                color: var(--irs-accent-text);
             }
         }
 
@@ -201,7 +201,7 @@
         button:hover:not(:disabled),
         a:hover {
             background: var(--irs-accent-soft);
-            color: var(--irs-accent);
+            color: var(--irs-accent-text);
         }
 
         button {
@@ -290,7 +290,7 @@
             padding: 0 0.5rem;
             border-radius: 999px;
             background: var(--irs-accent-soft);
-            color: var(--irs-accent);
+            color: var(--irs-accent-text);
             font-size: 0.6875rem;
             font-style: normal;
         }
@@ -313,7 +313,7 @@
         &[aria-pressed="true"] {
             border-color: var(--irs-accent);
             background: var(--irs-accent-soft);
-            color: var(--irs-accent);
+            color: var(--irs-accent-text);
             font-weight: 600;
         }
     }
@@ -334,7 +334,7 @@
         &:hover {
             border-color: var(--irs-accent);
             background: var(--irs-accent-soft);
-            color: var(--irs-accent);
+            color: var(--irs-accent-text);
         }
     }
 }

@@ -31,9 +31,9 @@
     max-height: 12rem;
     margin-top: 0.25rem;
     overflow-y: auto;
-    border: 1px solid var(--bs-border-color, #dee2e6);
+    border: 1px solid var(--irs-border);
     border-radius: 0.5rem;
-    background: var(--bs-body-bg, #fff);
+    background: var(--irs-surface);
 }
 
 .irs-location-item {
@@ -48,10 +48,10 @@
 
     &:hover,
     &:focus-visible {
-        background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
+        background: var(--irs-accent-soft);
     }
 
     small {
-        color: var(--bs-secondary-color, #6c757d);
+        color: var(--irs-muted);
     }
 }
