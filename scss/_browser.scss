@@ -9,11 +9,6 @@
 .irs {
     --irs-gap: 1rem;
     --irs-card: 6.5rem;
-    --irs-border: var(--bs-border-color, var(--border-color, #dee2e6));
-    --irs-muted: var(--bs-secondary-color, #6c757d);
-    --irs-accent: var(--bs-primary, var(--primary, #0f6cbf));
-    --irs-accent-soft: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
-    --irs-surface: var(--bs-body-bg, #fff);
     --irs-radius: 0.75rem;
     --irs-fill: calc(100vh - var(--irs-top, 9rem) - 1.25rem);
     display: flex;
@@ -26,7 +21,7 @@
         padding: 0.125rem 0.625rem;
         border-radius: 999px;
         background: var(--irs-accent-soft);
-        color: var(--irs-accent);
+        color: var(--irs-accent-text);
         font-size: 0.75rem;
         font-weight: 600;
         white-space: nowrap;
