@@ -28,6 +28,12 @@ on:
       - 'MOODLE_*_STABLE'
   workflow_dispatch:
 
+# A new push to a pull request cancels the run that is still going for the one before it, so the checks of a commit that is
+# already out of date do not keep running next to the ones of the commit that replaced it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
