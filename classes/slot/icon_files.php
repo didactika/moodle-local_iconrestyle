@@ -29,7 +29,7 @@ namespace local_iconrestyle\slot;
  */
 class icon_files {
     /** @var string[] Extensions of icon files, in order of preference. */
-    private const EXTENSIONS = ['svg', 'png'];
+    private const EXTENSIONS = ['svg', 'png', 'webp', 'gif', 'jpg', 'jpeg'];
 
     /**
      * The file of an icon.
