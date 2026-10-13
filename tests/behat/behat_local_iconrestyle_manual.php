@@ -70,7 +70,8 @@ class behat_local_iconrestyle_manual extends behat_base {
                 ring.className = 'irs-doc-mark';
                 ring.style.cssText = 'position:fixed;z-index:2147483000;pointer-events:none;box-sizing:border-box;' +
                     'border:2px solid #e83e8c;border-radius:8px;box-shadow:0 0 0 3px rgba(232,62,140,.25);' +
-                    'left:' + (r.left - 3) + 'px;top:' + (r.top - 3) + 'px;width:' + (r.width + 6) + 'px;height:' + (r.height + 6) + 'px';
+                    'left:' + (r.left - 3) + 'px;top:' + (r.top - 3) + 'px;width:' + (r.width + 6) + 'px;' +
+                    'height:' + (r.height + 6) + 'px';
                 document.body.appendChild(ring);
                 var at = {
                     'top-left': [r.left - 14, r.top - 14],
@@ -110,7 +111,7 @@ class behat_local_iconrestyle_manual extends behat_base {
     }
 
     /**
-     * Open one group of the editing panel and close the others, so its controls are all in view.
+     * Open one group of the editing panel and close the others, with the group at the top of the panel.
      *
      * @When /^I show only the group "([^"]+)" of the editing panel$/
      * @param string $name Title of the group.
@@ -118,19 +119,28 @@ class behat_local_iconrestyle_manual extends behat_base {
     public function i_show_only_the_group(string $name): void {
         $script = "(function (name) {
             var found = false;
+            var target = null;
             Array.prototype.slice.call(document.querySelectorAll('.irs-panel details.irs-group')).forEach(function (g) {
                 var summary = g.querySelector('summary');
                 var wanted = summary && summary.textContent.trim() === name;
                 g.open = wanted;
                 found = found || wanted;
+                target = wanted ? summary : target;
             });
             var body = document.querySelector('.irs-panel-body');
-            if (body) { body.scrollTop = 0; }
+            if (body) {
+                body.scrollTop = 0;
+                if (target) {
+                    body.scrollTop = target.getBoundingClientRect().top - body.getBoundingClientRect().top;
+                }
+            }
             return found;
         })(" . json_encode($name) . ")";
         if (!$this->getSession()->evaluateScript($script)) {
             throw new \Behat\Mink\Exception\ExpectationException('There is no group called ' . $name, $this->getSession());
         }
+        // The arrows of the groups turn while they open and close.
+        $this->getSession()->wait(700);
     }
 
     /**
@@ -161,7 +171,10 @@ class behat_local_iconrestyle_manual extends behat_base {
         );
         $box = json_decode($json, true);
         if (!is_array($box)) {
-            throw new \Behat\Mink\Exception\ExpectationException('There is nothing to capture at ' . $selector, $this->getSession());
+            throw new \Behat\Mink\Exception\ExpectationException(
+                'There is nothing to capture at ' . $selector,
+                $this->getSession()
+            );
         }
         $image = imagecreatefromstring($this->getSession()->getScreenshot());
         $scale = imagesx($image) / max(1, $box['iw']);
