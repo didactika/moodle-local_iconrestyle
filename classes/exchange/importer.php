@@ -216,7 +216,7 @@ class importer {
         try {
             $assetids[$hash] = $this->assets->add($bytes, $userid, 'import')->id();
         } catch (asset_rejected_exception $exception) {
-            $report->skip('Artwork that was refused: ' . $exception->getMessage());
+            $report->skip(get_string('artworkrefused', 'local_iconrestyle', $exception->getMessage()));
         }
     }
 
