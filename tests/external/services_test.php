@@ -24,6 +24,7 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
 use local_iconrestyle\service_factory;
 
 #[\PHPUnit\Framework\Attributes\CoversNothing]
@@ -41,7 +42,6 @@ final class services_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         parent::setUp();
-        require_once(__DIR__ . '/../../classes/external/compat.php');
         $this->resetAfterTest();
         service_factory::reset();
         $this->setAdminUser();
@@ -69,7 +69,7 @@ final class services_test extends \advanced_testcase {
      * @return mixed The cleaned response.
      */
     private function clean(string $function, $result) {
-        return api::clean_returnvalue($function::execute_returns(), $result);
+        return external_api::clean_returnvalue($function::execute_returns(), $result);
     }
 
     /**

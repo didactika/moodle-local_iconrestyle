@@ -24,16 +24,16 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_value;
 use local_iconrestyle\service_factory;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * The preview uses the same compiler as the real pages, scoped to the preview area, so what is seen is what is saved.
  */
-class preview_css extends api {
+class preview_css extends external_api {
     /** @var string[] Preview areas the CSS can be scoped to, each with the class irs-preview-{scope}. */
     public const SCOPES = ['current', 'new'];
 
@@ -43,12 +43,12 @@ class preview_css extends api {
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters([
-            'rules' => new listof(rule_payload::input()),
-            'scope' => new value(PARAM_ALPHA, 'Preview area: current or new', VALUE_DEFAULT, 'new'),
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([
+            'rules' => new external_multiple_structure(rule_payload::input()),
+            'scope' => new external_value(PARAM_ALPHA, 'Preview area: current or new', VALUE_DEFAULT, 'new'),
         ]);
     }
 
@@ -80,9 +80,9 @@ class preview_css extends api {
     /**
      * Returned structure.
      *
-     * @return value Description.
+     * @return external_value Description.
      */
-    public static function execute_returns(): value {
-        return new value(PARAM_RAW, 'CSS scoped to the preview area');
+    public static function execute_returns(): external_value {
+        return new external_value(PARAM_RAW, 'CSS scoped to the preview area');
     }
 }

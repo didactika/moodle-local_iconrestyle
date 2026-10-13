@@ -393,7 +393,7 @@ final class exchange_test extends \advanced_testcase {
      */
     public function test_the_services_round_trip(): void {
         $this->customise();
-        $export = \local_iconrestyle\external\api::clean_returnvalue(
+        $export = \core_external\external_api::clean_returnvalue(
             \local_iconrestyle\external\export_rules::execute_returns(),
             \local_iconrestyle\external\export_rules::execute()
         );
@@ -415,7 +415,7 @@ final class exchange_test extends \advanced_testcase {
         $export = \local_iconrestyle\external\export_rules::execute(['core:a/setting']);
         $this->assertCount(5, explode("\n", trim($export['content'])));
         $this->wipe();
-        $dry = \local_iconrestyle\external\api::clean_returnvalue(
+        $dry = \core_external\external_api::clean_returnvalue(
             \local_iconrestyle\external\import_rules::execute_returns(),
             \local_iconrestyle\external\import_rules::execute($export['content'], 'merge', true)
         );

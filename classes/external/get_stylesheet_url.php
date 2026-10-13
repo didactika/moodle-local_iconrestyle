@@ -24,24 +24,23 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_value;
 use local_iconrestyle\hook\head_callbacks;
 use local_iconrestyle\service_factory;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * The designer asks for it after saving, so every icon on its own page shows what was just saved without a reload.
  */
-class get_stylesheet_url extends api {
+class get_stylesheet_url extends external_api {
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters([]);
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([]);
     }
 
     /**
@@ -60,9 +59,9 @@ class get_stylesheet_url extends api {
     /**
      * Returned structure.
      *
-     * @return value Description.
+     * @return external_value Description.
      */
-    public static function execute_returns(): value {
-        return new value(PARAM_RAW, 'Address of the stylesheet, empty when no rule applies');
+    public static function execute_returns(): external_value {
+        return new external_value(PARAM_RAW, 'Address of the stylesheet, empty when no rule applies');
     }
 }

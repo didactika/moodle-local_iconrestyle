@@ -24,23 +24,24 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use local_iconrestyle\service_factory;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * The list is the same for every context, so the client keeps it by version and searches it locally.
  */
-class get_catalogue extends api {
+class get_catalogue extends external_api {
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters([]);
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([]);
     }
 
     /**
@@ -72,21 +73,24 @@ class get_catalogue extends api {
     /**
      * Returned structure.
      *
-     * @return structure Description.
+     * @return external_single_structure Description.
      */
-    public static function execute_returns(): structure {
-        return new structure([
-            'version' => new value(PARAM_ALPHANUM, 'Key that changes when the installed code or plugins change'),
-            'icons' => new listof(new structure([
-                'key' => new value(PARAM_RAW, 'Slot key'),
-                'kind' => new value(PARAM_ALPHA, 'font, image or container'),
-                'classes' => new value(PARAM_RAW, 'Class attribute of a font icon'),
-                'imageurl' => new value(PARAM_RAW, 'Address of an image icon'),
-                'component' => new value(PARAM_RAW, 'Component'),
-                'name' => new value(PARAM_RAW, 'Name inside the component'),
-                'group' => new value(PARAM_INT, 'Number of icons that share its glyph, zero when it is alone'),
-                'purpose' => new value(PARAM_ALPHANUMEXT, 'Purpose of an activity slot, empty for icons'),
-                'sample' => new value(PARAM_ALPHANUMEXT, 'Activity module whose icon previews an activity slot, empty for icons'),
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure([
+            'version' => new external_value(PARAM_ALPHANUM, 'Key that changes when the installed code or plugins change'),
+            'icons' => new external_multiple_structure(new external_single_structure([
+                'key' => new external_value(PARAM_RAW, 'Slot key'),
+                'kind' => new external_value(PARAM_ALPHA, 'font, image or container'),
+                'classes' => new external_value(PARAM_RAW, 'Class attribute of a font icon'),
+                'imageurl' => new external_value(PARAM_RAW, 'Address of an image icon'),
+                'component' => new external_value(PARAM_RAW, 'Component'),
+                'name' => new external_value(PARAM_RAW, 'Name inside the component'),
+                'group' => new external_value(PARAM_INT, 'Number of icons that share its glyph, zero when it is alone'),
+                'purpose' => new external_value(PARAM_ALPHANUMEXT, 'Purpose of an activity slot, empty for icons'),
+                'sample' => new external_value(
+                    PARAM_ALPHANUMEXT,
+                    'Activity module whose icon previews an activity slot, empty for icons'
+                ),
             ])),
         ]);
     }
