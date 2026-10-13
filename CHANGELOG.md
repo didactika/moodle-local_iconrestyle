@@ -21,6 +21,16 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [5.3.3] - 2026-10-13
+
+### Changed
+
+- The web service classes use the `core_external` classes directly and the `compat.php` shim that loaded them with a manual `require_once` is gone, since Moodle 5.3 always has them.
+- The nested element selectors of the component styles (`input`, `span`, `svg`, `li`, `small`, `button`, `a`, `kbd`, `hr`, `em`, `option`) and the Moodle classes inside the designer (`.form-control`, the autocomplete) are written with an explicit parent (`& input`), so no rule can be read as a global one. The generated `styles.css` is the same.
+- The banner of the Moodle licence is the first part of the file comment of every TypeScript source, so that it survives in the built files that Moodle serves.
+- The `Content-Length` of the stylesheet and of an artwork is computed before the header is written.
+- The reason shown when an imported artwork is refused is a language string.
+
 ## [5.3.1] - 2026-10-13
 
 ### Fixed
