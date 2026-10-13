@@ -28,6 +28,9 @@ on:
       - 'MOODLE_*_STABLE'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   setup:
     # Turns $plugin->supported (version.php) into the test matrix consumed by
