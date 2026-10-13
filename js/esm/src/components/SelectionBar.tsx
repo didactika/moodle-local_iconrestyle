@@ -9,8 +9,7 @@
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {useLayoutEffect, useRef} from 'react';
-import {IconClose} from './common/Icons';
+import {IconClose, IconColourMode} from './common/Icons';
 import type {Selection} from '../hooks/useSelection';
 import type {Text} from '../types';
 
@@ -36,28 +35,8 @@ export default function SelectionBar({selection, modeLabels, text}: SelectionBar
     };
     const disabled = busy || picked.size === 0 || (mode === 'copy' && groups.length === 0) ||
         (mode === 'modes' && fromMode === toMode);
-    const bar = useRef<HTMLDivElement>(null);
-    // The grid keeps room for the bar, whose height changes with what it offers and with the width.
-    useLayoutEffect(() => {
-        const element = bar.current;
-        const root = element?.closest<HTMLElement>('.irs');
-        if (!element || !root) {
-            return undefined;
-        }
-        const measure = () => root.style.setProperty('--irs-selbar', `${element.offsetHeight}px`);
-        measure();
-        if (typeof ResizeObserver === 'undefined') {
-            return undefined;
-        }
-        const observer = new ResizeObserver(measure);
-        observer.observe(element);
-        return () => {
-            observer.disconnect();
-            root.style.removeProperty('--irs-selbar');
-        };
-    }, [mode]);
     return <div className="irs-selbar" data-region="selection-bar" role="region" aria-label={text('selectbar')}
-        ref={bar} hidden={mode === null}>
+        hidden={mode === null}>
         <div className="irs-selbar-head">
             <span className="irs-selbar-title" data-region="selection-title">{mode === null ? '' : titles[mode]}</span>
             <span className="irs-selbar-count" data-region="selection-count" role="status" aria-live="polite">
@@ -100,9 +79,11 @@ export default function SelectionBar({selection, modeLabels, text}: SelectionBar
         <div className="irs-selbar-actions">
             <button type="button" className="irs-pillbtn" data-action="selection-back" data-for="modes" hidden={mode !== 'modes'}
                 onClick={() => selection.switchTo('export')}>{text('back')}</button>
-            <button type="button" className="irs-pillbtn" data-action="selection-modes" data-for="export"
+            <button type="button" className="irs-iconbtn irs-modesbtn" data-action="selection-modes" data-for="export"
                 hidden={mode !== 'export' || modeNames.length < 2} disabled={picked.size === 0}
-                onClick={() => selection.switchTo('modes')}>{text('selectmodes')}</button>
+                title={text('selectmodes')} aria-label={text('selectmodes')} onClick={() => selection.switchTo('modes')}>
+                <IconColourMode />
+            </button>
             <button type="button" className="irs-pillbtn irs-pillbtn-primary" data-action="selection-apply" disabled={disabled}
                 onClick={() => void selection.apply()}>
                 <span data-region="selection-apply-text">{text(mode === 'export' ? 'selectexport' : 'selectcopy')}</span>

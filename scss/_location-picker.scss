@@ -1,0 +1,57 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The search of places of a rule.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.irs-chosen-places {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-bottom: 0.375rem;
+}
+
+.irs-picked-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding-right: 0.25rem;
+    font-weight: 600;
+
+    .irs-x {
+        position: static;
+        transform: none;
+        color: inherit;
+    }
+}
+
+.irs-location-list {
+    max-height: 12rem;
+    margin-top: 0.25rem;
+    overflow-y: auto;
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    border-radius: 0.5rem;
+    background: var(--bs-body-bg, #fff);
+}
+
+.irs-location-item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+
+    &:hover,
+    &:focus-visible {
+        background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
+    }
+
+    small {
+        color: var(--bs-secondary-color, #6c757d);
+    }
+}

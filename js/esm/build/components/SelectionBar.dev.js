@@ -9,8 +9,7 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import { useLayoutEffect, useRef } from "react";
-import { IconClose } from "./common/Icons";
+import { IconClose, IconColourMode } from "./common/Icons";
 const GROUPS = ["colours", "shape", "spacing", "transform", "effects", "icon"];
 function SelectionBar({ selection, modeLabels, text }) {
   const { mode, from, picked, groups, overwrite, fromMode, toMode, busy } = selection;
@@ -21,25 +20,6 @@ function SelectionBar({ selection, modeLabels, text }) {
     "export": text("selectexporttitle")
   };
   const disabled = busy || picked.size === 0 || mode === "copy" && groups.length === 0 || mode === "modes" && fromMode === toMode;
-  const bar = useRef(null);
-  useLayoutEffect(() => {
-    const element = bar.current;
-    const root = element?.closest(".irs");
-    if (!element || !root) {
-      return void 0;
-    }
-    const measure = /* @__PURE__ */ __name(() => root.style.setProperty("--irs-selbar", `${element.offsetHeight}px`), "measure");
-    measure();
-    if (typeof ResizeObserver === "undefined") {
-      return void 0;
-    }
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => {
-      observer.disconnect();
-      root.style.removeProperty("--irs-selbar");
-    };
-  }, [mode]);
   return /* @__PURE__ */ jsxDEV(
     "div",
     {
@@ -47,23 +27,22 @@ function SelectionBar({ selection, modeLabels, text }) {
       "data-region": "selection-bar",
       role: "region",
       "aria-label": text("selectbar"),
-      ref: bar,
       hidden: mode === null,
       children: [
         /* @__PURE__ */ jsxDEV("div", { className: "irs-selbar-head", children: [
           /* @__PURE__ */ jsxDEV("span", { className: "irs-selbar-title", "data-region": "selection-title", children: mode === null ? "" : titles[mode] }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-            lineNumber: 62,
+            lineNumber: 41,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("span", { className: "irs-selbar-count", "data-region": "selection-count", role: "status", "aria-live": "polite", children: text("selectcount", picked.size) }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-            lineNumber: 63,
+            lineNumber: 42,
             columnNumber: 13
           }, this)
         ] }, void 0, true, {
           fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-          lineNumber: 61,
+          lineNumber: 40,
           columnNumber: 9
         }, this),
         /* @__PURE__ */ jsxDEV(
@@ -85,7 +64,7 @@ function SelectionBar({ selection, modeLabels, text }) {
                   onChange: (event) => selection.setFromMode(event.target.value),
                   children: modeNames.map((name) => /* @__PURE__ */ jsxDEV("option", { value: name, children: modeLabels[name] }, name, false, {
                     fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-                    lineNumber: 71,
+                    lineNumber: 50,
                     columnNumber: 42
                   }, this))
                 },
@@ -93,14 +72,14 @@ function SelectionBar({ selection, modeLabels, text }) {
                 false,
                 {
                   fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-                  lineNumber: 69,
+                  lineNumber: 48,
                   columnNumber: 13
                 },
                 this
               ),
               /* @__PURE__ */ jsxDEV("span", { className: "irs-arrow", "aria-hidden": "true", children: "\u2192" }, void 0, false, {
                 fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-                lineNumber: 73,
+                lineNumber: 52,
                 columnNumber: 13
               }, this),
               /* @__PURE__ */ jsxDEV(
@@ -113,7 +92,7 @@ function SelectionBar({ selection, modeLabels, text }) {
                   onChange: (event) => selection.setToMode(event.target.value),
                   children: modeNames.map((name) => /* @__PURE__ */ jsxDEV("option", { value: name, children: modeLabels[name] }, name, false, {
                     fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-                    lineNumber: 76,
+                    lineNumber: 55,
                     columnNumber: 42
                   }, this))
                 },
@@ -121,7 +100,7 @@ function SelectionBar({ selection, modeLabels, text }) {
                 false,
                 {
                   fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-                  lineNumber: 74,
+                  lineNumber: 53,
                   columnNumber: 13
                 },
                 this
@@ -139,19 +118,19 @@ function SelectionBar({ selection, modeLabels, text }) {
                   false,
                   {
                     fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-                    lineNumber: 79,
+                    lineNumber: 58,
                     columnNumber: 17
                   },
                   this
                 ),
                 /* @__PURE__ */ jsxDEV("span", { children: text("selectoverwrite") }, void 0, false, {
                   fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-                  lineNumber: 81,
+                  lineNumber: 60,
                   columnNumber: 17
                 }, this)
               ] }, void 0, true, {
                 fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-                lineNumber: 78,
+                lineNumber: 57,
                 columnNumber: 13
               }, this)
             ]
@@ -160,7 +139,7 @@ function SelectionBar({ selection, modeLabels, text }) {
           true,
           {
             fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-            lineNumber: 67,
+            lineNumber: 46,
             columnNumber: 9
           },
           this
@@ -179,39 +158,39 @@ function SelectionBar({ selection, modeLabels, text }) {
             false,
             {
               fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-              lineNumber: 86,
+              lineNumber: 65,
               columnNumber: 17
             },
             this
           ),
           /* @__PURE__ */ jsxDEV("span", { children: text(`copygroup${group}`) }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-            lineNumber: 89,
+            lineNumber: 68,
             columnNumber: 17
           }, this)
         ] }, group, true, {
           fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-          lineNumber: 85,
+          lineNumber: 64,
           columnNumber: 36
         }, this)) }, void 0, false, {
           fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-          lineNumber: 84,
+          lineNumber: 63,
           columnNumber: 9
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "irs-selbar-quick", "data-for": "export copy modes", children: [
           /* @__PURE__ */ jsxDEV("button", { type: "button", className: "irs-linkbtn", "data-action": "selection-all", onClick: selection.all, children: text("selectall") }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-            lineNumber: 93,
+            lineNumber: 72,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("button", { type: "button", className: "irs-linkbtn", "data-action": "selection-none", onClick: selection.none, children: text("selectnone") }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-            lineNumber: 96,
+            lineNumber: 75,
             columnNumber: 13
           }, this)
         ] }, void 0, true, {
           fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-          lineNumber: 92,
+          lineNumber: 71,
           columnNumber: 9
         }, this),
         /* @__PURE__ */ jsxDEV("div", { className: "irs-selbar-actions", children: [
@@ -230,7 +209,7 @@ function SelectionBar({ selection, modeLabels, text }) {
             false,
             {
               fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-              lineNumber: 101,
+              lineNumber: 80,
               columnNumber: 13
             },
             this
@@ -239,19 +218,25 @@ function SelectionBar({ selection, modeLabels, text }) {
             "button",
             {
               type: "button",
-              className: "irs-pillbtn",
+              className: "irs-iconbtn irs-modesbtn",
               "data-action": "selection-modes",
               "data-for": "export",
               hidden: mode !== "export" || modeNames.length < 2,
               disabled: picked.size === 0,
+              title: text("selectmodes"),
+              "aria-label": text("selectmodes"),
               onClick: () => selection.switchTo("modes"),
-              children: text("selectmodes")
+              children: /* @__PURE__ */ jsxDEV(IconColourMode, {}, void 0, false, {
+                fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
+                lineNumber: 85,
+                columnNumber: 17
+              }, this)
             },
             void 0,
             false,
             {
               fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-              lineNumber: 103,
+              lineNumber: 82,
               columnNumber: 13
             },
             this
@@ -266,7 +251,7 @@ function SelectionBar({ selection, modeLabels, text }) {
               onClick: () => void selection.apply(),
               children: /* @__PURE__ */ jsxDEV("span", { "data-region": "selection-apply-text", children: text(mode === "export" ? "selectexport" : "selectcopy") }, void 0, false, {
                 fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-                lineNumber: 108,
+                lineNumber: 89,
                 columnNumber: 17
               }, this)
             },
@@ -274,7 +259,7 @@ function SelectionBar({ selection, modeLabels, text }) {
             false,
             {
               fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-              lineNumber: 106,
+              lineNumber: 87,
               columnNumber: 13
             },
             this
@@ -290,7 +275,7 @@ function SelectionBar({ selection, modeLabels, text }) {
               onClick: selection.stop,
               children: /* @__PURE__ */ jsxDEV(IconClose, {}, void 0, false, {
                 fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-                lineNumber: 112,
+                lineNumber: 93,
                 columnNumber: 17
               }, this)
             },
@@ -298,14 +283,14 @@ function SelectionBar({ selection, modeLabels, text }) {
             false,
             {
               fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-              lineNumber: 110,
+              lineNumber: 91,
               columnNumber: 13
             },
             this
           )
         ] }, void 0, true, {
           fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-          lineNumber: 100,
+          lineNumber: 79,
           columnNumber: 9
         }, this)
       ]
@@ -314,7 +299,7 @@ function SelectionBar({ selection, modeLabels, text }) {
     true,
     {
       fileName: "public/local/iconrestyle/js/esm/src/components/SelectionBar.tsx",
-      lineNumber: 59,
+      lineNumber: 38,
       columnNumber: 12
     },
     this

@@ -1,0 +1,345 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// Choosing icons in the grid and the bar that floats over it.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.irs {
+    .irs-card-icon {
+        position: relative;
+    }
+
+    .irs-card-fit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform-origin: center;
+    }
+
+    .irs-preview-cells {
+        padding: 0.25rem 0;
+    }
+
+    .irs-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .irs-chip-label {
+        min-width: 0;
+        padding: 0.3125rem 0.75rem;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .irs-chip {
+        .irs-x {
+            position: static;
+            flex: none;
+            margin-right: 0.25rem;
+            transform: none;
+        }
+
+        &.irs-has-x {
+            .irs-chip-label {
+                padding-right: 0.25rem;
+            }
+        }
+    }
+
+    .irs-panel-actions {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+
+        .irs-iconbtn {
+            width: 2rem;
+            height: 2rem;
+            border: 1px solid var(--irs-border);
+            border-radius: 0.5rem;
+
+            &[aria-pressed="true"] {
+                border-color: var(--irs-accent);
+                background: var(--irs-accent-soft);
+                color: var(--irs-accent);
+            }
+        }
+    }
+
+    .irs-selectbtn {
+        flex: none;
+
+        &[aria-pressed="true"] {
+            border-color: var(--irs-accent);
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+            font-weight: 600;
+        }
+    }
+
+    .irs-pick {
+        position: absolute;
+        top: 0.375rem;
+        left: 0.375rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.125rem;
+        height: 1.125rem;
+        border: 2px solid var(--irs-border);
+        border-radius: 50%;
+        background: var(--irs-surface);
+        color: transparent;
+        transition: background-color 0.12s ease, border-color 0.12s ease;
+
+        svg {
+            width: 0.6875rem;
+            height: 0.6875rem;
+        }
+    }
+
+    .irs-card {
+        &.irs-picking {
+            .irs-shared {
+                display: none;
+            }
+
+            &.irs-selected {
+                .irs-pick {
+                    display: none;
+                }
+            }
+        }
+
+        &.irs-picked {
+            border-color: var(--irs-accent);
+            background: var(--irs-accent-soft);
+
+            .irs-pick {
+                border-color: var(--irs-accent);
+                background: var(--irs-accent);
+                color: #fff;
+            }
+        }
+
+        &:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+
+            &:hover {
+                background: transparent;
+            }
+        }
+    }
+
+    .irs-selbar {
+        position: relative;
+        z-index: 6;
+        flex: none;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        align-items: center;
+        gap: 0.5rem 0.75rem;
+        width: 40rem;
+        max-width: calc(100% - 1.5rem);
+        margin: 0.5rem auto 0.75rem;
+        padding: 0.5rem 0.75rem 0.5rem 1.125rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 1.25rem;
+        background: var(--irs-surface);
+        box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.22);
+        animation: irs-rise 0.16s ease-out;
+    }
+
+    .irs-selbar[hidden],
+    .irs-selbar-what[hidden] {
+        display: none;
+    }
+}
+
+@keyframes irs-rise {
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.irs {
+    .irs-selbar {
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
+    }
+
+    .irs-selbar-head {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .irs-selbar-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .irs-selbar-count {
+        color: var(--irs-muted);
+        font-size: 0.75rem;
+    }
+
+    .irs-selbar-head {
+        grid-row: 1;
+    }
+
+    .irs-selbar-quick,
+    .irs-selbar-actions {
+        grid-row: 1;
+    }
+
+    .irs-selbar-what {
+        display: flex;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+
+        .irs-chipcheck {
+            flex: none;
+        }
+    }
+
+    .irs-selbar-quick,
+    .irs-selbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .irs-selbar-actions {
+        justify-self: end;
+
+        .irs-modesbtn {
+            width: 2.25rem;
+            height: 2.25rem;
+            border: 1px solid var(--irs-border);
+            border-radius: 999px;
+        }
+    }
+}
+
+.irs-linkbtn {
+    padding: 0.25rem 0.5rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: var(--bs-primary, var(--primary, #0f6cbf));
+    font-size: 0.8125rem;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+        background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
+    }
+}
+
+.irs-chipcheck {
+    position: relative;
+    margin: 0;
+
+    input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        opacity: 0.0001;
+        cursor: pointer;
+    }
+
+    span {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border: 1px solid var(--bs-border-color, #dee2e6);
+        border-radius: 999px;
+        font-size: 0.8125rem;
+        user-select: none;
+        transition: background-color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
+    }
+
+    &:hover {
+        span {
+            border-color: var(--bs-primary, #0f6cbf);
+            background: var(--bs-tertiary-bg, #f1f3f5);
+            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.16);
+            transform: translateY(-1px);
+        }
+
+        input {
+            &:checked {
+                + span {
+                    background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
+                    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.16), 0 0 0 2px var(--bs-primary-bg-subtle, #e7f1fa);
+                }
+            }
+        }
+    }
+
+    input {
+        &:active {
+            + span {
+                box-shadow: none;
+                transform: none;
+            }
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        span {
+            transition: none;
+        }
+
+        &:hover {
+            span {
+                transform: none;
+            }
+        }
+    }
+
+    input {
+        &:checked {
+            + span {
+                border-color: var(--bs-primary, #0f6cbf);
+                background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
+                color: var(--bs-primary, #0f6cbf);
+                font-weight: 600;
+
+                &::before {
+                    content: "\2713\00a0";
+                }
+            }
+        }
+
+        &:focus-visible {
+            + span {
+                outline: 2px solid var(--bs-primary, #0f6cbf);
+                outline-offset: 2px;
+            }
+        }
+    }
+}

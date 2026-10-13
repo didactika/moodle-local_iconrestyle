@@ -1,0 +1,189 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The grid of icons and its cards.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.irs {
+    --irs-gap: 1rem;
+    --irs-card: 6.5rem;
+    --irs-border: var(--bs-border-color, var(--border-color, #dee2e6));
+    --irs-muted: var(--bs-secondary-color, #6c757d);
+    --irs-accent: var(--bs-primary, var(--primary, #0f6cbf));
+    --irs-accent-soft: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
+    --irs-surface: var(--bs-body-bg, #fff);
+    --irs-radius: 0.75rem;
+    --irs-fill: calc(100vh - var(--irs-top, 9rem) - 1.25rem);
+    display: flex;
+    flex-direction: column;
+    height: Max(32rem, var(--irs-fill));
+    min-width: 0;
+
+    .irs-pill {
+        display: inline-block;
+        padding: 0.125rem 0.625rem;
+        border-radius: 999px;
+        background: var(--irs-accent-soft);
+        color: var(--irs-accent);
+        font-size: 0.75rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .irs-layout {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--irs-gap);
+        align-items: stretch;
+
+        &.irs-open {
+            grid-template-columns: minmax(0, 1fr) minmax(23rem, 30rem);
+        }
+    }
+
+    @media (max-width: 62rem) {
+        height: auto;
+
+        .irs-layout {
+            &.irs-open {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .irs-grid {
+            height: 50vh;
+        }
+    }
+
+    .irs-browser {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        border: 1px solid var(--irs-border);
+        border-radius: var(--irs-radius);
+        background: var(--irs-surface);
+    }
+
+    .irs-grid {
+        flex: 1 1 auto;
+        min-height: 12rem;
+        overflow-y: auto;
+        padding: 0.75rem;
+        border-radius: var(--irs-radius);
+
+        &:focus-visible {
+            outline: 2px solid var(--irs-accent);
+            outline-offset: -2px;
+        }
+    }
+
+    .irs-grid-spacer {
+        position: relative;
+    }
+
+    .irs-grid-window {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(var(--irs-card), 1fr));
+        gap: 0.5rem;
+        will-change: transform;
+    }
+
+    .irs-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 6.5rem;
+        padding: 0.5rem 0.25rem;
+        border: 1px solid transparent;
+        border-radius: 0.625rem;
+        background: transparent;
+        color: inherit;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.12s ease, border-color 0.12s ease;
+
+        &:hover {
+            background: var(--irs-accent-soft);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--irs-accent);
+            outline-offset: 1px;
+        }
+
+        &.irs-selected {
+            border-color: var(--irs-accent);
+            background: var(--irs-accent-soft);
+            box-shadow: 0 0 0 1px var(--irs-accent);
+        }
+    }
+
+    .irs-card-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 2.5rem;
+        font-size: 1.5rem;
+
+        .icon {
+            margin: 0;
+        }
+
+        .activityiconcontainer {
+            width: 2.25rem;
+            height: 2.25rem;
+            padding: 0.4rem;
+        }
+    }
+
+    .irs-card-name,
+    .irs-card-component {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .irs-card-name {
+        font-size: 0.75rem;
+    }
+
+    .irs-card-component {
+        color: var(--irs-muted);
+        font-size: 0.6875rem;
+    }
+
+    .irs-dot {
+        position: absolute;
+        top: 0.375rem;
+        right: 0.375rem;
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--irs-accent);
+    }
+
+    .irs-shared {
+        position: absolute;
+        top: 0.125rem;
+        left: 0.375rem;
+        color: var(--irs-muted);
+        font-size: 0.875rem;
+    }
+
+    .irs-empty,
+    .irs-loading {
+        margin: 0;
+        padding: 1.5rem;
+        color: var(--irs-muted);
+        text-align: center;
+    }
+
+}

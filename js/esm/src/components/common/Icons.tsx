@@ -39,6 +39,10 @@ export const IconBack = () => <Svg size={18}><line x1="19" y1="12" x2="5" y2="12
 export const IconCheck = ({size = 18}: {size?: number}) => <Svg size={size}><polyline points="20 6 9 17 4 12" /></Svg>;
 export const IconChevron = () => <Svg><polyline points="6 9 12 15 18 9" /></Svg>;
 export const IconClose = () => <Svg><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></Svg>;
+export const IconColourMode = () => <Svg>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" />
+</Svg>;
 export const IconCopy = () => <Svg>
     <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />

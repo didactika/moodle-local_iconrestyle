@@ -103,18 +103,56 @@ class bundle_service {
      * @return array CSS under css and whether every revision was current under current.
      */
     public function assemble(array $chain): array {
+        $state = $this->effective($chain);
+        return ['css' => $this->css($state['chain']), 'current' => $state['current']];
+    }
+
+    /**
+     * The revisions that a bundle is made of now, which needs no stylesheet to be read.
+     *
+     * @param int[] $chain Revision keyed by context id, as found in a URL.
+     * @return array The current revision of each context that has rules, under chain, and whether every revision of the
+     *     request was current, under current.
+     */
+    public function effective(array $chain): array {
         $current = $this->revisions->get_many(array_keys($chain));
-        $css = '';
+        $effective = [];
         $iscurrent = true;
         foreach ($chain as $contextid => $rev) {
-            $effective = $current[$contextid] ?? 0;
-            if ($effective !== $rev) {
+            $now = $current[$contextid] ?? 0;
+            if ($now !== $rev) {
                 $iscurrent = false;
             }
-            if ($effective > 0) {
-                $css .= $this->sheets->css($contextid, $effective);
+            if ($now > 0) {
+                $effective[$contextid] = $now;
             }
         }
-        return ['css' => $css, 'current' => $iscurrent];
+        return ['chain' => $effective, 'current' => $iscurrent];
+    }
+
+    /**
+     * The stylesheets of a chain in cascade order.
+     *
+     * @param int[] $chain Current revision keyed by context id, as effective() gives it.
+     * @return string CSS.
+     */
+    public function css(array $chain): string {
+        $css = '';
+        foreach ($chain as $contextid => $rev) {
+            $css .= $this->sheets->css($contextid, $rev);
+        }
+        return $css;
+    }
+
+    /**
+     * Entity tag of a bundle. A revision is never reused for different rules, so the revisions and the version of the code say
+     * what the bundle holds, and a browser that has it can be answered before any stylesheet is read.
+     *
+     * @param string $version Version hash of the code.
+     * @param int[] $chain Current revision keyed by context id, as effective() gives it.
+     * @return string Tag without quotes.
+     */
+    public static function etag(string $version, array $chain): string {
+        return $version . '-' . substr(sha1(self::encode_chain($chain)), 0, 16);
     }
 }

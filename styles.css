@@ -1,3 +1,7 @@
+/* Generated from styles.scss. Edit the SCSS component sources and rebuild. */
+/* Moodle 4.0 and later cores disagree on decimal formatting; use the current leading-zero style. */
+/* stylelint-disable number-leading-zero */
+
 .irs {
     --irs-gap: 1rem;
     --irs-card: 6.5rem;
@@ -7,9 +11,10 @@
     --irs-accent-soft: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
     --irs-surface: var(--bs-body-bg, #fff);
     --irs-radius: 0.75rem;
+    --irs-fill: calc(100vh - var(--irs-top, 9rem) - 1.25rem);
     display: flex;
     flex-direction: column;
-    height: max(32rem, calc(100vh - var(--irs-top, 9rem) - 1.25rem));
+    height: max(32rem, var(--irs-fill));
     min-width: 0;
 }
 
@@ -38,6 +43,7 @@
 }
 
 @media (max-width: 62rem) {
+
     .irs {
         height: auto;
     }
@@ -190,6 +196,7 @@
 }
 
 @media (max-width: 62rem) {
+
     .irs .irs-panel {
         max-height: none;
     }
@@ -236,6 +243,15 @@
     margin: 0 1rem 0.625rem;
 }
 
+.irs .irs-notice {
+    position: relative;
+    margin: 0.75rem 1rem 0;
+    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+    border-left: 3px solid var(--irs-accent);
+    background: var(--irs-accent-soft);
+    font-size: 0.8125rem;
+}
+
 .irs .irs-notice[hidden] {
     display: none;
 }
@@ -244,15 +260,6 @@
     top: 0.5rem;
     right: 0.375rem;
     transform: none;
-}
-
-.irs .irs-notice {
-    position: relative;
-    margin: 0.75rem 1rem 0;
-    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
-    border-left: 3px solid var(--irs-accent);
-    background: var(--irs-accent-soft);
-    font-size: 0.8125rem;
 }
 
 .irs .irs-preview-head {
@@ -377,12 +384,12 @@
     transition: transform 0.15s ease;
 }
 
-.irs .irs-group[open] > summary::after {
-    transform: rotate(225deg);
-}
-
 .irs .irs-group[open] {
     padding-bottom: 0.5rem;
+}
+
+.irs .irs-group[open] > summary::after {
+    transform: rotate(225deg);
 }
 
 .irs .irs-field {
@@ -683,7 +690,6 @@
     color: var(--bs-danger, #b02a37);
 }
 
-
 .irs .irs-swatch {
     flex: none;
     width: 1rem;
@@ -837,26 +843,26 @@
     color: inherit;
 }
 
-.irs .irs-link[aria-pressed="true"] {
+.irs .irs-link[aria-pressed=true] {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
     color: var(--irs-accent);
 }
 
 .irs .irs-link .irs-icon-unlinked,
-.irs .irs-link[aria-pressed="true"] .irs-icon-unlinked {
+.irs .irs-link[aria-pressed=true] .irs-icon-unlinked {
     display: none;
 }
 
-.irs .irs-link[aria-pressed="false"] .irs-icon-linked {
+.irs .irs-link[aria-pressed=false] .irs-icon-linked {
     display: none;
 }
 
-.irs .irs-link[aria-pressed="false"] .irs-icon-unlinked {
+.irs .irs-link[aria-pressed=false] .irs-icon-unlinked {
     display: block;
 }
 
-.irs input[type="range"] {
+.irs input[type=range] {
     width: 100%;
 }
 
@@ -879,7 +885,7 @@
     font-size: 0.6875rem;
 }
 
-.irs .irs-shape[aria-pressed="true"] {
+.irs .irs-shape[aria-pressed=true] {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
     color: var(--irs-accent);
@@ -964,6 +970,9 @@
     color: var(--irs-accent);
     font-weight: 600;
 }
+
+/* The autocomplete of Moodle sets the position and the width of its list inline, so only !important can place it in the modal. */
+/* stylelint-disable declaration-no-important */
 
 .irs-places-form .irs-seg {
     display: flex;
@@ -1054,7 +1063,7 @@
 }
 
 .irs-places-form .irs-field,
-.irs-places-form [data-fieldtype="autocomplete"] {
+.irs-places-form [data-fieldtype=autocomplete] {
     min-width: 0;
     max-width: 100%;
 }
@@ -1063,15 +1072,13 @@
     max-width: 100%;
 }
 
-.irs-places-form .form-autocomplete-selection [role="option"] {
+.irs-places-form .form-autocomplete-selection [role=option] {
     max-width: 100%;
     white-space: normal;
     overflow-wrap: anywhere;
     text-align: left;
 }
 
-/* The autocomplete of Moodle sets the position and the width of its list inline, so only !important can place it in the modal. */
-/* stylelint-disable declaration-no-important */
 .irs-places-form .form-autocomplete-suggestions {
     position: static !important;
     width: 100% !important;
@@ -1085,7 +1092,6 @@
     background: var(--bs-body-bg, #fff);
     list-style: none;
 }
-/* stylelint-enable declaration-no-important */
 
 .irs-places-form .form-autocomplete-suggestions li {
     padding: 0.375rem 0.625rem;
@@ -1094,6 +1100,8 @@
     white-space: normal;
     overflow-wrap: anywhere;
 }
+
+/* stylelint-enable declaration-no-important */
 
 .local-iconrestyle-designer #page-header,
 .local-iconrestyle-designer #page-navbar,
@@ -1172,12 +1180,6 @@
     font-weight: 600;
 }
 
-.irs .irs-filter option {
-    background-color: var(--irs-surface);
-    color: var(--bs-body-color, inherit);
-    font-weight: 400;
-}
-
 .irs .irs-filter {
     width: auto;
     height: 2rem;
@@ -1185,6 +1187,12 @@
     padding-bottom: 0.125rem;
     border-radius: 999px;
     font-size: 0.8125rem;
+}
+
+.irs .irs-filter option {
+    background-color: var(--irs-surface);
+    color: var(--bs-body-color, inherit);
+    font-weight: 400;
 }
 
 .irs .irs-count {
@@ -1207,31 +1215,33 @@
     display: none;
 }
 
-.irs .irs-status[data-state="saved"] .irs-status-saved {
+.irs .irs-status[data-state=saved] .irs-status-saved {
     display: inline-flex;
     color: var(--bs-success, #198754);
 }
 
-.irs .irs-status[data-state="saving"] .irs-status-busy,
-.irs .irs-status[data-state="dirty"] .irs-status-busy {
+.irs .irs-status[data-state=saving] .irs-status-busy,
+.irs .irs-status[data-state=dirty] .irs-status-busy {
     display: inline-flex;
     animation: irs-spin 1s linear infinite;
 }
 
-.irs .irs-status[data-state="error"] .irs-status-error {
+.irs .irs-status[data-state=error] .irs-status-error {
     display: inline-flex;
     color: var(--bs-danger, #b02a37);
 }
 
 @keyframes irs-spin {
+
     to {
         transform: rotate(360deg);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .irs .irs-status[data-state="saving"] .irs-status-busy,
-    .irs .irs-status[data-state="dirty"] .irs-status-busy {
+
+    .irs .irs-status[data-state=saving] .irs-status-busy,
+    .irs .irs-status[data-state=dirty] .irs-status-busy {
         animation: none;
     }
 }
@@ -1342,12 +1352,12 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
-.irs .irs-preview-cols[data-view="edited"] [data-area="default"],
-.irs .irs-preview-cols[data-view="original"] [data-area="new"] {
+.irs .irs-preview-cols[data-view=edited] [data-area=default],
+.irs .irs-preview-cols[data-view=original] [data-area=new] {
     display: none;
 }
 
-.irs .irs-preview-cols[data-view="compare"] {
+.irs .irs-preview-cols[data-view=compare] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -1397,7 +1407,7 @@
     font-size: 0.8125rem;
 }
 
-.irs .irs-toggle[aria-pressed="true"] {
+.irs .irs-toggle[aria-pressed=true] {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
     color: var(--irs-accent);
@@ -1499,7 +1509,7 @@
     border-radius: 0.5rem;
 }
 
-.irs .irs-panel-actions .irs-iconbtn[aria-pressed="true"] {
+.irs .irs-panel-actions .irs-iconbtn[aria-pressed=true] {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
     color: var(--irs-accent);
@@ -1509,21 +1519,11 @@
     flex: none;
 }
 
-.irs .irs-selectbtn[aria-pressed="true"] {
+.irs .irs-selectbtn[aria-pressed=true] {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
     color: var(--irs-accent);
     font-weight: 600;
-}
-
-.irs.irs-picking {
-    height: auto;
-    min-height: max(32rem, calc(100vh - var(--irs-top, 9rem) - 1.25rem));
-}
-
-.irs.irs-picking .irs-grid {
-    min-height: calc(var(--irs-selbar, 12rem) + 9rem);
-    padding-bottom: calc(var(--irs-selbar, 12rem) + 2rem);
 }
 
 .irs .irs-pick {
@@ -1576,22 +1576,21 @@
 }
 
 .irs .irs-selbar {
-    position: absolute;
-    bottom: 1rem;
-    left: 50%;
+    position: relative;
     z-index: 6;
+    flex: none;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto auto;
     align-items: center;
     gap: 0.5rem 0.75rem;
     width: 40rem;
     max-width: calc(100% - 1.5rem);
+    margin: 0.5rem auto 0.75rem;
     padding: 0.5rem 0.75rem 0.5rem 1.125rem;
     border: 1px solid var(--irs-border);
     border-radius: 1.25rem;
     background: var(--irs-surface);
     box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.22);
-    transform: translateX(-50%);
     animation: irs-rise 0.16s ease-out;
 }
 
@@ -1601,18 +1600,20 @@
 }
 
 @keyframes irs-rise {
+
     from {
         opacity: 0;
-        transform: translate(-50%, 0.75rem);
+        transform: translateY(0.75rem);
     }
 
     to {
         opacity: 1;
-        transform: translate(-50%, 0);
+        transform: translateY(0);
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     .irs .irs-selbar {
         animation: none;
     }
@@ -1667,6 +1668,13 @@
     justify-self: end;
 }
 
+.irs .irs-selbar-actions .irs-modesbtn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--irs-border);
+    border-radius: 999px;
+}
+
 .irs-linkbtn {
     padding: 0.25rem 0.5rem;
     border: 0;
@@ -1704,6 +1712,35 @@
     border-radius: 999px;
     font-size: 0.8125rem;
     user-select: none;
+    transition: background-color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
+}
+
+.irs-chipcheck:hover span {
+    border-color: var(--bs-primary, #0f6cbf);
+    background: var(--bs-tertiary-bg, #f1f3f5);
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.16);
+    transform: translateY(-1px);
+}
+
+.irs-chipcheck:hover input:checked + span {
+    background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.16), 0 0 0 2px var(--bs-primary-bg-subtle, #e7f1fa);
+}
+
+.irs-chipcheck input:active + span {
+    box-shadow: none;
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .irs-chipcheck span {
+        transition: none;
+    }
+
+    .irs-chipcheck:hover span {
+        transform: none;
+    }
 }
 
 .irs-chipcheck input:checked + span {
@@ -1714,7 +1751,7 @@
 }
 
 .irs-chipcheck input:checked + span::before {
-    content: "\2713\00a0";
+    content: "\2713 \a0";
 }
 
 .irs-chipcheck input:focus-visible + span {
@@ -1944,7 +1981,7 @@
     font-weight: 600;
 }
 
-.irs .irs-filtersbtn[aria-expanded="true"],
+.irs .irs-filtersbtn[aria-expanded=true],
 .irs .irs-filtersbtn.irs-active {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
@@ -2006,10 +2043,16 @@
     margin: 0;
     padding: 0.3125rem 0.625rem;
     cursor: pointer;
+    transition: background-color 0.12s ease, box-shadow 0.12s ease;
 }
 
 .irs .irs-filter-row:hover {
     background: var(--irs-accent-soft);
+    box-shadow: inset 3px 0 0 var(--irs-accent);
+}
+
+.irs .irs-filter-row:active {
+    box-shadow: none;
 }
 
 .irs .irs-filter-name {

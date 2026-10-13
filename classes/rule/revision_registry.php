@@ -40,15 +40,20 @@ class revision_registry {
     /** @var \cache Revision cache. */
     private $cache;
 
+    /** @var \cache|null Cache of the chains that were resolved from the revisions, dropped when one changes. */
+    private $chains;
+
     /**
      * Create the registry.
      *
      * @param \moodle_database $db Database.
      * @param \cache $cache Revision cache.
+     * @param \cache|null $chains Cache of the chains that were resolved from the revisions.
      */
-    public function __construct(\moodle_database $db, \cache $cache) {
+    public function __construct(\moodle_database $db, \cache $cache, ?\cache $chains = null) {
         $this->db = $db;
         $this->cache = $cache;
+        $this->chains = $chains;
     }
 
     /**
@@ -101,6 +106,7 @@ class revision_registry {
         }
         $effective = $rulecount > 0 ? (int)$record->rev : 0;
         $this->cache->set((string)$contextid, $effective);
+        $this->drop_chains();
         return $effective;
     }
 
@@ -138,6 +144,16 @@ class revision_registry {
     public function forget(int $contextid): void {
         $this->db->delete_records(self::TABLE, ['contextid' => $contextid]);
         $this->cache->delete((string)$contextid);
+        $this->drop_chains();
+    }
+
+    /**
+     * Forget every chain that was resolved, because the revisions it was made from changed.
+     */
+    private function drop_chains(): void {
+        if ($this->chains !== null) {
+            $this->chains->purge();
+        }
     }
 
     /**

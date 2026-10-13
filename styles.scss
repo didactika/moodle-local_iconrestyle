@@ -1,0 +1,19 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// Nested component sources; styles.css is generated from them for the browsers Moodle supports.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+@import 'scss/browser';
+@import 'scss/panel';
+@import 'scss/controls';
+@import 'scss/places-form';
+@import 'scss/page';
+@import 'scss/toolbar';
+@import 'scss/selection';
+@import 'scss/import';
+@import 'scss/filters';
+@import 'scss/selection-modes';
+@import 'scss/location-picker';
