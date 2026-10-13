@@ -21,6 +21,12 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [5.3.2] - 2026-10-14
+
+### Fixed
+
+- The lists that open under a button or a field (the theme colours of a colour field, the filters and the menu of the toolbar) stayed where they were opened while the page, or the panel that holds the field, scrolled. They now follow their button or field as it moves, and close when it scrolls out of sight.
+
 ## [5.3.1] - 2026-10-13
 
 ### Fixed

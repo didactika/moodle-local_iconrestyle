@@ -656,6 +656,44 @@ class behat_local_iconrestyle extends behat_base {
     }
 
     /**
+     * Scroll the first thing that holds an element and can scroll, or the page, so that the element moves on the screen.
+     *
+     * @When /^I scroll away from "([^"]+)" by (\d+) pixels$/
+     * @param string $selector CSS selector of the element.
+     * @param string $pixels How far to scroll.
+     */
+    public function i_scroll_away_from(string $selector, string $pixels): void {
+        $this->getSession()->executeScript(
+            "(function() { var node = document.querySelector(" . json_encode($selector) . ").parentElement;" .
+            "while (node && node !== document.body && !(node.scrollHeight > node.clientHeight + 4 &&" .
+            "['auto', 'scroll'].indexOf(getComputedStyle(node).overflowY) >= 0)) { node = node.parentElement; }" .
+            "if (node && node !== document.body) { node.scrollTop += " . (int) $pixels . "; }" .
+            "else { window.scrollBy({top: " . (int) $pixels . ", behavior: 'instant'}); } })();"
+        );
+        $this->getSession()->wait(500);
+    }
+
+    /**
+     * Check that a list that floats is still right under the field that opened it.
+     *
+     * @Then /^"([^"]+)" should be right under "([^"]+)"$/
+     * @param string $list CSS selector of the list.
+     * @param string $field CSS selector of the field.
+     */
+    public function the_list_should_be_under(string $list, string $field): void {
+        $gap = (float) $this->getSession()->evaluateScript(
+            "document.querySelector(" . json_encode($list) . ").getBoundingClientRect().top -" .
+            "document.querySelector(" . json_encode($field) . ").getBoundingClientRect().bottom"
+        );
+        if ($gap < -1 || $gap > 16) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                'The list is ' . $gap . ' pixels from the field, not right under it.',
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
      * Check the theme colour a colour field shows.
      *
      * @Then /^the theme colour of "(fg|bg|bc|sc)" should contain "([^"]+)"$/

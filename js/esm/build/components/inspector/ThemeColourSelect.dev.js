@@ -13,6 +13,7 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useFollowAnchor } from "../../hooks/useFollowAnchor";
 import { IconChevron } from "../common/Icons";
 import * as themevars from "../../lib/themevars";
 const LIMIT = 80;
@@ -55,11 +56,15 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
     setOpen(false);
     setTyping(false);
   }, "close");
-  useLayoutEffect(() => {
-    if (!open || !input.current) {
+  const follow = /* @__PURE__ */ __name(() => {
+    if (!input.current) {
       return;
     }
     const rect = input.current.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > window.innerHeight) {
+      close();
+      return;
+    }
     const width = Math.min(Math.max(rect.width, 260), window.innerWidth - 2 * MARGIN);
     const left = Math.max(MARGIN, Math.min(rect.left, window.innerWidth - width - MARGIN));
     const below = window.innerHeight - rect.bottom - MARGIN;
@@ -75,7 +80,13 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
         list: { maxHeight: Math.max(140, above - 16) }
       });
     }
+  }, "follow");
+  useLayoutEffect(() => {
+    if (open) {
+      follow();
+    }
   }, [open]);
+  useFollowAnchor(open, follow, () => panel.current);
   useEffect(() => {
     if (!open) {
       return void 0;
@@ -87,10 +98,8 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
       }
     }, "outside");
     document.addEventListener("pointerdown", outside, true);
-    window.addEventListener("resize", close);
     return () => {
       document.removeEventListener("pointerdown", outside, true);
-      window.removeEventListener("resize", close);
     };
   }, [open]);
   const pick = /* @__PURE__ */ __name((value) => {
@@ -155,7 +164,7 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
       false,
       {
         fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-        lineNumber: 185,
+        lineNumber: 199,
         columnNumber: 9
       },
       this
@@ -189,18 +198,18 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
       false,
       {
         fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-        lineNumber: 187,
+        lineNumber: 201,
         columnNumber: 9
       },
       this
     ),
     /* @__PURE__ */ jsxDEV("span", { className: "irs-caret", "aria-hidden": "true", children: /* @__PURE__ */ jsxDEV(IconChevron, {}, void 0, false, {
       fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-      lineNumber: 198,
+      lineNumber: 212,
       columnNumber: 56
     }, this) }, void 0, false, {
       fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-      lineNumber: 198,
+      lineNumber: 212,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(
@@ -232,12 +241,12 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
                   children: [
                     /* @__PURE__ */ jsxDEV("span", { className: "irs-swatch irs-swatch-none", "aria-hidden": "true" }, void 0, false, {
                       fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                      lineNumber: 205,
+                      lineNumber: 219,
                       columnNumber: 21
                     }, this),
                     /* @__PURE__ */ jsxDEV("span", { className: "irs-theme-name", children: item.label }, void 0, false, {
                       fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                      lineNumber: 206,
+                      lineNumber: 220,
                       columnNumber: 21
                     }, this)
                   ]
@@ -246,7 +255,7 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
                 true,
                 {
                   fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                  lineNumber: 203,
+                  lineNumber: 217,
                   columnNumber: 50
                 },
                 this
@@ -261,17 +270,17 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
                   children: [
                     /* @__PURE__ */ jsxDEV("span", { className: "irs-swatch", style: { background: `var(${item.name})` }, "aria-hidden": "true" }, void 0, false, {
                       fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                      lineNumber: 210,
+                      lineNumber: 224,
                       columnNumber: 21
                     }, this),
                     /* @__PURE__ */ jsxDEV("span", { className: "irs-theme-name", children: item.name }, void 0, false, {
                       fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                      lineNumber: 211,
+                      lineNumber: 225,
                       columnNumber: 21
                     }, this),
                     /* @__PURE__ */ jsxDEV("span", { className: "irs-theme-value", children: item.value }, void 0, false, {
                       fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                      lineNumber: 212,
+                      lineNumber: 226,
                       columnNumber: 21
                     }, this)
                   ]
@@ -280,7 +289,7 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
                 true,
                 {
                   fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                  lineNumber: 208,
+                  lineNumber: 222,
                   columnNumber: 53
                 },
                 this
@@ -295,12 +304,12 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
                   children: [
                     /* @__PURE__ */ jsxDEV("span", { className: "irs-swatch", style: { background: `var(${choices.custom})` }, "aria-hidden": "true" }, void 0, false, {
                       fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                      lineNumber: 216,
+                      lineNumber: 230,
                       columnNumber: 21
                     }, this),
                     /* @__PURE__ */ jsxDEV("span", { className: "irs-theme-name", children: text("themecolourcustom", choices.custom) }, void 0, false, {
                       fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                      lineNumber: 217,
+                      lineNumber: 231,
                       columnNumber: 21
                     }, this)
                   ]
@@ -309,19 +318,19 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
                 true,
                 {
                   fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                  lineNumber: 214,
+                  lineNumber: 228,
                   columnNumber: 54
                 },
                 this
               ),
               choices?.found.more && /* @__PURE__ */ jsxDEV("p", { className: "irs-theme-note", children: text("themecoloursmore") }, void 0, false, {
                 fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                lineNumber: 219,
+                lineNumber: 233,
                 columnNumber: 41
               }, this),
               none && /* @__PURE__ */ jsxDEV("p", { className: "irs-theme-note", children: text("nothemecolours") }, void 0, false, {
                 fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-                lineNumber: 220,
+                lineNumber: 234,
                 columnNumber: 26
               }, this)
             ]
@@ -330,7 +339,7 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
           true,
           {
             fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-            lineNumber: 201,
+            lineNumber: 215,
             columnNumber: 13
           },
           this
@@ -340,14 +349,14 @@ function ThemeColourSelect({ name, stored, specials, text, onPick }) {
       false,
       {
         fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-        lineNumber: 199,
+        lineNumber: 213,
         columnNumber: 9
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/iconrestyle/js/esm/src/components/inspector/ThemeColourSelect.tsx",
-    lineNumber: 184,
+    lineNumber: 198,
     columnNumber: 12
   }, this);
 }
