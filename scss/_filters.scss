@@ -13,18 +13,19 @@
     }
 
     .irs-count-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 1.25rem;
-        height: 1.25rem;
-        padding: 0 0.3125rem;
-        border-radius: 999px;
+        position: absolute;
+        top: -0.45rem;
+        right: -0.45rem;
+        min-width: 1.15rem;
+        height: 1.15rem;
+        padding: 0 0.3rem;
+        border-radius: 1rem;
         background: var(--irs-accent);
         color: var(--irs-on-accent);
-        font-size: 0.6875rem;
-        font-weight: 700;
-        line-height: 1;
+        font-size: 0.7rem;
+        font-weight: 600;
+        line-height: 1.15rem;
+        text-align: center;
 
         &[hidden] {
             display: none;
@@ -46,11 +47,18 @@
     }
 
     .irs-filtersbtn {
+        position: relative;
+
         &[aria-expanded="true"],
         &.irs-active {
             border-color: var(--irs-accent);
             background: var(--irs-accent-soft);
             color: var(--irs-accent-text);
+        }
+
+        &[aria-expanded="true"],
+        &:focus-visible {
+            box-shadow: 0 0 0 0.2rem var(--irs-accent-ring);
         }
     }
 

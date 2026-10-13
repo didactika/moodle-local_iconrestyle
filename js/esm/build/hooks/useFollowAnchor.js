@@ -1,4 +1,7 @@
 import{useEffect as m,useRef as u}from"react";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * Keep a floating list under the element that opened it while the page, or anything inside the page, scrolls or changes size.
  *
  * The lists are placed in the coordinates of the window, so they would stay where they were put while the element that opened
