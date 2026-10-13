@@ -57,6 +57,24 @@ class rule_store {
     }
 
     /**
+     * Rules of several delta stylesheets, grouped by stylesheet, with one query.
+     *
+     * @param int[] $deltas Delta owner contexts.
+     * @return rule[][] Rules of each stylesheet, in the order the stylesheet is compiled in.
+     */
+    public function find_by_deltas(array $deltas): array {
+        $grouped = array_fill_keys($deltas, []);
+        if ($deltas === []) {
+            return $grouped;
+        }
+        $records = $this->db->get_records_list(self::TABLE, 'deltactxid', array_values($deltas), 'slotkey ASC, target ASC');
+        foreach ($records as $record) {
+            $grouped[(int)$record->deltactxid][] = $this->to_rule($record);
+        }
+        return $grouped;
+    }
+
+    /**
      * Every rule of the site, in a stable order.
      *
      * @return rule[] Rules.
@@ -123,7 +141,132 @@ class rule_store {
      */
     public function save(int $deltactxid, rule $rule, int $userid): rule {
         $now = time();
-        $values = [
+        $values = $this->values_of($deltactxid, $rule, $userid, $now);
+        $existing = $this->db->get_record(
+            self::TABLE,
+            [
+                'contextid' => $rule->contextid(),
+                'slotkey' => $values['slotkey'],
+                'target' => $values['target'],
+                'variant' => $values['variant'],
+            ]
+        );
+        if ($existing) {
+            if ($rule->id() > 0 && (int)$existing->rev !== $rule->rev()) {
+                throw new rule_conflict_exception('The rule changed since it was read.');
+            }
+            $values['id'] = $existing->id;
+            $values['rev'] = (int)$existing->rev + 1;
+            $this->db->update_record(self::TABLE, (object)$values);
+            return $this->to_rule((object)$values);
+        }
+        $values['rev'] = 1;
+        $values['timecreated'] = $now;
+        $values['id'] = $this->db->insert_record(self::TABLE, (object)$values);
+        return $this->to_rule((object)$values);
+    }
+
+    /**
+     * Create or update many rules at once, with one query to find the ones that exist and one to insert the new ones.
+     *
+     * A rule that appears twice keeps its last version. The rules that are written are not read back.
+     *
+     * @param array[] $items Pairs of delta owner context id and rule.
+     * @param int $userid User making the change.
+     * @throws rule_conflict_exception When a stored rule changed since it was read.
+     */
+    public function save_many(array $items, int $userid): void {
+        if ($items === []) {
+            return;
+        }
+        $now = time();
+        $contextids = [];
+        $wanted = [];
+        foreach ($items as [$deltactxid, $rule]) {
+            $contextids[$rule->contextid()] = true;
+            $wanted[self::identity_of($rule->contextid(), (string)$rule->slot(), $rule->target(), $rule->variant())] =
+                [$deltactxid, $rule];
+        }
+        $existing = [];
+        $records = $this->db->get_records_list(
+            self::TABLE,
+            'contextid',
+            array_keys($contextids),
+            '',
+            'id, contextid, slotkey, target, variant, rev'
+        );
+        foreach ($records as $record) {
+            $existing[self::identity_of((int)$record->contextid, $record->slotkey, $record->target, $record->variant)] = $record;
+        }
+        $inserts = [];
+        foreach ($wanted as $identity => [$deltactxid, $rule]) {
+            $values = $this->values_of($deltactxid, $rule, $userid, $now);
+            if (isset($existing[$identity])) {
+                if ($rule->id() > 0 && (int)$existing[$identity]->rev !== $rule->rev()) {
+                    throw new rule_conflict_exception('The rule changed since it was read.');
+                }
+                $values['id'] = $existing[$identity]->id;
+                $values['rev'] = (int)$existing[$identity]->rev + 1;
+                $this->db->update_record(self::TABLE, (object)$values);
+            } else {
+                $values['rev'] = 1;
+                $values['timecreated'] = $now;
+                $inserts[] = (object)$values;
+            }
+        }
+        if ($inserts !== []) {
+            $this->db->insert_records(self::TABLE, $inserts);
+        }
+    }
+
+    /**
+     * Which of the identities of some rules are already stored.
+     *
+     * @param int[] $contextids Contexts that hold the rules.
+     * @return bool[] True for each identity, as identity_of() writes it, that has a stored rule.
+     */
+    public function stored_identities(array $contextids): array {
+        if ($contextids === []) {
+            return [];
+        }
+        $stored = [];
+        $records = $this->db->get_records_list(
+            self::TABLE,
+            'contextid',
+            array_values($contextids),
+            '',
+            'id, contextid, slotkey, target, variant'
+        );
+        foreach ($records as $record) {
+            $stored[self::identity_of((int)$record->contextid, $record->slotkey, $record->target, $record->variant)] = true;
+        }
+        return $stored;
+    }
+
+    /**
+     * Identity of a rule within its context.
+     *
+     * @param int $contextid Context id.
+     * @param string $slotkey Slot key.
+     * @param string $target Target.
+     * @param string $variant Identity of the rule's pages and regions.
+     * @return string Identity.
+     */
+    public static function identity_of(int $contextid, string $slotkey, string $target, string $variant): string {
+        return $contextid . '|' . $slotkey . '|' . $target . '|' . $variant;
+    }
+
+    /**
+     * The columns that a rule is stored in.
+     *
+     * @param int $deltactxid Delta owner context.
+     * @param rule $rule Rule.
+     * @param int $userid User making the change.
+     * @param int $now Time of the change.
+     * @return array Values by column.
+     */
+    private function values_of(int $deltactxid, rule $rule, int $userid, int $now): array {
+        return [
             'contextid' => $rule->contextid(),
             'deltactxid' => $deltactxid,
             'slotkey' => (string)$rule->slot(),
@@ -141,28 +284,6 @@ class rule_store {
             'usermodified' => $userid,
             'timemodified' => $now,
         ];
-        $existing = $this->db->get_record(
-            self::TABLE,
-            [
-                'contextid' => $rule->contextid(),
-                'slotkey' => $values['slotkey'],
-                'target' => $values['target'],
-                'variant' => $values['variant'],
-            ]
-        );
-        if ($existing) {
-            if ($rule->id() > 0 && (int)$existing->rev !== $rule->rev()) {
-                throw new rule_conflict_exception('The rule changed since it was read.');
-            }
-            $values['id'] = $existing->id;
-            $values['rev'] = (int)$existing->rev + 1;
-            $this->db->update_record(self::TABLE, (object)$values);
-            return $this->to_rule($this->db->get_record(self::TABLE, ['id' => $existing->id], '*', MUST_EXIST));
-        }
-        $values['rev'] = 1;
-        $values['timecreated'] = $now;
-        $id = $this->db->insert_record(self::TABLE, (object)$values);
-        return $this->to_rule($this->db->get_record(self::TABLE, ['id' => $id], '*', MUST_EXIST));
     }
 
     /**

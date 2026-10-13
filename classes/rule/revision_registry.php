@@ -111,6 +111,45 @@ class revision_registry {
     }
 
     /**
+     * Record a change to several delta stylesheets with one query to read them and one to insert the new ones.
+     *
+     * @param int[] $rulecounts Rules now in each stylesheet, by delta owner context.
+     * @return int[] New effective revision of each stylesheet, by delta owner context.
+     */
+    public function bump_many(array $rulecounts): array {
+        if ($rulecounts === []) {
+            return [];
+        }
+        $now = time();
+        $stored = [];
+        foreach ($this->db->get_records_list(self::TABLE, 'contextid', array_keys($rulecounts)) as $record) {
+            $stored[(int)$record->contextid] = $record;
+        }
+        $inserts = [];
+        $effective = [];
+        foreach ($rulecounts as $contextid => $rulecount) {
+            if (isset($stored[$contextid])) {
+                $record = $stored[$contextid];
+                $record->rev = (int)$record->rev + 1;
+                $record->rulecount = $rulecount;
+                $record->timemodified = $now;
+                $this->db->update_record(self::TABLE, $record);
+                $rev = (int)$record->rev;
+            } else {
+                $inserts[] = (object)['contextid' => $contextid, 'rev' => 1, 'rulecount' => $rulecount, 'timemodified' => $now];
+                $rev = 1;
+            }
+            $effective[$contextid] = $rulecount > 0 ? $rev : 0;
+        }
+        if ($inserts !== []) {
+            $this->db->insert_records(self::TABLE, $inserts);
+        }
+        $this->cache->set_many(array_combine(array_map('strval', array_keys($effective)), array_values($effective)));
+        $this->drop_chains();
+        return $effective;
+    }
+
+    /**
      * Every delta stylesheet that has rules, with its effective revision.
      *
      * @return int[] Effective revision keyed by context id.

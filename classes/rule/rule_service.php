@@ -111,7 +111,7 @@ class rule_service {
                 $doomed[(int)$id] = $existing;
             }
         }
-        $counts = $this->check($rules, $doomed);
+        $counts = $this->check($rules, $doomed, $this->preload($rules, $doomed))['counts'];
 
         $transaction = $this->db->start_delegated_transaction();
         $touched = [];
@@ -145,6 +145,62 @@ class rule_service {
             \local_iconrestyle\event\rules_changed::for_change($counts['created'], $counts['updated'], count($deleted))->trigger();
         }
         return ['saved' => $saved, 'deleted' => $deleted];
+    }
+
+    /**
+     * Create or update many rules in one transaction, for an import.
+     *
+     * It checks the limits as apply() does and bumps each stylesheet once, but it reads and writes by the batch, so a site
+     * with very many stylesheets is not slowed down by one query for each rule. The stored rules are not returned.
+     *
+     * @param rule[] $rules Rules to store.
+     * @param int $userid User making the change.
+     * @throws \InvalidArgumentException When a context cannot hold rules or a limit is reached.
+     */
+    public function apply_bulk(array $rules, int $userid): void {
+        if ($rules === []) {
+            return;
+        }
+        $checked = $this->check($rules, [], $this->preload($rules, []));
+        $counts = $checked['counts'];
+
+        $transaction = $this->db->start_delegated_transaction();
+        $updates = [];
+        try {
+            $items = [];
+            $touched = [];
+            foreach ($rules as $rule) {
+                $delta = $this->deltas->owner_of($rule->contextid());
+                $items[] = [$delta, $rule];
+                $touched[$delta] = true;
+            }
+            $this->store->save_many($items, $userid);
+            $updates = $this->publish(array_keys($touched));
+        } catch (\Throwable $exception) {
+            $transaction->rollback($exception);
+        }
+        $transaction->allow_commit();
+        if ($this->sheets !== null) {
+            foreach ($updates as $delta => $update) {
+                $this->sheets->replace($delta, $update['rev'], $update['css'], $update['previous']);
+            }
+        }
+        \local_iconrestyle\event\rules_changed::for_change($counts['created'], $counts['updated'], 0)->trigger();
+    }
+
+    /**
+     * Read the rules of every stylesheet that a change touches, with one query.
+     *
+     * @param rule[] $rules Rules to store.
+     * @param rule[] $doomed Rules to delete.
+     * @return rule[][] Rules of each stylesheet, by delta owner context.
+     */
+    private function preload(array $rules, array $doomed): array {
+        $deltas = [];
+        foreach (array_merge($rules, array_values($doomed)) as $rule) {
+            $deltas[$this->deltas->owner_of($rule->contextid())] = true;
+        }
+        return $this->store->find_by_deltas(array_keys($deltas));
     }
 
     /**
@@ -186,17 +242,18 @@ class rule_service {
      *
      * @param rule[] $rules Rules to store.
      * @param rule[] $doomed Rules to delete.
-     * @return int[] How many of the rules are new, under created, and how many replace a stored rule, under updated.
+     * @param rule[][] $preloaded Rules of the stylesheets that are touched, by delta owner context, already read.
+     * @return array How many of the rules are new, under counts as created, and how many replace a stored rule, as updated.
      * @throws \InvalidArgumentException When a limit is reached.
      */
-    private function check(array $rules, array $doomed): array {
+    private function check(array $rules, array $doomed, array $preloaded = []): array {
         $counts = ['created' => 0, 'updated' => 0];
         $after = [];
         $before = [];
         $stored = [];
         foreach ($doomed as $existing) {
             $delta = $this->deltas->owner_of($existing->contextid());
-            $this->load($delta, $after, $before, $stored);
+            $this->load($delta, $after, $before, $stored, $preloaded);
             unset($after[$delta][$this->identity($existing)]);
         }
         foreach ($rules as $rule) {
@@ -204,7 +261,7 @@ class rule_service {
                 throw new \InvalidArgumentException('The effects of this rule are too expensive to paint.');
             }
             $delta = $this->deltas->owner_of($rule->contextid());
-            $this->load($delta, $after, $before, $stored);
+            $this->load($delta, $after, $before, $stored, $preloaded);
             $was = $stored[$delta][$this->identity($rule)] ?? null;
             if ($was !== null && $rule->id() > 0 && $was->rev() !== $rule->rev()) {
                 throw new rule_conflict_exception('The rule changed since it was read.');
@@ -212,17 +269,18 @@ class rule_service {
             $counts[$was === null ? 'created' : 'updated']++;
             $after[$delta][$this->identity($rule)] = $rule;
         }
-        $newdeltas = 0;
+        $newdeltas = [];
         foreach ($after as $delta => $set) {
             if (count($set) > $this->limits->rules()) {
                 throw new \InvalidArgumentException('Rule limit reached for this context.');
             }
             if ($before[$delta] === 0 && $set !== []) {
-                $this->check_new_delta($delta, $newdeltas++);
+                $newdeltas[] = $delta;
             }
             $this->check_sheet($set);
         }
-        return $counts;
+        $this->check_new_deltas($newdeltas);
+        return ['counts' => $counts];
     }
 
     /**
@@ -232,13 +290,14 @@ class rule_service {
      * @param rule[][] $after Rules of each stylesheet by identity, which this fills.
      * @param int[] $before How many rules each stylesheet has now, which this fills.
      * @param rule[][] $stored Rules of each stylesheet by identity as they are stored, which this fills.
+     * @param rule[][] $preloaded Rules of the stylesheets that are touched, already read, by delta owner context.
      */
-    private function load(int $delta, array &$after, array &$before, array &$stored): void {
+    private function load(int $delta, array &$after, array &$before, array &$stored, array $preloaded = []): void {
         if (isset($after[$delta])) {
             return;
         }
         $stored[$delta] = [];
-        foreach ($this->store->find_by_delta($delta) as $existing) {
+        foreach ($preloaded[$delta] ?? $this->store->find_by_delta($delta) as $existing) {
             $stored[$delta][$this->identity($existing)] = $existing;
         }
         $after[$delta] = $stored[$delta];
@@ -246,26 +305,41 @@ class rule_service {
     }
 
     /**
-     * Refuse a first rule in a context when the site already serves as many stylesheets as it is allowed to.
+     * Refuse a first rule in some contexts when the site already serves as many stylesheets as it is allowed to.
      *
      * The site context is always allowed. Other contexts are limited in number, and by how many of their parents already
-     * have rules, because the stylesheet of a page is made of every one of them and the address has room for a few.
+     * have rules, because the stylesheet of a page is made of every one of them and the address has room for a few. All the
+     * contexts are read with one query, and so are the revisions of their parents.
      *
-     * @param int $delta Delta owner context that is getting its first rule.
-     * @param int $others Contexts that get their first rule in the same change.
+     * @param int[] $deltas Delta owner contexts that are getting their first rule, in the order they were reached.
      * @throws \InvalidArgumentException When a limit is reached.
      */
-    private function check_new_delta(int $delta, int $others): void {
-        $context = \context::instance_by_id($delta);
-        if ($context->contextlevel === CONTEXT_SYSTEM) {
+    private function check_new_deltas(array $deltas): void {
+        if ($deltas === []) {
             return;
         }
-        if ($this->revisions->count_active() + $others >= $this->limits->contexts()) {
-            throw new \InvalidArgumentException('Too many categories and courses have rules of their own.');
+        $contexts = $this->db->get_records_list('context', 'id', $deltas, '', 'id, contextlevel, path');
+        $parents = [];
+        foreach ($deltas as $delta) {
+            if (!isset($contexts[$delta])) {
+                throw new \InvalidArgumentException('Unknown context.');
+            }
+            $parents[$delta] = array_slice(array_values(array_filter(explode('/', $contexts[$delta]->path))), 0, -1);
         }
-        $parents = array_filter($this->revisions->get_many($context->get_parent_context_ids()));
-        if (count($parents) >= rule_limits::MAX_CHAIN) {
-            throw new \InvalidArgumentException('Too many parents of this context have rules of their own.');
+        $revisions = $this->revisions->get_many(array_values(array_unique(array_merge(...array_values($parents)))));
+        $active = null;
+        foreach ($deltas as $others => $delta) {
+            if ((int)$contexts[$delta]->contextlevel === CONTEXT_SYSTEM) {
+                continue;
+            }
+            $active = $active ?? $this->revisions->count_active();
+            if ($active + $others >= $this->limits->contexts()) {
+                throw new \InvalidArgumentException('Too many categories and courses have rules of their own.');
+            }
+            $withrules = array_filter(array_intersect_key($revisions, array_flip(array_map('intval', $parents[$delta]))));
+            if (count($withrules) >= rule_limits::MAX_CHAIN) {
+                throw new \InvalidArgumentException('Too many parents of this context have rules of their own.');
+            }
         }
     }
 
@@ -300,12 +374,13 @@ class rule_service {
      */
     private function publish(array $deltas): array {
         $previous = $this->revisions->get_many($deltas);
+        $rules = $this->store->find_by_deltas($deltas);
+        $revisions = $this->revisions->bump_many(array_map('count', $rules));
         $updates = [];
         foreach ($deltas as $delta) {
-            $rules = $this->store->find_by_delta($delta);
             $updates[$delta] = [
-                'rev' => $this->revisions->bump($delta, count($rules)),
-                'css' => $rules === [] || $this->sheets === null ? '' : $this->sheets->compile($rules),
+                'rev' => $revisions[$delta],
+                'css' => $rules[$delta] === [] || $this->sheets === null ? '' : $this->sheets->compile($rules[$delta]),
                 'previous' => $previous[$delta] ?? 0,
             ];
         }
