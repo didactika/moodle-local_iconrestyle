@@ -1,19 +1,23 @@
 name: Release on version bump
 
-# Creates a git tag and a GitHub release automatically whenever the
-# $plugin->release value in version.php changes on `main` OR on any
-# MOODLE_XXX_STABLE branch -- a stable branch backporting a fix has its own
-# release line, same as `main`, so it needs the same ability to publish one
-# (mirrors the vMAJOR.x pattern used for npm packages: releases come from
-# whichever maintained line changed, not from one branch only).
-# It only acts when a tag for that release does not already exist, so
-# re-running or unrelated edits to version.php are safe (idempotent), and
-# safe across branches too: two different lines are expected to use their
-# own distinct release numbers, same as they would with separate npm majors.
+# Creates a git tag and a GitHub release automatically whenever version.php changes on `main` OR on any MOODLE_XXX_STABLE
+# branch and its $plugin->release has not been published yet. A stable branch backporting a fix has its own release line,
+# same as `main`, so it can publish one too.
 #
-# This plugin has no other release surface: there is no package registry to
-# publish to and no environment to deploy to, just this zip attached to a
-# GitHub Release (see README.md).
+# The latest release is always the one of `main`, whichever branch published last: a release from a MOODLE_XXX_STABLE
+# branch is created with --latest=false, and every run ends by marking the release that `main` declares as the latest one.
+#
+# The version of every line ends with the code of its Moodle line, so lines never collide and a site that moves to a newer
+# line always sees a higher version:
+#   - MOODLE_XXX_STABLE -> $plugin->version = YYYYMMDDXX.XXX
+#   - main              -> $plugin->version = YYYYMMDDXX.<highest value of $plugin->supported>
+# A release whose version does not follow that is refused before anything is created.
+#
+# It only acts when a tag for that release does not already exist, so re-running or unrelated edits to version.php are
+# safe (idempotent). It can also be started by hand from the Actions tab, for instance to mark the latest release again.
+#
+# This plugin has no other release surface: there is no package registry to publish to and no environment to deploy to, just
+# the zip attached to a GitHub Release (see README.md).
 
 on:
   push:
@@ -22,9 +26,15 @@ on:
       - 'MOODLE_*_STABLE'
     paths:
       - version.php
+  workflow_dispatch:
 
 permissions:
   contents: write
+
+# One release at a time, so which release is the latest is settled in a fixed order.
+concurrency:
+  group: release-${{ github.repository }}
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -38,57 +48,52 @@ jobs:
       - name: Read release info from version.php
         id: ver
         run: |
-          release=$(grep -oP '\$plugin->release\s*=\s*'\''\K[^'\'']+' version.php)
-          version=$(grep -oP '\$plugin->version\s*=\s*\K[0-9]+' version.php)
-          if [ -z "$release" ]; then
-            echo "::error::Could not parse \$plugin->release from version.php"
+          read_field() { grep -oP "\\\$plugin->$1\\s*=\\s*\\K[^;]+" version.php | head -n 1 | tr -d " '\"\r"; }
+          release=$(read_field release)
+          version=$(read_field version)
+          supported=$(grep -oP '\$plugin->supported\s*=\s*\[\K[^\]]+' version.php | tr ',' '\n' | tr -d ' \t\r' | grep -v '^$' | sort -n | tail -n 1)
+          if [ -z "$release" ] || [ -z "$version" ]; then
+            echo "::error::Could not parse \$plugin->release and \$plugin->version from version.php"
+            exit 1
+          fi
+          branch="${GITHUB_REF_NAME}"
+          if [ "$branch" = "main" ]; then
+            line="$supported"
+          else
+            line=$(echo "$branch" | grep -oP '^MOODLE_\K[0-9]+(?=_STABLE$)' || true)
+          fi
+          if [ -z "$line" ]; then
+            echo "::error::Release only from main or a MOODLE_XXX_STABLE branch, not from $branch."
+            exit 1
+          fi
+          if ! echo "$version" | grep -qE "^[0-9]{10}\\.${line}\$"; then
+            echo "::error::\$plugin->version is $version; on $branch it must be YYYYMMDDXX.$line."
             exit 1
           fi
           echo "release=$release" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=v$release" >> "$GITHUB_OUTPUT"
-          echo "Detected release v$release (version $version)"
+          echo "Detected release v$release (version $version) on $branch"
 
       - name: Derive plugin name from version.php
         id: plugin
         run: |
-          # The release zip's filename and the folder name it unpacks into
-          # both need the plugin's short name, not the git repository's name.
-          # Both are derived from $plugin->component (e.g.
-          # "local_servicemanager"), the same field Moodle itself uses to
-          # know where to install the plugin:
-          #   - component  = the full value, used as the zip filename prefix
-          #                  ("local_servicemanager-v1.0.1.zip"), matching
-          #                  the convention Moodle plugin release zips use.
-          #   - shortname  = component with its "<type>_" prefix stripped
-          #                  ("servicemanager"), because a Moodle plugin zip
-          #                  must contain a single top-level folder matching
-          #                  the install path under the type folder, e.g.
-          #                  local/servicemanager/, mod/forum/, block/html/.
-          #                  Moodle plugin type prefixes never contain an
-          #                  underscore, so stripping up to the first "_" is
-          #                  safe.
+          # The release zip's filename and the folder name it unpacks into both need the plugin's short name, not the git
+          # repository's name. Both are derived from $plugin->component (e.g. "local_servicemanager"), the same field Moodle
+          # itself uses to know where to install the plugin:
+          #   - component = the full value, used as the zip filename prefix.
+          #   - shortname = component with its "<type>_" prefix stripped ("servicemanager"), because a Moodle plugin zip must
+          #                 contain a single top-level folder matching the install path under the type folder.
           component=$(grep -oP '\$plugin->component\s*=\s*'\''\K[^'\'']+' version.php || true)
           if [ -z "$component" ]; then
-            # version.php has no $plugin->component yet (e.g. this repo was
-            # only just created from the template). Fall back to the
-            # repository directory name, stripping the "moodle-" prefix
-            # conventionally used for Moodle plugin repos on GitHub, e.g.
-            # "moodle-local_servicemanager" -> "local_servicemanager". In
-            # practice ci.yml's "validate" step already requires a real
-            # $plugin->component on every push/PR before this can run on
-            # main, so this fallback mainly matters for a very first commit.
             component=$(basename "$(pwd)")
             component="${component#moodle-}"
             echo "::warning::\$plugin->component not found in version.php; falling back to directory-derived name '$component'. Add \$plugin->component to version.php."
           fi
-
           shortname="${component#*_}"
           if [ "$shortname" = "$component" ]; then
-            # No "type_" prefix found -- use the component name as-is.
             shortname="$component"
           fi
-
           echo "component=$component" >> "$GITHUB_OUTPUT"
           echo "shortname=$shortname" >> "$GITHUB_OUTPUT"
           echo "Derived component='$component' shortname='$shortname'"
@@ -98,14 +103,13 @@ jobs:
         run: |
           if git ls-remote --exit-code --tags origin "refs/tags/${{ steps.ver.outputs.tag }}" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "Tag ${{ steps.ver.outputs.tag }} already exists — nothing to do."
+            echo "Tag ${{ steps.ver.outputs.tag }} already exists — nothing to publish."
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Extract release notes from CHANGELOG.md
         if: steps.check.outputs.exists == 'false'
-        id: notes
         run: |
           release='${{ steps.ver.outputs.release }}'
           awk -v ver="$release" '
@@ -123,8 +127,6 @@ jobs:
         if: steps.check.outputs.exists == 'false'
         id: zip
         run: |
-          # Package the plugin into a zip file. Filename and internal folder
-          # prefix both come from the "Derive plugin name" step above.
           zipname="${{ steps.plugin.outputs.component }}-${{ steps.ver.outputs.tag }}.zip"
           git archive --format=zip --prefix="${{ steps.plugin.outputs.shortname }}/" -o "$zipname" "${{ github.sha }}"
           echo "zipname=$zipname" >> "$GITHUB_OUTPUT"
@@ -136,8 +138,29 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Only a release of main may take the "latest" badge when it is created.
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then latest="--latest"; else latest="--latest=false"; fi
           gh release create "${{ steps.ver.outputs.tag }}" \
             "${{ steps.zip.outputs.zipname }}" \
             --target "${{ github.sha }}" \
             --title "${{ steps.ver.outputs.tag }}" \
-            --notes-file release_notes.md
+            --notes-file release_notes.md \
+            "$latest"
+
+      - name: Keep the latest release on main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Whatever branch published last, the release that main declares is the latest one.
+          git fetch --no-tags origin main
+          main_release=$(git show origin/main:version.php | grep -oP "\\\$plugin->release\\s*=\\s*\\K[^;]+" | head -n 1 | tr -d " '\"\r")
+          if [ -z "$main_release" ]; then
+            echo "main has no \$plugin->release; nothing to mark."
+            exit 0
+          fi
+          if gh release view "v$main_release" >/dev/null 2>&1; then
+            gh release edit "v$main_release" --latest
+            echo "v$main_release is the latest release."
+          else
+            echo "main has not published v$main_release yet; the latest release is left as it is."
+          fi
