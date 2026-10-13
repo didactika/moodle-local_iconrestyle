@@ -1,0 +1,90 @@
+{
+  "components/common/Modal": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/FiltersPanel": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/Grid": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/IconCard": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/IconCell": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/ImportModal": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/Inspector": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/inspector/ArtworkGroup": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/inspector/ColourField": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/inspector/SelectField": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/inspector/SidesField": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/inspector/SliderField": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/inspector/StyleTab": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/inspector/ThemeColourSelect": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/places/LocationPicker": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/places/PlacesModal": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/places/PlacesTab": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/PreviewPanel": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/SelectionBar": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/ShadowStage": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "components/Toolbar": {
+    "eject": "risky",
+    "wrap": "risky"
+  },
+  "Designer": {
+    "eject": "risky",
+    "wrap": "risky"
+  }
+}

@@ -1,0 +1,3 @@
+{"type":"header","format":"local_iconrestyle","version":1}
+{"type":"rule","place":"site","slot":"core:a/setting","painter":"color","asset":null,"fg":"#e83e8c","bg":null,"design":{},"pages":[],"regions":[],"mode":"all","enabled":true}
+{"type":"rule","place":"course:shortname=CA","slot":"core:t/delete","painter":"color","asset":null,"fg":"#0f6cbf","bg":null,"design":{},"pages":[],"regions":[],"mode":"all","enabled":true}

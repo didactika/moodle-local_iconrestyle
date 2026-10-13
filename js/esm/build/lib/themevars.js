@@ -1,0 +1,8 @@
+/**
+ * Finds the colours the active theme declares as CSS custom properties.
+ *
+ * @module     local_iconrestyle/lib/themevars
+ * @copyright  2026 Didactika.org
+ * @author     Hector Arrechea <hectorlazaroarrechea@gmail.com>
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */const g=/(^|[\s,>+~(])(:root|html|body)(?![\w-])/,u=/^--[A-Za-z0-9_-]{1,64}$/,h=/^(inherit|initial|unset|revert|revert-layer)$/i,a="var:",f=(t,e)=>{for(const o of Array.from(t)){const r=o;if(r.selectorText===void 0){const s=o;s.cssRules&&f(s.cssRules,e);continue}if(g.test(r.selectorText))for(const s of Array.from(r.style))s.startsWith("--")&&u.test(s)&&e.add(s)}},S=t=>{const e=new Set;for(const o of t){let r;try{r=o.cssRules}catch{continue}r&&f(r,e)}return[...e].sort()},p=(t,e,o)=>t.map(r=>({name:r,value:e(r).trim()})).filter(({value:r})=>r!==""&&!h.test(r)&&o(r)),C=(t,e,o)=>{const r=String(e).toLowerCase().replace(/--/g," ").split(/\s+/).filter(Boolean),s=t.filter(({name:c,value:i})=>{const n=`${c.slice(2)} ${i}`.toLowerCase();return r.every(l=>n.includes(l))});if(r.length>0){const c=r[0],i=n=>n.name.slice(2).toLowerCase().startsWith(c)?0:1;s.sort((n,l)=>i(n)-i(l))}return{items:s.slice(0,o),more:s.length>o}},y=t=>u.test(t),v=t=>a+t,m=t=>{if(t.startsWith(a))return t.slice(a.length);if(t.startsWith("token:")){const e=t.slice(6);return e.startsWith("activity")?`--${e}`:`--bs-${e}`}return""},R=t=>{const e=m(t);return e===""?"":t.startsWith("token:")&&!e.startsWith("--activity")?`var(${e}, var(--${e.slice(5)}))`:`var(${e})`};export{S as collectNames,R as cssOf,y as isVariableName,m as nameOf,p as resolveColours,C as search,v as toStored};
