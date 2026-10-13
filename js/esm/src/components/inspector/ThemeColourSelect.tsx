@@ -13,6 +13,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import {useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent} from 'react';
+import {useFollowAnchor} from '../../hooks/useFollowAnchor';
 import {IconChevron} from '../common/Icons';
 import * as themevars from '../../lib/themevars';
 import type {Text} from '../../types';
@@ -88,11 +89,18 @@ export default function ThemeColourSelect({name, stored, specials, text, onPick}
         setTyping(false);
     };
 
-    useLayoutEffect(() => {
-        if (!open || !input.current) {
+    /**
+     * Put the list under the field, or over it when there is more room there, where the field is now.
+     */
+    const follow = (): void => {
+        if (!input.current) {
             return;
         }
         const rect = input.current.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) {
+            close();
+            return;
+        }
         const width = Math.min(Math.max(rect.width, 260), window.innerWidth - 2 * MARGIN);
         const left = Math.max(MARGIN, Math.min(rect.left, window.innerWidth - width - MARGIN));
         const below = window.innerHeight - rect.bottom - MARGIN;
@@ -108,7 +116,15 @@ export default function ThemeColourSelect({name, stored, specials, text, onPick}
                 list: {maxHeight: Math.max(140, above - 16)},
             });
         }
+    };
+
+    useLayoutEffect(() => {
+        if (open) {
+            follow();
+        }
     }, [open]);
+
+    useFollowAnchor(open, follow, () => panel.current);
 
     useEffect(() => {
         if (!open) {
@@ -121,10 +137,8 @@ export default function ThemeColourSelect({name, stored, specials, text, onPick}
             }
         };
         document.addEventListener('pointerdown', outside, true);
-        window.addEventListener('resize', close);
         return () => {
             document.removeEventListener('pointerdown', outside, true);
-            window.removeEventListener('resize', close);
         };
     }, [open]);
 

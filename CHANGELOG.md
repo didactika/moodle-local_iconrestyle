@@ -23,6 +23,10 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [5.3.3] - 2026-10-13
 
+### Fixed
+
+- The lists that open under a button or a field (the theme colours of a colour field, the filters and the menu of the toolbar) stayed where they were opened while the page, or the panel that holds the field, scrolled. They now follow their button or field as it moves, and close when it scrolls out of sight.
+
 ### Changed
 
 - The web service classes use the `core_external` classes directly and the `compat.php` shim that loaded them with a manual `require_once` is gone, since Moodle 5.3 always has them.

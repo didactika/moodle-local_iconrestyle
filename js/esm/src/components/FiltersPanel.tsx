@@ -14,6 +14,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import {useEffect, useMemo, useRef, useState, type CSSProperties} from 'react';
+import {useFollowAnchor} from '../hooks/useFollowAnchor';
 import {IconFilter, IconFilterClear} from './common/Icons';
 import type {Filters, Icon, Text} from '../types';
 
@@ -51,6 +52,7 @@ export default function FiltersPanel({icons, filters, modes, text, onChange}: Fi
     const [place, setPlace] = useState<CSSProperties>({});
     const wrapper = useRef<HTMLDivElement>(null);
     const button = useRef<HTMLButtonElement>(null);
+    const panel = useRef<HTMLDivElement>(null);
 
     const total = filters.kinds.length + filters.components.length + filters.purposes.length + filters.traits.length +
         filters.places.length + filters.modes.length + (filters.sort === 'catalogue' ? 0 : 1);
@@ -80,15 +82,31 @@ export default function FiltersPanel({icons, filters, modes, text, onChange}: Fi
         return () => document.removeEventListener('click', outside);
     }, [open]);
 
+    /**
+     * Put the panel under the button, where the button is now.
+     */
+    const follow = (): void => {
+        if (!button.current) {
+            return;
+        }
+        const rect = button.current.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) {
+            setOpen(false);
+            return;
+        }
+        const width = Math.min(24 * 16, window.innerWidth - 16);
+        setPlace({
+            top: rect.bottom + 6,
+            left: Math.max(8, Math.min(rect.left, window.innerWidth - width - 8)),
+            maxHeight: Math.max(240, window.innerHeight - rect.bottom - 24),
+        });
+    };
+
+    useFollowAnchor(open, follow, () => panel.current);
+
     const toggle = (): void => {
-        if (!open && button.current) {
-            const rect = button.current.getBoundingClientRect();
-            const width = Math.min(24 * 16, window.innerWidth - 16);
-            setPlace({
-                top: rect.bottom + 6,
-                left: Math.max(8, Math.min(rect.left, window.innerWidth - width - 8)),
-                maxHeight: Math.max(240, window.innerHeight - rect.bottom - 24),
-            });
+        if (!open) {
+            follow();
         }
         setOpen(!open);
     };
@@ -128,7 +146,7 @@ export default function FiltersPanel({icons, filters, modes, text, onChange}: Fi
             <IconFilter /><span>{text('filtbutton')}</span>
             <span className="irs-count-badge" data-region="filters-count" hidden={total === 0}>{total > 0 ? total : ''}</span>
         </button>
-        <div className="irs-filters-panel" data-region="filters-panel" role="dialog" aria-label={text('filtbutton')} hidden={!open}
+        <div className="irs-filters-panel" data-region="filters-panel" ref={panel} role="dialog" aria-label={text('filtbutton')} hidden={!open}
             style={place}>
             <div className="irs-filter-head">
                 <h2 className="irs-filter-heading">{text('filtbutton')}</h2>

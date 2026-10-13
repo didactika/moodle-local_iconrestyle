@@ -13,6 +13,7 @@ import { jsxDEV } from "react/jsx-dev-runtime";
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import { useEffect, useRef, useState } from "react";
+import { useFollowAnchor } from "../hooks/useFollowAnchor";
 import {
   IconAlert,
   IconBack,
@@ -73,13 +74,24 @@ function Toolbar(props) {
     document.addEventListener("click", outside);
     return () => document.removeEventListener("click", outside);
   }, [menu]);
+  const followMenu = /* @__PURE__ */ __name(() => {
+    if (!toggle.current) {
+      return;
+    }
+    const rect = toggle.current.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > window.innerHeight) {
+      setMenu(null);
+      return;
+    }
+    setMenu({ top: rect.bottom + 4, right: Math.max(8, window.innerWidth - rect.right) });
+  }, "followMenu");
+  useFollowAnchor(menu !== null, followMenu, () => document.querySelector(".irs-menu-list"));
   const openMenu = /* @__PURE__ */ __name(() => {
     if (menu !== null || !toggle.current) {
       setMenu(null);
       return;
     }
-    const rect = toggle.current.getBoundingClientRect();
-    setMenu({ top: rect.bottom + 4, right: Math.max(8, window.innerWidth - rect.right) });
+    followMenu();
   }, "openMenu");
   const item = /* @__PURE__ */ __name((action, label, icon, onClick, disabled = false, shortcut = "") => /* @__PURE__ */ jsxDEV(
     "button",
@@ -96,12 +108,12 @@ function Toolbar(props) {
         icon,
         /* @__PURE__ */ jsxDEV("span", { children: label }, void 0, false, {
           fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 115,
+          lineNumber: 132,
           columnNumber: 15
         }, this),
         shortcut ? /* @__PURE__ */ jsxDEV("kbd", { children: shortcut }, void 0, false, {
           fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 115,
+          lineNumber: 132,
           columnNumber: 47
         }, this) : null
       ]
@@ -110,7 +122,7 @@ function Toolbar(props) {
     true,
     {
       fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-      lineNumber: 109,
+      lineNumber: 126,
       columnNumber: 124
     },
     this
@@ -132,12 +144,12 @@ function Toolbar(props) {
         children: [
           /* @__PURE__ */ jsxDEV(IconBack, {}, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 125,
+            lineNumber: 142,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("span", { children: text("back") }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 125,
+            lineNumber: 142,
             columnNumber: 25
           }, this)
         ]
@@ -146,7 +158,7 @@ function Toolbar(props) {
       true,
       {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 123,
+        lineNumber: 140,
         columnNumber: 9
       },
       this
@@ -154,12 +166,12 @@ function Toolbar(props) {
     /* @__PURE__ */ jsxDEV("div", { className: "irs-search", children: [
       /* @__PURE__ */ jsxDEV(IconSearch, {}, void 0, false, {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 128,
+        lineNumber: 145,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("label", { className: "sr-only visually-hidden", htmlFor: "irs-search", children: text("searchicons") }, void 0, false, {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 129,
+        lineNumber: 146,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -178,14 +190,14 @@ function Toolbar(props) {
         false,
         {
           fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 130,
+          lineNumber: 147,
           columnNumber: 13
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-      lineNumber: 127,
+      lineNumber: 144,
       columnNumber: 9
     }, this),
     filters,
@@ -201,12 +213,12 @@ function Toolbar(props) {
         children: [
           /* @__PURE__ */ jsxDEV(IconSelect, {}, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 137,
+            lineNumber: 154,
             columnNumber: 13
           }, this),
           /* @__PURE__ */ jsxDEV("span", { children: text("selectstart") }, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 137,
+            lineNumber: 154,
             columnNumber: 27
           }, this)
         ]
@@ -215,52 +227,52 @@ function Toolbar(props) {
       true,
       {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 135,
+        lineNumber: 152,
         columnNumber: 9
       },
       this
     ),
     /* @__PURE__ */ jsxDEV("span", { className: "irs-count", "data-region": "count", role: "status", "aria-live": "polite", children: text("iconcount", count) }, void 0, false, {
       fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-      lineNumber: 139,
+      lineNumber: 156,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("span", { className: "irs-status", "data-region": "status", "data-state": status, role: "status", "aria-live": "polite", children: [
       /* @__PURE__ */ jsxDEV("span", { className: "irs-status-icon irs-status-saved", children: /* @__PURE__ */ jsxDEV(IconCheck, {}, void 0, false, {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 141,
+        lineNumber: 158,
         columnNumber: 64
       }, this) }, void 0, false, {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 141,
+        lineNumber: 158,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("span", { className: "irs-status-icon irs-status-busy", children: /* @__PURE__ */ jsxDEV(IconRefresh, {}, void 0, false, {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 142,
+        lineNumber: 159,
         columnNumber: 63
       }, this) }, void 0, false, {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 142,
+        lineNumber: 159,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("span", { className: "irs-status-icon irs-status-error", children: /* @__PURE__ */ jsxDEV(IconAlert, {}, void 0, false, {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 143,
+        lineNumber: 160,
         columnNumber: 64
       }, this) }, void 0, false, {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 143,
+        lineNumber: 160,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("span", { className: "irs-status-text", "data-region": "status-text", children: text(`status${status}`) }, void 0, false, {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 144,
+        lineNumber: 161,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-      lineNumber: 140,
+      lineNumber: 157,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV("div", { className: "irs-tools", children: [
@@ -276,7 +288,7 @@ function Toolbar(props) {
           onClick: props.onUndo,
           children: /* @__PURE__ */ jsxDEV(IconUndo, {}, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 149,
+            lineNumber: 166,
             columnNumber: 17
           }, this)
         },
@@ -284,7 +296,7 @@ function Toolbar(props) {
         false,
         {
           fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 147,
+          lineNumber: 164,
           columnNumber: 13
         },
         this
@@ -301,7 +313,7 @@ function Toolbar(props) {
           onClick: props.onRedo,
           children: /* @__PURE__ */ jsxDEV(IconRedo, {}, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 153,
+            lineNumber: 170,
             columnNumber: 17
           }, this)
         },
@@ -309,7 +321,7 @@ function Toolbar(props) {
         false,
         {
           fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 151,
+          lineNumber: 168,
           columnNumber: 13
         },
         this
@@ -329,7 +341,7 @@ function Toolbar(props) {
             onClick: openMenu,
             children: /* @__PURE__ */ jsxDEV(IconMore, {}, void 0, false, {
               fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-              lineNumber: 159,
+              lineNumber: 176,
               columnNumber: 21
             }, this)
           },
@@ -337,7 +349,7 @@ function Toolbar(props) {
           false,
           {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 156,
+            lineNumber: 173,
             columnNumber: 17
           },
           this
@@ -345,42 +357,42 @@ function Toolbar(props) {
         /* @__PURE__ */ jsxDEV("div", { className: "irs-menu-list", "data-region": "menu", role: "menu", hidden: menu === null, style: menu ?? void 0, children: [
           item("undo", text("undo"), /* @__PURE__ */ jsxDEV(IconUndo, {}, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 162,
+            lineNumber: 179,
             columnNumber: 49
           }, this), props.onUndo, !canUndo, "Ctrl Z"),
           item("redo", text("redo"), /* @__PURE__ */ jsxDEV(IconRedo, {}, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 163,
+            lineNumber: 180,
             columnNumber: 49
           }, this), props.onRedo, !canRedo, "Ctrl Y"),
           /* @__PURE__ */ jsxDEV("hr", {}, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 164,
+            lineNumber: 181,
             columnNumber: 21
           }, this),
           item("exchange-export", text("exportcustomisations"), /* @__PURE__ */ jsxDEV(IconDownload, {}, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 165,
+            lineNumber: 182,
             columnNumber: 76
           }, this), props.onExportAll),
           item("exchange-import", text("importcustomisations"), /* @__PURE__ */ jsxDEV(IconUpload, {}, void 0, false, {
             fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-            lineNumber: 166,
+            lineNumber: 183,
             columnNumber: 76
           }, this), () => file.current?.click())
         ] }, void 0, true, {
           fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-          lineNumber: 161,
+          lineNumber: 178,
           columnNumber: 17
         }, this)
       ] }, void 0, true, {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 155,
+        lineNumber: 172,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-      lineNumber: 146,
+      lineNumber: 163,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ jsxDEV(
@@ -405,14 +417,14 @@ function Toolbar(props) {
       false,
       {
         fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-        lineNumber: 170,
+        lineNumber: 187,
         columnNumber: 9
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/iconrestyle/js/esm/src/components/Toolbar.tsx",
-    lineNumber: 118,
+    lineNumber: 135,
     columnNumber: 12
   }, this);
 }

@@ -10,6 +10,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import {useEffect, useRef, useState, type CSSProperties, type ReactNode} from 'react';
+import {useFollowAnchor} from '../hooks/useFollowAnchor';
 import {
     IconAlert, IconBack, IconCheck, IconDownload, IconMore, IconRedo, IconRefresh, IconSearch, IconSelect, IconUndo, IconUpload,
 } from './common/Icons';
@@ -97,13 +98,29 @@ export default function Toolbar(props: ToolbarProps) {
         return () => document.removeEventListener('click', outside);
     }, [menu]);
 
+    /**
+     * Put the menu under its button, where the button is now.
+     */
+    const followMenu = (): void => {
+        if (!toggle.current) {
+            return;
+        }
+        const rect = toggle.current.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) {
+            setMenu(null);
+            return;
+        }
+        setMenu({top: rect.bottom + 4, right: Math.max(8, window.innerWidth - rect.right)});
+    };
+
+    useFollowAnchor(menu !== null, followMenu, () => document.querySelector<HTMLElement>('.irs-menu-list'));
+
     const openMenu = (): void => {
         if (menu !== null || !toggle.current) {
             setMenu(null);
             return;
         }
-        const rect = toggle.current.getBoundingClientRect();
-        setMenu({top: rect.bottom + 4, right: Math.max(8, window.innerWidth - rect.right)});
+        followMenu();
     };
 
     const item = (action: string, label: string, icon: ReactNode, onClick: () => void, disabled = false, shortcut = '') => <button
