@@ -110,8 +110,8 @@ jobs:
           # output still needs a field literally called "include" -- that's
           # GitHub Actions' own matrix schema, not jq's, and unaffected by
           # this rename.
-          lowest=$(echo "$supported_raw" | tr ',' '\n' | tr -d '[:space:]' | grep -v '^$' | sort -n | head -n 1)
-          highest=$(echo "$supported_raw" | tr ',' '\n' | tr -d '[:space:]' | grep -v '^$' | sort -n | tail -n 1)
+          lowest=$(echo "$supported_raw" | tr ',' '\n' | tr -d ' \t\r' | grep -v '^$' | sort -n | head -n 1)
+          highest=$(echo "$supported_raw" | tr ',' '\n' | tr -d ' \t\r' | grep -v '^$' | sort -n | tail -n 1)
           for edge in "$lowest" "$highest"; do
             if ! echo "$MOODLE_PHP_TABLE" | jq -e --arg v "$edge" 'has($v)' > /dev/null; then
               echo "::error::Moodle version $edge is listed in \$plugin->supported but MOODLE_PHP_TABLE above has no entry for it. Add one (see https://moodledev.io/general/development/policies/php) before this can run."
