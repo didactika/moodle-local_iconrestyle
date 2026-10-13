@@ -32,6 +32,7 @@ $string['appliesto'] = 'Applies to';
 $string['artwork'] = 'Replace the icon';
 $string['artworkfailed'] = 'The icon\'s own file could not be used, so the colour was not applied.';
 $string['artworkready'] = 'Your {$a} icon is used';
+$string['artworkrefused'] = 'Artwork that was refused: {$a}';
 $string['asset_rejected_dimensions'] = 'The image size is outside the accepted range.';
 $string['asset_rejected_empty'] = 'The file does not draw anything.';
 $string['asset_rejected_forbidden'] = 'The file contains something that is not allowed in icons, such as a script or an external reference.';

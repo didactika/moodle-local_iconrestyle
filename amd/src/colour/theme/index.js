@@ -26,6 +26,7 @@
 import selectors from 'local_iconrestyle/colour/theme/selectors';
 import {bindThemeListeners} from 'local_iconrestyle/colour/theme/listeners';
 import {renderResults} from 'local_iconrestyle/colour/theme/templates';
+import Templates from 'core/templates';
 import * as themevars from 'local_iconrestyle/lib/themevars';
 
 const LIMIT = 80;
@@ -104,7 +105,7 @@ export const createThemeColours = (field, name, config) => {
             none: found.items.length === 0 && specials.length === 0 && custom === '',
         });
         if (mine === rendering) {
-            list.innerHTML = html;
+            Templates.replaceNodeContents(list, html, '');
         }
     };
 
