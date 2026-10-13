@@ -69,7 +69,7 @@ class behat_local_iconrestyle_manual extends behat_base {
                 var ring = document.createElement('div');
                 ring.className = 'irs-doc-mark';
                 ring.style.cssText = 'position:fixed;z-index:2147483000;pointer-events:none;box-sizing:border-box;' +
-                    'border:2px solid #e83e8c;border-radius:8px;box-shadow:0 0 0 3px rgba(232,62,140,.25);' +
+                    'border:2px solid #0d9488;border-radius:8px;box-shadow:0 0 0 3px rgba(13,148,136,.25);' +
                     'left:' + (r.left - 3) + 'px;top:' + (r.top - 3) + 'px;width:' + (r.width + 6) + 'px;' +
                     'height:' + (r.height + 6) + 'px';
                 document.body.appendChild(ring);
@@ -84,7 +84,7 @@ class behat_local_iconrestyle_manual extends behat_base {
                 badge.className = 'irs-doc-mark';
                 badge.textContent = row.number;
                 badge.style.cssText = 'position:fixed;z-index:2147483001;pointer-events:none;width:22px;height:22px;' +
-                    'border-radius:50%;background:#e83e8c;color:#fff;font:700 12px/22px sans-serif;text-align:center;' +
+                    'border-radius:50%;background:#0d9488;color:#fff;font:700 12px/22px sans-serif;text-align:center;' +
                     'box-shadow:0 1px 3px rgba(0,0,0,.45);left:' + at[0] + 'px;top:' + at[1] + 'px';
                 document.body.appendChild(badge);
             });
