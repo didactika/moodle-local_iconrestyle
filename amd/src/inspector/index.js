@@ -168,7 +168,7 @@ export const createInspector = (root, options) => {
             find(selectors.sharedNotice).hidden = icon.group < 2 || dismissed.has(icon.key);
             find(selectors.sharedNoticeText).textContent = icon.group < 2 ? '' : text('sharedglyph', icon.group);
             root.querySelectorAll(selectors.lookButtons).forEach((button) => {
-                button.hidden = !button.dataset.kinds.split(' ').includes(icon.kind);
+                button.hidden = !button.dataset.kinds.split(',').includes(icon.kind);
             });
             showProps(draft);
             const hasArtwork = draft.assetid > 0;
