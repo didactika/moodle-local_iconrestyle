@@ -113,7 +113,46 @@ export const createState = (everywhere, modes = ['all']) => {
         return has(inflight, key) && inflight[key] === null;
     };
 
-    const draftOf = (key) => current(key) || emptyDraft(slotOf(key), whereOfKey(key));
+    /**
+     * The rule of every colour mode that a variant of one mode shows through, because it has no rule of its own.
+     *
+     * A look made before the site had colour modes applies to every mode. It is the look the pages show in each mode that has
+     * none of its own, so it is the one the designer must open with, and the one a removal or a change has to deal with.
+     *
+     * @param {string} key Rule key of a variant of one colour mode.
+     * @returns {string|null} Rule key of the look that applies to every mode, or null when the variant has its own rule or
+     *     there is none.
+     */
+    const inheritedKey = (key) => {
+        const where = whereOfKey(key);
+        if (where.mode === 'all' || !modes.includes(where.mode) || current(key) !== null) {
+            return null;
+        }
+        const everyKey = ruleKey(slotOf(key), {...where, mode: 'all'});
+        const every = current(everyKey);
+        return every !== null && !isEmpty(every) ? everyKey : null;
+    };
+
+    /**
+     * The look a variant of one mode starts from when it has no rule: the look that applies to every mode, if there is one.
+     *
+     * @param {string} key Rule key.
+     * @returns {object|null} Draft, or null when there is no such look.
+     */
+    const inheritedDraft = (key) => {
+        const everyKey = inheritedKey(key);
+        return everyKey === null ? null : {...current(everyKey), id: 0, rev: 0, mode: whereOfKey(key).mode};
+    };
+
+    /**
+     * What a variant looks like now, including what it shows through from the look of every mode.
+     *
+     * @param {string} key Rule key.
+     * @returns {object|null} Draft, or null when nothing styles it.
+     */
+    const effective = (key) => current(key) || inheritedDraft(key);
+
+    const draftOf = (key) => effective(key) || emptyDraft(slotOf(key), whereOfKey(key));
 
     /**
      * Make a variant look like a draft, or have no rule, by changing what is pending.
@@ -148,6 +187,84 @@ export const createState = (everywhere, modes = ['all']) => {
             }
         }
         lastTime = now;
+        redoOps = [];
+    };
+
+    const changeOf = (key, patch) => {
+        const before = effective(key);
+        const after = {...(before || emptyDraft(slotOf(key), whereOfKey(key))), ...patch};
+        const next = isEmpty(after) ? null : after;
+        const unchanged = before === null ? next === null : next !== null && sameDraft(before, next);
+        return unchanged ? null : {key, before, after: next};
+    };
+
+    /**
+     * Give every colour mode its own copy of the look that applies to all of them, and drop that look.
+     *
+     * It is what a change to the look of one mode starts with, so that mode can change, or lose its look, without the
+     * look of every mode still being served under it, and the other modes keep what they show.
+     *
+     * @param {string} key Rule key of the variant that is about to change.
+     * @returns {object[]} The steps that were taken, which an undo takes back, empty when there was nothing to fold.
+     */
+    const fold = (key) => {
+        const everyKey = inheritedKey(key);
+        if (everyKey === null) {
+            return [];
+        }
+        const every = current(everyKey);
+        const where = whereOfKey(key);
+        const ops = [];
+        modes.forEach((mode) => {
+            const modeKey = ruleKey(slotOf(key), {...where, mode});
+            if (current(modeKey) !== null) {
+                return;
+            }
+            const copy = {...every, id: 0, rev: 0, mode};
+            if (!saved.has(modeKey)) {
+                added[modeKey] = {...where, mode};
+            }
+            ops.push({key: modeKey, before: null, after: copy});
+            setState(modeKey, copy);
+        });
+        ops.push({key: everyKey, before: every, after: null});
+        setState(everyKey, null);
+        return ops;
+    };
+
+    /**
+     * Change a variant, folding the look of every mode first when the variant shows it through.
+     *
+     * @param {string} key Rule key.
+     * @param {object} patch Fields to change.
+     * @returns {object[]|null} The steps of the change, or null when it changes nothing.
+     */
+    const change = (key, patch) => {
+        const operation = changeOf(key, patch);
+        if (operation === null) {
+            return null;
+        }
+        const ops = fold(key);
+        const own = ops.find((each) => each.key === key);
+        if (own) {
+            own.after = operation.after;
+        } else {
+            ops.push(operation);
+        }
+        setState(key, operation.after);
+        return ops;
+    };
+
+    /**
+     * Add one step to the history, which an undo takes back whole.
+     *
+     * @param {object[]} ops The operations of the step.
+     */
+    const pushStep = (ops) => {
+        undoOps.push({ops});
+        if (undoOps.length > MAX_HISTORY) {
+            undoOps.shift();
+        }
         redoOps = [];
     };
 
@@ -250,6 +367,13 @@ export const createState = (everywhere, modes = ['all']) => {
          */
         savedDraft: (key) => (saved.has(key) ? fromRule(saved.get(key)) : null),
         isSaved: (key) => saved.has(key),
+        /**
+         * Whether a variant has no rule of its own and shows the look that applies to every colour mode.
+         *
+         * @param {string} key Rule key.
+         * @returns {boolean} True when it does.
+         */
+        isInherited: (key) => inheritedKey(key) !== null,
         isPending: (key) => has(pending, key) || has(inflight, key),
         /**
          * The variants of an icon: the one for every page first, then the others in a stable order.
@@ -309,15 +433,15 @@ export const createState = (everywhere, modes = ['all']) => {
          * @returns {boolean} Whether anything changed, which is not the case when the variant already looks like that.
          */
         stage: (key, patch) => {
-            const before = current(key);
-            const after = {...(before || emptyDraft(slotOf(key), whereOfKey(key))), ...patch};
-            const next = isEmpty(after) ? null : after;
-            const unchanged = before === null ? next === null : next !== null && sameDraft(before, next);
-            if (unchanged) {
+            const ops = change(key, patch);
+            if (ops === null) {
                 return false;
             }
-            setState(key, next);
-            record(key, before, next);
+            if (ops.length === 1) {
+                record(key, ops[0].before, ops[0].after);
+            } else {
+                pushStep(ops);
+            }
             return true;
         },
         /**
@@ -329,21 +453,10 @@ export const createState = (everywhere, modes = ['all']) => {
         stageMany: (entries) => {
             const ops = [];
             entries.forEach(({key, patch}) => {
-                const before = current(key);
-                const after = {...(before || emptyDraft(slotOf(key), whereOfKey(key))), ...patch};
-                const next = isEmpty(after) ? null : after;
-                const unchanged = before === null ? next === null : next !== null && sameDraft(before, next);
-                if (!unchanged) {
-                    setState(key, next);
-                    ops.push({key, before, after: next});
-                }
+                ops.push(...(change(key, patch) || []));
             });
             if (ops.length > 0) {
-                undoOps.push({ops});
-                if (undoOps.length > MAX_HISTORY) {
-                    undoOps.shift();
-                }
-                redoOps = [];
+                pushStep(ops);
             }
             return ops.length;
         },
@@ -369,10 +482,19 @@ export const createState = (everywhere, modes = ['all']) => {
          * @param {string} key Rule key.
          */
         remove: (key) => {
-            const before = current(key);
+            const before = effective(key);
+            const ops = fold(key);
             delete added[key];
             setState(key, null);
-            record(key, before, null);
+            const own = ops.find((each) => each.key === key);
+            if (own) {
+                own.after = null;
+            }
+            if (ops.length === 0) {
+                record(key, before, null);
+            } else {
+                pushStep(ops);
+            }
         },
         undo: () => {
             const op = undoOps.pop();
