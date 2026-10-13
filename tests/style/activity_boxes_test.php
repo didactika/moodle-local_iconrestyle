@@ -237,4 +237,23 @@ final class activity_boxes_test extends \advanced_testcase {
         $this->assertStringContainsString('background-image: url(', $css);
         $this->assertStringNotContainsString('mask', $css);
     }
+
+    /**
+     * An activity type is as specific as its purpose, so its rules are written after those of every purpose, which makes the
+     * look given to one kind of activity the one that shows, whatever the names of the slots are.
+     */
+    public function test_activity_rules_follow_purpose_rules(): void {
+        $css = service_factory::instance()->compiler()->compile([
+            $this->rule('purpose:content', ['bg' => '#0a6b3d']),
+            $this->rule('activity:folder', ['bg' => '#e83e8c']),
+            $this->rule('activity:book', ['bg' => '#123456']),
+            $this->rule('purpose:assessment', ['bg' => '#654321']),
+        ]);
+        $purpose = strrpos($css, 'activityiconcontainer.assessment {');
+        $this->assertNotFalse($purpose);
+        foreach (['modtype_folder', 'modtype_book'] as $type) {
+            $this->assertGreaterThan($purpose, strpos($css, $type), $type);
+        }
+        $this->assertGreaterThan(strpos($css, 'activityiconcontainer.content {'), strpos($css, 'modtype_folder'));
+    }
 }
