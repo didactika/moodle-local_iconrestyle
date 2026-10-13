@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_iconrestyle';
-$plugin->version = 2026101213.503;
+$plugin->version = '2026101213.503';
 $plugin->requires = 2026100500;
 $plugin->maturity = MATURITY_BETA;
 $plugin->release = '5.3.0-beta.1';
