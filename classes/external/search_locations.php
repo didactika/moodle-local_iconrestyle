@@ -72,8 +72,9 @@ class search_locations extends external_api {
         if (!in_array($params['kind'], self::KINDS, true)) {
             throw new \invalid_parameter_exception('Unknown kind of place.');
         }
-        self::validate_context(\context_system::instance());
-        service_factory::instance()->permissions()->require_manage();
+        $context = \context_system::instance();
+        self::validate_context($context);
+        require_capability('local/iconrestyle:manage', $context);
         $text = trim($params['query']);
         if ($params['kind'] === 'category') {
             return ['places' => self::categories($text)];

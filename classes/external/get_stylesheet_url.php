@@ -54,8 +54,9 @@ class get_stylesheet_url extends external_api {
      */
     public static function execute(): string {
         self::validate_parameters(self::execute_parameters(), []);
-        self::validate_context(\context_system::instance());
-        service_factory::instance()->permissions()->require_manage();
+        $context = \context_system::instance();
+        self::validate_context($context);
+        require_capability('local/iconrestyle:manage', $context);
         $url = head_callbacks::stylesheet_url(\context_system::instance());
         return $url === null ? '' : $url->out(false);
     }

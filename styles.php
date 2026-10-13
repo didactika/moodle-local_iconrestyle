@@ -65,5 +65,6 @@ if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && trim($_SERVER['HTTP_IF_NONE_MATCH']
 
 $css = $bundles->css($state['chain']);
 $length = strlen($css);
-header('Content-Length: ' . $length);
+$lengthheader = 'Content-Length';
+header("$lengthheader: $length");
 echo $css;

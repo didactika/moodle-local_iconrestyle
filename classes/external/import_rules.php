@@ -82,9 +82,10 @@ class import_rules extends external_api {
             self::execute_parameters(),
             ['content' => $content, 'mode' => $mode, 'dryrun' => $dryrun, 'slots' => $slots]
         );
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         $factory = service_factory::instance();
-        $factory->permissions()->require_exchange();
+        require_capability('local/iconrestyle:exchange', $context);
         if (strlen($params['content']) > self::MAX_BYTES) {
             throw new \invalid_parameter_exception('The package is too big to send through the web.');
         }

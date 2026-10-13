@@ -68,9 +68,10 @@ class preview_css extends external_api {
         if (!in_array($params['scope'], self::SCOPES, true)) {
             throw new \invalid_parameter_exception('Unknown preview area.');
         }
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage();
+        require_capability('local/iconrestyle:manage', $context);
         if (count($params['rules']) > self::MAX_RULES) {
             throw new \invalid_parameter_exception('Too many rules in one preview.');
         }

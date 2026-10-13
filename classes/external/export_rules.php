@@ -64,9 +64,10 @@ class export_rules extends external_api {
      */
     public static function execute(array $slots = []): array {
         $params = self::validate_parameters(self::execute_parameters(), ['slots' => $slots]);
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         $factory = service_factory::instance();
-        $factory->permissions()->require_exchange();
+        require_capability('local/iconrestyle:exchange', $context);
         $exporter = $factory->exporter();
         $lines = [];
         foreach ($exporter->lines(self::valid_slots($params['slots'])) as $line) {
