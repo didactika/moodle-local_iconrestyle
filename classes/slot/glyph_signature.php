@@ -208,9 +208,9 @@ final class glyph_signature {
             ];
         }
         if ($this->kind === self::KIND_FONT) {
-            // An element is an icon because of its glyph class, whatever else the markup that draws it carries: the class icon is the one
-            // that Moodle writes, not one that an icon needs to be drawn, so it is not asked for. The attribute keeps the weight of the
-            // class that used to be here, so the rule is not weaker than the ones of a theme.
+            // An element is an icon because of its glyph class, whatever else the markup that draws it carries: the class icon
+            // is the one that Moodle writes, not one that an icon needs to be drawn, so it is not asked for. The attribute
+            // keeps the weight of the class that used to be here, so the rule is not weaker than the ones of a theme.
             $selector = $prefix . '[class]';
             foreach ($this->required as $class) {
                 $selector .= '.' . $class;
