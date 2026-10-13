@@ -24,11 +24,14 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api as api;
+use core_external\external_function_parameters as parameters;
+use core_external\external_multiple_structure as listof;
+use core_external\external_single_structure as structure;
+use core_external\external_value as value;
 use local_iconrestyle\service_factory;
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * Backs the "where" picker of the designer with a small, bounded search.

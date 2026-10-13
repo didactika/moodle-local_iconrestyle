@@ -24,6 +24,9 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_multiple_structure as listof;
+use core_external\external_single_structure as structure;
+use core_external\external_value as value;
 use local_iconrestyle\asset\asset_urls;
 use local_iconrestyle\rule\design;
 use local_iconrestyle\rule\rule;
@@ -32,8 +35,6 @@ use local_iconrestyle\service_factory;
 use local_iconrestyle\slot\slot_key;
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * One place that describes and builds the rule structure, so every function agrees on it.

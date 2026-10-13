@@ -24,13 +24,16 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api as api;
+use core_external\external_function_parameters as parameters;
+use core_external\external_multiple_structure as listof;
+use core_external\external_single_structure as structure;
+use core_external\external_value as value;
 use local_iconrestyle\hook\head_callbacks;
 use local_iconrestyle\rule\rule_conflict_exception;
 use local_iconrestyle\service_factory;
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * The designer sends everything that changed since its last save in one request. All of it is stored in one transaction, so

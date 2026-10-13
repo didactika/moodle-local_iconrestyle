@@ -24,6 +24,7 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api as api;
 use local_iconrestyle\service_factory;
 
 #[\PHPUnit\Framework\Attributes\CoversNothing]
@@ -41,7 +42,6 @@ final class services_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         parent::setUp();
-        require_once(__DIR__ . '/../../classes/external/compat.php');
         $this->resetAfterTest();
         service_factory::reset();
         $this->setAdminUser();

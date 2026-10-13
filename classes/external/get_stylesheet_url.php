@@ -24,12 +24,13 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api as api;
+use core_external\external_function_parameters as parameters;
+use core_external\external_value as value;
 use local_iconrestyle\hook\head_callbacks;
 use local_iconrestyle\service_factory;
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * The designer asks for it after saving, so every icon on its own page shows what was just saved without a reload.

@@ -24,13 +24,15 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api as api;
+use core_external\external_function_parameters as parameters;
+use core_external\external_single_structure as structure;
+use core_external\external_value as value;
 use local_iconrestyle\asset\asset_rejected_exception;
 use local_iconrestyle\service_factory;
 use local_iconrestyle\slot\slot_key;
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * An image icon cannot be recoloured as it is, so its own file becomes the artwork and the colour is painted through it.

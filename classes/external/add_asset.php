@@ -24,13 +24,15 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api as api;
+use core_external\external_function_parameters as parameters;
+use core_external\external_single_structure as structure;
+use core_external\external_value as value;
 use local_iconrestyle\asset\asset_rejected_exception;
 use local_iconrestyle\asset\asset_urls;
 use local_iconrestyle\service_factory;
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * The file travels as base64 in the request, which keeps the upload inside the normal web service checks.
