@@ -138,7 +138,7 @@ function Designer(props) {
   }, [icons, filters, tick, loaded]);
   const icon = state.icon(selected);
   const draft = icon && active ? state.draftOf(active) : null;
-  const customised = active !== null && (state.isSaved(active) || state.isPending(active));
+  const customised = active !== null && (state.isSaved(active) || state.isPending(active) || state.isInherited(active));
   const preview = usePreviewCss(icon, customised ? draft : null);
   const select = /* @__PURE__ */ __name((key) => {
     if (key === null && selection.mode === "copy") {
@@ -412,7 +412,7 @@ function Designer(props) {
     false,
     {
       fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-      lineNumber: 423,
+      lineNumber: 426,
       columnNumber: 35
     },
     this
@@ -451,7 +451,7 @@ function Designer(props) {
               false,
               {
                 fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-                lineNumber: 435,
+                lineNumber: 438,
                 columnNumber: 30
               },
               this
@@ -461,7 +461,7 @@ function Designer(props) {
           false,
           {
             fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-            lineNumber: 430,
+            lineNumber: 433,
             columnNumber: 17
           },
           this
@@ -487,29 +487,29 @@ function Designer(props) {
           false,
           {
             fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-            lineNumber: 437,
+            lineNumber: 440,
             columnNumber: 17
           },
           this
         ),
         /* @__PURE__ */ jsxDEV(SelectionBar, { selection, modeLabels: view.selectionModes, text }, void 0, false, {
           fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-          lineNumber: 442,
+          lineNumber: 445,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ jsxDEV("p", { className: "irs-empty", "data-region": "empty", hidden: !loaded || filtered.length > 0, children: text("noicons") }, void 0, false, {
           fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-          lineNumber: 443,
+          lineNumber: 446,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ jsxDEV("p", { className: "irs-loading", "data-region": "loading", hidden: loaded, children: text("loading") }, void 0, false, {
           fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-          lineNumber: 444,
+          lineNumber: 447,
           columnNumber: 17
         }, this)
       ] }, void 0, true, {
         fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-        lineNumber: 429,
+        lineNumber: 432,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -540,14 +540,14 @@ function Designer(props) {
         false,
         {
           fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-          lineNumber: 446,
+          lineNumber: 449,
           columnNumber: 13
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-      lineNumber: 428,
+      lineNumber: 431,
       columnNumber: 9
     }, this),
     placesOpen && /* @__PURE__ */ jsxDEV(
@@ -569,7 +569,7 @@ function Designer(props) {
       false,
       {
         fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-        lineNumber: 454,
+        lineNumber: 457,
         columnNumber: 24
       },
       this
@@ -589,14 +589,14 @@ function Designer(props) {
       false,
       {
         fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-        lineNumber: 461,
+        lineNumber: 464,
         columnNumber: 20
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-    lineNumber: 427,
+    lineNumber: 430,
     columnNumber: 12
   }, this);
 }

@@ -153,7 +153,10 @@ export default function Designer(props: DesignerProps) {
 
     const icon = state.icon(selected);
     const draft = icon && active ? state.draftOf(active) : null;
-    const customised = active !== null && (state.isSaved(active) || state.isPending(active));
+    const customised = active !== null && (
+        state.isSaved(active) || state.isPending(active) ||
+        state.isInherited(active)
+    );
     const preview = usePreviewCss(icon, customised ? draft : null);
 
     const select = (key: string | null): void => {
