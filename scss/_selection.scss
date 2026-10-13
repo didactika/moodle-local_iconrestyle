@@ -102,7 +102,7 @@
         color: transparent;
         transition: background-color 0.12s ease, border-color 0.12s ease;
 
-        svg {
+        & svg {
             width: 0.6875rem;
             height: 0.6875rem;
         }
@@ -259,7 +259,7 @@
     position: relative;
     margin: 0;
 
-    input {
+    & input {
         position: absolute;
         inset: 0;
         width: 100%;
@@ -270,7 +270,7 @@
         cursor: pointer;
     }
 
-    span {
+    & span {
         display: inline-block;
         padding: 0.25rem 0.75rem;
         border: 1px solid var(--bs-border-color, #dee2e6);
@@ -281,14 +281,14 @@
     }
 
     &:hover {
-        span {
+        & span {
             border-color: var(--bs-primary, #0f6cbf);
             background: var(--bs-tertiary-bg, #f1f3f5);
             box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.16);
             transform: translateY(-1px);
         }
 
-        input {
+        & input {
             &:checked {
                 + span {
                     background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
@@ -298,7 +298,7 @@
         }
     }
 
-    input {
+    & input {
         &:active {
             + span {
                 box-shadow: none;
@@ -308,18 +308,18 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-        span {
+        & span {
             transition: none;
         }
 
         &:hover {
-            span {
+            & span {
                 transform: none;
             }
         }
     }
 
-    input {
+    & input {
         &:checked {
             + span {
                 border-color: var(--bs-primary, #0f6cbf);
