@@ -51,7 +51,7 @@
         background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
     }
 
-    small {
+    & small {
         color: var(--bs-secondary-color, #6c757d);
     }
 }

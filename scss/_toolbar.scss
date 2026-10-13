@@ -39,7 +39,7 @@
         flex: 0 1 17rem;
         min-width: 9rem;
 
-        svg {
+        & svg {
             position: absolute;
             top: 50%;
             left: 0.625rem;
@@ -50,7 +50,7 @@
             pointer-events: none;
         }
 
-        input {
+        & input {
             height: 2rem;
             padding: 0.125rem 0.75rem 0.125rem 2rem;
             border-radius: 999px;
@@ -74,7 +74,7 @@
         border-radius: 999px;
         font-size: 0.8125rem;
 
-        option {
+        & option {
             background-color: var(--irs-surface);
             color: var(--bs-body-color, inherit);
             font-weight: 400;
@@ -182,8 +182,8 @@
         background: var(--irs-surface);
         box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
 
-        button,
-        a {
+        & button,
+        & a {
             display: flex;
             align-items: center;
             gap: 0.625rem;
@@ -198,19 +198,19 @@
             text-decoration: none;
         }
 
-        button:hover:not(:disabled),
-        a:hover {
+        & button:hover:not(:disabled),
+        & a:hover {
             background: var(--irs-accent-soft);
             color: var(--irs-accent);
         }
 
-        button {
+        & button {
             &:disabled {
                 opacity: 0.4;
             }
         }
 
-        kbd {
+        & kbd {
             margin-left: auto;
             padding: 0 0.375rem;
             border: 1px solid var(--irs-border);
@@ -220,7 +220,7 @@
             font-size: 0.6875rem;
         }
 
-        hr {
+        & hr {
             margin: 0.25rem 0;
         }
     }
@@ -271,7 +271,7 @@
         background: transparent;
         cursor: pointer;
 
-        svg {
+        & svg {
             &:last-child {
                 width: 0.875rem;
                 height: 0.875rem;
@@ -285,7 +285,7 @@
             left: 0;
         }
 
-        em {
+        & em {
             margin-left: auto;
             padding: 0 0.5rem;
             border-radius: 999px;
