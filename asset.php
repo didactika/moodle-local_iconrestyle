@@ -63,5 +63,6 @@ if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && trim($_SERVER['HTTP_IF_NONE_MATCH']
 }
 
 $bytes = service_factory::instance()->asset_store()->content($asset);
-header('Content-Length: ' . strlen($bytes));
+$length = strlen($bytes);
+header('Content-Length: ' . $length);
 echo $bytes;

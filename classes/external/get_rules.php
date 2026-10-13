@@ -24,23 +24,27 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
 use local_iconrestyle\service_factory;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
+// The classes below use those of core_external, which Moodle 4.0 and 4.1 only have under their old names.
+// phpcs:ignore moodle.Files.MoodleInternal.MoodleInternalGlobalState
+\local_iconrestyle\compat\external_aliases::register();
 
 /**
  * Returns every rule of the site, each saying where it applies.
  */
-class get_rules extends api {
+class get_rules extends external_api {
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters([]);
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([]);
     }
 
     /**
@@ -60,9 +64,9 @@ class get_rules extends api {
     /**
      * Returned structure.
      *
-     * @return structure Description.
+     * @return external_single_structure Description.
      */
-    public static function execute_returns(): structure {
-        return new structure(['rules' => new listof(rule_payload::output())]);
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure(['rules' => new external_multiple_structure(rule_payload::output())]);
     }
 }
