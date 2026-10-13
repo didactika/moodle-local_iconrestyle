@@ -28,6 +28,7 @@ use local_iconrestyle\rule\module_scope;
 use local_iconrestyle\rule\rule;
 use local_iconrestyle\slot\glyph_signature;
 use local_iconrestyle\slot\glyph_signature_factory;
+use local_iconrestyle\slot\slot_key;
 
 /**
  * The only producer of CSS. Output is deterministic and built from typed values only.
@@ -78,6 +79,10 @@ class stylesheet_compiler {
      */
     public function compile(array $rules, string $prefix = self::PREFIX, bool $scoped = true): string {
         usort($rules, function (rule $first, rule $second): int {
+            $tiers = self::tier($first) <=> self::tier($second);
+            if ($tiers !== 0) {
+                return $tiers;
+            }
             $order = strcmp((string)$first->slot() . "\0" . $first->target(), (string)$second->slot() . "\0" . $second->target());
             return $order !== 0 ? $order : $first->id() <=> $second->id();
         });
@@ -104,6 +109,27 @@ class stylesheet_compiler {
             }
         }
         return $css;
+    }
+
+    /**
+     * Where a rule stands in the cascade of one stylesheet.
+     *
+     * The selector of a purpose and the one of an activity type are equally specific, so the one written last wins. An activity
+     * type is a narrower choice than its purpose, so its rules are written after the rules of every purpose, whatever the
+     * names of the slots are; otherwise a look given to one kind of activity would never show while its purpose has one.
+     *
+     * @param rule $rule Rule.
+     * @return int 0 for icons, 1 for purposes, 2 for activity types.
+     */
+    private static function tier(rule $rule): int {
+        switch ($rule->slot()->kind()) {
+            case slot_key::KIND_PURPOSE:
+                return 1;
+            case slot_key::KIND_ACTIVITY:
+                return 2;
+            default:
+                return 0;
+        }
     }
 
     /**

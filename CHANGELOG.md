@@ -21,6 +21,13 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [5.3.1] - 2026-10-13
+
+### Fixed
+
+- A look given to one kind of activity (`activity:folder`) showed in the preview of the designer but not on the pages of the site whenever its purpose (`purpose:content`) had a look of its own. The selector of a purpose and the one of an activity type are equally specific, and the stylesheet wrote the rules in the alphabetical order of their slots, so the purpose came last and won. The rules of one stylesheet are now written icons first, then purposes, then activity types, so the narrower choice wins. The version changes so that every stylesheet is compiled again with the new order.
+- A look that applies to every colour mode, made before the site had colour modes, kept being served after the designer showed its light or dark variant empty or removed: the pages in the other modes, and any property the new variant did not set, still showed it, while the preview showed only the open variant. The designer now opens a mode with the look that the pages show in it, and the first change or removal in a mode gives every mode its own copy of that look, so each mode can be changed or removed on its own.
+
 ## [5.3.0] - 2026-10-13
 
 ### Changed

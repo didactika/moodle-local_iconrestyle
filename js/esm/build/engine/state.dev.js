@@ -69,7 +69,21 @@ const createState = /* @__PURE__ */ __name((everywhere, modes = ["all"]) => {
     }
     return has(inflight, key) && inflight[key] === null;
   }, "isRemoved");
-  const draftOf = /* @__PURE__ */ __name((key) => current(key) || emptyDraft(slotOf(key), whereOfKey(key)), "draftOf");
+  const inheritedKey = /* @__PURE__ */ __name((key) => {
+    const where = whereOfKey(key);
+    if (where.mode === "all" || !modes.includes(where.mode) || current(key) !== null) {
+      return null;
+    }
+    const everyKey = ruleKey(slotOf(key), { ...where, mode: "all" });
+    const every = current(everyKey);
+    return every !== null && !isEmpty(every) ? everyKey : null;
+  }, "inheritedKey");
+  const inheritedDraft = /* @__PURE__ */ __name((key) => {
+    const everyKey = inheritedKey(key);
+    return everyKey === null ? null : { ...current(everyKey), id: 0, rev: 0, mode: whereOfKey(key).mode };
+  }, "inheritedDraft");
+  const effective = /* @__PURE__ */ __name((key) => current(key) || inheritedDraft(key), "effective");
+  const draftOf = /* @__PURE__ */ __name((key) => effective(key) || emptyDraft(slotOf(key), whereOfKey(key)), "draftOf");
   const setState = /* @__PURE__ */ __name((key, draft) => {
     const base = baseline(key);
     if (draft === null || isEmpty(draft)) {
@@ -98,6 +112,45 @@ const createState = /* @__PURE__ */ __name((everywhere, modes = ["all"]) => {
     lastTime = now;
     redoOps = [];
   }, "record");
+  const fold = /* @__PURE__ */ __name((key) => {
+    const everyKey = inheritedKey(key);
+    if (everyKey === null) {
+      return [];
+    }
+    const every = current(everyKey);
+    const where = whereOfKey(key);
+    const ops = [];
+    modes.forEach((mode) => {
+      const modeKey = ruleKey(slotOf(key), { ...where, mode });
+      if (current(modeKey) !== null) {
+        return;
+      }
+      const copy = { ...every, id: 0, rev: 0, mode };
+      if (!saved.has(modeKey)) {
+        added[modeKey] = { ...where, mode };
+      }
+      ops.push({ key: modeKey, before: null, after: copy });
+      setState(modeKey, copy);
+    });
+    ops.push({ key: everyKey, before: every, after: null });
+    setState(everyKey, null);
+    return ops;
+  }, "fold");
+  const change = /* @__PURE__ */ __name((key, patch) => {
+    const operation = changeOf(key, patch);
+    if (operation === null) {
+      return null;
+    }
+    const ops = fold(key);
+    const own = ops.find((each) => each.key === key);
+    if (own) {
+      own.after = operation.after;
+    } else {
+      ops.push(operation);
+    }
+    setState(key, operation.after);
+    return ops;
+  }, "change");
   const ingest = /* @__PURE__ */ __name((rules) => {
     saved = new Map(rules.map((rule) => [ruleKey(rule.slotkey, whereOf(rule)), rule]));
     pending = {};
@@ -155,7 +208,7 @@ const createState = /* @__PURE__ */ __name((everywhere, modes = ["all"]) => {
     return { written: keys.length, stylesheeturl };
   }, "write");
   const changeOf = /* @__PURE__ */ __name((key, patch) => {
-    const before = current(key);
+    const before = effective(key);
     const after = { ...before || emptyDraft(slotOf(key), whereOfKey(key)), ...patch };
     const next = isEmpty(after) ? null : after;
     const unchanged = before === null ? next === null : next !== null && sameDraft(before, next);
@@ -185,6 +238,7 @@ const createState = /* @__PURE__ */ __name((everywhere, modes = ["all"]) => {
     }, "savedDraft"),
     isSaved: /* @__PURE__ */ __name((key) => saved.has(key), "isSaved"),
     isPending: /* @__PURE__ */ __name((key) => has(pending, key) || has(inflight, key), "isPending"),
+    isInherited: /* @__PURE__ */ __name((key) => inheritedKey(key) !== null, "isInherited"),
     variants: /* @__PURE__ */ __name((slotkey) => {
       const bases = modes.map((mode) => ruleKey(slotkey, { ...everywhere, mode }));
       const keys = new Set(bases);
@@ -217,22 +271,25 @@ const createState = /* @__PURE__ */ __name((everywhere, modes = ["all"]) => {
       return map;
     }, "traits"),
     stage: /* @__PURE__ */ __name((key, patch) => {
-      const operation = changeOf(key, patch);
-      if (operation === null) {
+      const ops = change(key, patch);
+      if (ops === null) {
         return false;
       }
-      setState(key, operation.after);
-      record(key, operation.before, operation.after);
+      if (ops.length === 1) {
+        record(key, ops[0].before, ops[0].after);
+      } else {
+        undoOps.push({ ops });
+        if (undoOps.length > MAX_HISTORY) {
+          undoOps.shift();
+        }
+        redoOps = [];
+      }
       return true;
     }, "stage"),
     stageMany: /* @__PURE__ */ __name((entries) => {
       const ops = [];
       entries.forEach(({ key, patch }) => {
-        const operation = changeOf(key, patch);
-        if (operation !== null) {
-          setState(key, operation.after);
-          ops.push(operation);
-        }
+        ops.push(...change(key, patch) ?? []);
       });
       if (ops.length > 0) {
         undoOps.push({ ops });
@@ -253,10 +310,23 @@ const createState = /* @__PURE__ */ __name((everywhere, modes = ["all"]) => {
       return key;
     }, "addVariant"),
     remove: /* @__PURE__ */ __name((key) => {
-      const before = current(key);
+      const before = effective(key);
+      const ops = fold(key);
       delete added[key];
       setState(key, null);
-      record(key, before, null);
+      const own = ops.find((each) => each.key === key);
+      if (own) {
+        own.after = null;
+      }
+      if (ops.length === 0) {
+        record(key, before, null);
+      } else {
+        undoOps.push({ ops });
+        if (undoOps.length > MAX_HISTORY) {
+          undoOps.shift();
+        }
+        redoOps = [];
+      }
     }, "remove"),
     undo: /* @__PURE__ */ __name(() => {
       const step = undoOps.pop();
