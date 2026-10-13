@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_iconrestyle/exchange/import_body
+
+    The body of the import modal: what is in the package, how to import it, which icons to take and what that would do.
+
+    Context variables required for this template:
+    * summary - text that says how many icons, rules and artwork files the package has
+    * report - what importing would do, as the report template describes it
+
+    Example context (json):
+    {
+        "summary": "40 icons, 118 rules, 2 artwork files",
+        "report": {"created": 12, "updated": 3, "deleted": 0, "skipped": 0, "assets": 2, "issues": []}
+    }
+}}
+<div class="irs-import" data-region="import-form">
+    <p class="irs-import-summary" data-region="import-summary">{{summary}}</p>
+    <fieldset class="irs-import-section">
+        <legend class="irs-label">{{#str}}importmode, local_iconrestyle{{/str}}</legend>
+        <div class="irs-seg irs-seg-wide">
+            <label class="irs-seg-option"><input type="radio" name="irs-import-mode" id="irs-import-merge" value="merge" checked><span>{{#str}}importmodemerge, local_iconrestyle{{/str}}</span></label>
+            <label class="irs-seg-option"><input type="radio" name="irs-import-mode" id="irs-import-replace" value="replace"><span>{{#str}}importmodereplace, local_iconrestyle{{/str}}</span></label>
+        </div>
+        <p class="irs-hint" data-region="import-mode-help">{{#str}}importmergehelp, local_iconrestyle{{/str}}</p>
+    </fieldset>
+    <div class="irs-import-section">
+        <div class="irs-label">{{#str}}importchoose, local_iconrestyle{{/str}}</div>
+        <div class="irs-review-bar">
+            <input type="search" class="form-control" data-region="import-search" autocomplete="off"
+                placeholder="{{#str}}importsearch, local_iconrestyle{{/str}}" aria-label="{{#str}}importsearch, local_iconrestyle{{/str}}">
+            <button type="button" class="irs-linkbtn" data-action="review-all">{{#str}}selectall, local_iconrestyle{{/str}}</button>
+            <button type="button" class="irs-linkbtn" data-action="review-new">{{#str}}importonlynew, local_iconrestyle{{/str}}</button>
+            <button type="button" class="irs-linkbtn" data-action="review-none">{{#str}}selectnone, local_iconrestyle{{/str}}</button>
+            <span class="irs-review-count" data-region="import-count" role="status" aria-live="polite"></span>
+        </div>
+        <div class="irs-review-list" data-region="import-rows"></div>
+        <p class="irs-hint irs-error" data-region="import-error" role="alert" hidden></p>
+    </div>
+    <div class="irs-import-report" data-region="import-report" aria-live="polite">
+        {{#report}}{{> local_iconrestyle/exchange/report}}{{/report}}
+    </div>
+</div>

@@ -1,0 +1,559 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// Colour fields, looks, buttons, sliders, shapes and chips of the panel.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.irs {
+    .irs-with-x {
+        position: relative;
+        flex: 0 1 6.25rem;
+        min-width: 4.75rem;
+
+        .form-control {
+            width: 100%;
+            padding-right: 2rem;
+        }
+    }
+
+    .irs-colour-row {
+        .irs-theme {
+            flex: 1 1 9rem;
+            min-width: 0;
+            margin-top: 0;
+        }
+    }
+
+    .irs-x {
+        position: absolute;
+        top: 50%;
+        right: 0.25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: inherit;
+        opacity: 0.55;
+        transform: translateY(-50%);
+
+        &:hover,
+        &:focus-visible {
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+            opacity: 1;
+        }
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    .irs-colour-hex {
+        &.irs-from-theme {
+            font-style: italic;
+            opacity: 0.8;
+        }
+    }
+
+    .irs-mode-note {
+        margin: 0.25rem 0 0;
+        font-size: 0.75rem;
+        opacity: 0.75;
+    }
+
+    .irs-theme {
+        position: relative;
+        margin-top: 0.5rem;
+    }
+
+    .irs-theme-input {
+        padding-right: 2rem;
+        cursor: pointer;
+        text-overflow: ellipsis;
+    }
+
+    .irs-theme {
+        > .irs-swatch {
+            position: absolute;
+            top: 50%;
+            left: 0.625rem;
+            transform: translateY(-50%);
+
+            &:not([hidden]) {
+                + .irs-theme-input {
+                    padding-left: 2.125rem;
+                }
+            }
+        }
+    }
+
+    .irs-caret {
+        position: absolute;
+        top: 50%;
+        right: 0.625rem;
+        display: inline-flex;
+        opacity: 0.6;
+        pointer-events: none;
+        transform: translateY(-50%);
+    }
+
+    .irs-looks {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(5.25rem, 1fr));
+        gap: 0.5rem;
+    }
+
+    .irs-look {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.625rem 0.25rem 0.5rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 0.75rem;
+        background: var(--irs-surface);
+        color: inherit;
+        font-size: 0.75rem;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.12s ease, background-color 0.12s ease, transform 0.12s ease;
+
+        &[hidden] {
+            display: none;
+        }
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--irs-accent);
+            background: var(--irs-accent-soft);
+            transform: translateY(-1px);
+        }
+    }
+
+    .irs-look-sample {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        color: var(--bs-secondary-color, #495057);
+
+        &::after {
+            width: 0.875rem;
+            height: 0.875rem;
+            border-radius: 50%;
+            background: currentcolor;
+            content: "";
+        }
+    }
+
+    .irs-look-flat {
+        .irs-look-sample {
+            border: 1.5px dashed var(--irs-border);
+            border-radius: 0.375rem;
+        }
+    }
+
+    .irs-look-box {
+        .irs-look-sample {
+            background: var(--bs-secondary-bg, #e9ecef);
+            border-radius: 0.5rem;
+        }
+    }
+
+    .irs-look-pill {
+        .irs-look-sample {
+            width: 3.25rem;
+            height: 2rem;
+            background: var(--bs-secondary-bg, #e9ecef);
+            border-radius: 999px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+        }
+    }
+
+    .irs-look-tile {
+        .irs-look-sample {
+            border: 1px solid var(--bs-border-color, #dee2e6);
+            border-radius: 0.5rem;
+            background: var(--bs-tertiary-bg, #f8f9fa);
+        }
+    }
+
+    .irs-look-badge {
+        .irs-look-sample {
+            border-radius: 50%;
+            background: var(--irs-accent);
+            color: #fff;
+        }
+    }
+
+    .irs-look-outline {
+        .irs-look-sample {
+            border: 2px solid currentcolor;
+            border-radius: 50%;
+        }
+    }
+
+    .irs-file-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        min-width: 0;
+        font-size: 0.8125rem;
+        opacity: 0.75;
+
+        &.irs-has-file {
+            padding: 0.125rem 0.25rem 0.125rem 0.625rem;
+            border: 1px solid var(--irs-border);
+            border-radius: 999px;
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+            opacity: 1;
+        }
+
+        .irs-x {
+            position: static;
+            transform: none;
+        }
+    }
+
+    .irs-pillbtn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.875rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 999px;
+        background: var(--irs-surface);
+        color: inherit;
+        font-size: 0.8125rem;
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--irs-accent);
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+        }
+    }
+
+    .irs-pillbtn-primary {
+        border-color: var(--irs-accent);
+        background: var(--irs-accent);
+        color: #fff;
+
+        &:hover,
+        &:focus-visible {
+            background: var(--irs-accent);
+            color: #fff;
+            filter: brightness(0.92);
+        }
+    }
+
+    .irs-pillbtn-danger {
+        border-color: transparent;
+        background: transparent;
+        color: var(--bs-danger, #b02a37);
+
+        &:hover,
+        &:focus-visible {
+            border-color: transparent;
+            background: var(--bs-danger-bg-subtle, rgba(176, 42, 55, 0.12));
+            color: var(--bs-danger, #b02a37);
+        }
+    }
+
+    .irs-swatch {
+        flex: none;
+        width: 1rem;
+        height: 1rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 50%;
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    .irs-swatch-none {
+        --irs-cross: var(--bs-danger, #b02a37);
+        background: linear-gradient(135deg, transparent 45%, var(--irs-cross) 45%, var(--irs-cross) 55%, transparent 55%);
+    }
+
+    .irs-theme-panel {
+        position: fixed;
+        z-index: 1090;
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+        padding: 0.5rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 0.625rem;
+        background: var(--irs-surface);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    .irs-theme-list {
+        overflow-y: auto;
+    }
+
+    .irs-theme-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.375rem 0.5rem;
+        border: 0;
+        border-radius: 0.375rem;
+        background: transparent;
+        color: inherit;
+        font-size: 0.875rem;
+        text-align: left;
+
+        &:hover,
+        &:focus {
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+        }
+    }
+
+    .irs-theme-name {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .irs-theme-value {
+        flex: none;
+        font-family: monospace;
+        font-size: 0.75rem;
+        opacity: 0.7;
+    }
+
+    .irs-theme-note {
+        margin: 0;
+        padding: 0.375rem 0.5rem;
+        font-size: 0.8125rem;
+        opacity: 0.75;
+    }
+
+    .irs-upload-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        overflow: hidden;
+    }
+
+    .irs-upload {
+        &:focus-within {
+            outline: 2px solid var(--irs-accent);
+        }
+    }
+
+    .irs-hint {
+        margin: 0.25rem 0 0;
+        color: var(--irs-muted);
+        font-size: 0.8125rem;
+
+        &.irs-error {
+            color: var(--bs-danger, #b02a37);
+        }
+    }
+
+    .irs-help {
+        margin: 0.5rem 0 0.75rem;
+        color: var(--irs-muted);
+        font-size: 0.8125rem;
+    }
+
+    .irs-slider-head {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        .irs-label {
+            flex: 1 1 auto;
+            margin: 0;
+        }
+    }
+
+    .irs-value {
+        color: var(--irs-muted);
+        font-size: 0.8125rem;
+    }
+
+    .irs-reset {
+        padding: 0 0.25rem;
+        font-size: 0.75rem;
+        text-decoration: none;
+    }
+
+    .irs-num {
+        width: 4.75rem;
+        height: 1.75rem;
+        padding: 0.125rem 0.375rem;
+        font-size: 0.8125rem;
+        text-align: right;
+    }
+
+    .irs-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        padding: 0;
+        border: 1px solid var(--irs-border);
+        border-radius: 0.375rem;
+        background: transparent;
+        color: var(--irs-muted);
+
+        &:hover {
+            color: inherit;
+        }
+
+        &[aria-pressed="true"] {
+            border-color: var(--irs-accent);
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+        }
+
+        .irs-icon-unlinked,
+        &[aria-pressed="true"] .irs-icon-unlinked {
+            display: none;
+        }
+
+        &[aria-pressed="false"] {
+            .irs-icon-linked {
+                display: none;
+            }
+
+            .irs-icon-unlinked {
+                display: block;
+            }
+        }
+    }
+
+    input {
+        &[type="range"] {
+            width: 100%;
+        }
+    }
+
+    .irs-shapes {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 0.375rem;
+    }
+
+    .irs-shape {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.5rem 0.125rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 0.5rem;
+        background: transparent;
+        color: inherit;
+        font-size: 0.6875rem;
+
+        &[aria-pressed="true"] {
+            border-color: var(--irs-accent);
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+        }
+    }
+
+    .irs-shape-sample {
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 2px solid currentColor;
+
+        &.irs-square {
+            border-radius: 0;
+        }
+
+        &.irs-rounded {
+            border-radius: 0.375rem;
+        }
+
+        &.irs-circle {
+            border-radius: 50%;
+        }
+
+        &.irs-pill-shape {
+            width: 2rem;
+            border-radius: 999px;
+        }
+    }
+
+    .irs-sides {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+        align-items: end;
+        gap: 0.375rem;
+    }
+
+    .irs-side {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+        margin: 0;
+        font-size: 0.6875rem;
+        color: var(--irs-muted);
+
+        input {
+            padding: 0.25rem 0.375rem;
+            text-align: center;
+        }
+    }
+
+    .irs-panel-foot {
+        flex: none;
+        padding: 0.625rem 1rem;
+        border-top: 1px solid var(--irs-border);
+        background: var(--irs-surface);
+    }
+
+    .irs-variants {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .irs-chip {
+        position: relative;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0.3125rem 0.75rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 999px;
+        background: transparent;
+        color: inherit;
+        font-size: 0.8125rem;
+        text-align: left;
+
+        &.irs-active {
+            border-color: var(--irs-accent);
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+            font-weight: 600;
+        }
+    }
+}

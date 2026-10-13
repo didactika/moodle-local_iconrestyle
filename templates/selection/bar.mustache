@@ -1,0 +1,64 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_iconrestyle/selection/bar
+
+    The bar that floats over the grid while icons are being chosen, to export them or to copy a look to them.
+
+    Example context (json):
+    {}
+}}
+<div class="irs-selbar" data-region="selection-bar" role="region" aria-label="{{#str}}selectbar, local_iconrestyle{{/str}}" hidden>
+    <div class="irs-selbar-head">
+        <span class="irs-selbar-title" data-region="selection-title"></span>
+        <span class="irs-selbar-count" data-region="selection-count" role="status" aria-live="polite"></span>
+    </div>
+    <div class="irs-selbar-modes" data-for="modes" role="group" aria-label="{{#str}}selectmodeswhat, local_iconrestyle{{/str}}" hidden>
+        <select class="custom-select form-select irs-mini" data-region="selection-from" aria-label="{{#str}}selectfrom, local_iconrestyle{{/str}}"></select>
+        <span class="irs-arrow" aria-hidden="true">&#8594;</span>
+        <select class="custom-select form-select irs-mini" data-region="selection-to" aria-label="{{#str}}selectto, local_iconrestyle{{/str}}"></select>
+        <label class="irs-chipcheck"><input type="checkbox" data-region="selection-overwrite"><span>{{#str}}selectoverwrite, local_iconrestyle{{/str}}</span></label>
+    </div>
+    <div class="irs-selbar-what" data-for="copy" role="group" aria-label="{{#str}}copywhat, local_iconrestyle{{/str}}" hidden>
+        <label class="irs-chipcheck"><input type="checkbox" data-region="selection-group" value="colours" checked><span>{{#str}}copygroupcolours, local_iconrestyle{{/str}}</span></label>
+        <label class="irs-chipcheck"><input type="checkbox" data-region="selection-group" value="shape" checked><span>{{#str}}copygroupshape, local_iconrestyle{{/str}}</span></label>
+        <label class="irs-chipcheck"><input type="checkbox" data-region="selection-group" value="spacing" checked><span>{{#str}}copygroupspacing, local_iconrestyle{{/str}}</span></label>
+        <label class="irs-chipcheck"><input type="checkbox" data-region="selection-group" value="transform" checked><span>{{#str}}copygrouptransform, local_iconrestyle{{/str}}</span></label>
+        <label class="irs-chipcheck"><input type="checkbox" data-region="selection-group" value="effects" checked><span>{{#str}}copygroupeffects, local_iconrestyle{{/str}}</span></label>
+        <label class="irs-chipcheck"><input type="checkbox" data-region="selection-group" value="icon"><span>{{#str}}copygroupicon, local_iconrestyle{{/str}}</span></label>
+    </div>
+    <div class="irs-selbar-quick" data-for="export copy modes">
+        <button type="button" class="irs-linkbtn" data-action="selection-all">{{#str}}selectall, local_iconrestyle{{/str}}</button>
+        <button type="button" class="irs-linkbtn" data-action="selection-none">{{#str}}selectnone, local_iconrestyle{{/str}}</button>
+    </div>
+    <div class="irs-selbar-actions">
+        <button type="button" class="irs-pillbtn" data-action="selection-back" data-for="modes" hidden>
+            {{#str}}back, local_iconrestyle{{/str}}
+        </button>
+        <button type="button" class="irs-iconbtn irs-modesbtn" data-action="selection-modes" data-for="export" hidden disabled
+            title="{{#str}}selectmodes, local_iconrestyle{{/str}}" aria-label="{{#str}}selectmodes, local_iconrestyle{{/str}}">
+            {{> local_iconrestyle/common/icon_colour_mode}}
+        </button>
+        <button type="button" class="irs-pillbtn irs-pillbtn-primary" data-action="selection-apply" disabled>
+            <span data-region="selection-apply-text"></span>
+        </button>
+        <button type="button" class="irs-iconbtn" data-action="selection-cancel"
+            title="{{#str}}selectdone, local_iconrestyle{{/str}} (Esc)" aria-label="{{#str}}selectdone, local_iconrestyle{{/str}}">
+            {{> local_iconrestyle/common/icon_close}}
+        </button>
+    </div>
+</div>

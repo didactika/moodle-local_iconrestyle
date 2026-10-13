@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/iconrestyle/db" VERSION="20261011" COMMENT="XMLDB file for Moodle local/iconrestyle"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="local_iconrestyle_rule" COMMENT="One customisation of one icon slot in one context.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context the rule belongs to."/>
+        <FIELD NAME="deltactxid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context whose delta stylesheet contains the rule."/>
+        <FIELD NAME="slotkey" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Validated slot key, component:name."/>
+        <FIELD NAME="painter" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="color" SEQUENCE="false" COMMENT="Artwork painter: color, mask, image or none."/>
+        <FIELD NAME="assetid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Artwork asset, if any."/>
+        <FIELD NAME="fg" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Foreground colour or token."/>
+        <FIELD NAME="bg" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="Background colour or token."/>
+        <FIELD NAME="design" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON object of design properties: shape, radius, padding on each side, scale, rotation, border, shadow and opacity."/>
+        <FIELD NAME="target" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="icon" SEQUENCE="false" COMMENT="icon, type, purpose or instance."/>
+        <FIELD NAME="pages" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated kinds of page the rule is limited to, empty for every page."/>
+        <FIELD NAME="regions" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated regions of a page the rule is limited to, empty for every region."/>
+        <FIELD NAME="mode" TYPE="char" LENGTH="5" NOTNULL="true" DEFAULT="all" SEQUENCE="false" COMMENT="Colour mode the rule is limited to: all, light or dark."/>
+        <FIELD NAME="variant" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Identity of pages, regions and colour mode, tells variants of one icon in one context apart."/>
+        <FIELD NAME="enabled" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="rev" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Optimistic lock counter."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="contextslottargetvariant" UNIQUE="true" FIELDS="contextid, slotkey, target, variant"/>
+        <INDEX NAME="deltactxid" UNIQUE="false" FIELDS="deltactxid"/>
+        <INDEX NAME="assetid" UNIQUE="false" FIELDS="assetid"/>
+        <INDEX NAME="slotkey" UNIQUE="false" FIELDS="slotkey"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_iconrestyle_asset" COMMENT="Sanitised artwork, identified by the hash of its safe bytes.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contenthash" TYPE="char" LENGTH="64" NOTNULL="true" SEQUENCE="false" COMMENT="SHA-256 of the sanitised bytes."/>
+        <FIELD NAME="kind" TYPE="char" LENGTH="8" NOTNULL="true" SEQUENCE="false" COMMENT="svg, png or webp."/>
+        <FIELD NAME="bytes" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="width" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="height" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="monochrome" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="source" TYPE="char" LENGTH="8" NOTNULL="true" DEFAULT="upload" SEQUENCE="false" COMMENT="upload, library or import."/>
+        <FIELD NAME="sourceref" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Provenance as text only."/>
+        <FIELD NAME="license" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="Licence identifier of library artwork."/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="contenthash" UNIQUE="true" FIELDS="contenthash"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="local_iconrestyle_ctxstate" COMMENT="Revision authority of each delta stylesheet context.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Delta owner context."/>
+        <FIELD NAME="rev" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Monotonic revision, zero when the context has no rules."/>
+        <FIELD NAME="rulecount" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="contextid" UNIQUE="true" FIELDS="contextid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>

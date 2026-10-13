@@ -1,0 +1,358 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The bar over the grid, the menus and the narrow layouts.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.irs {
+    .irs-bar {
+        flex: none;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid var(--irs-border);
+    }
+
+    .irs-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.25rem 0.625rem 0.25rem 0.5rem;
+        border-radius: 999px;
+        color: var(--irs-muted);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+        }
+    }
+
+    .irs-search {
+        position: relative;
+        flex: 0 1 17rem;
+        min-width: 9rem;
+
+        svg {
+            position: absolute;
+            top: 50%;
+            left: 0.625rem;
+            width: 1rem;
+            height: 1rem;
+            color: var(--irs-muted);
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        input {
+            height: 2rem;
+            padding: 0.125rem 0.75rem 0.125rem 2rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+        }
+    }
+
+    .irs-filter.irs-active,
+    .irs-search .form-control.irs-active {
+        border-color: var(--irs-accent);
+        background-color: var(--irs-accent-soft);
+        color: var(--irs-accent);
+        font-weight: 600;
+    }
+
+    .irs-filter {
+        width: auto;
+        height: 2rem;
+        padding-top: 0.125rem;
+        padding-bottom: 0.125rem;
+        border-radius: 999px;
+        font-size: 0.8125rem;
+
+        option {
+            background-color: var(--irs-surface);
+            color: var(--bs-body-color, inherit);
+            font-weight: 400;
+        }
+    }
+
+    .irs-count {
+        margin-left: auto;
+        color: var(--irs-muted);
+        font-size: 0.8125rem;
+        white-space: nowrap;
+    }
+
+    .irs-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        color: var(--irs-muted);
+        font-size: 0.8125rem;
+        white-space: nowrap;
+
+        .irs-status-icon {
+            display: none;
+        }
+
+        &[data-state="saved"] {
+            .irs-status-saved {
+                display: inline-flex;
+                color: var(--bs-success, #198754);
+            }
+        }
+
+        &[data-state="saving"] .irs-status-busy,
+        &[data-state="dirty"] .irs-status-busy {
+            display: inline-flex;
+            animation: irs-spin 1s linear infinite;
+        }
+
+        &[data-state="error"] {
+            .irs-status-error {
+                display: inline-flex;
+                color: var(--bs-danger, #b02a37);
+            }
+        }
+    }
+}
+
+@keyframes irs-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.irs {
+    .irs-status {
+        @media (prefers-reduced-motion: reduce) {
+            &[data-state="saving"] .irs-status-busy,
+            &[data-state="dirty"] .irs-status-busy {
+                animation: none;
+            }
+        }
+    }
+
+    .irs-tools {
+        display: flex;
+        align-items: center;
+        gap: 0.125rem;
+    }
+
+    .irs-iconbtn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        border: 0;
+        border-radius: 0.5rem;
+        background: transparent;
+        color: inherit;
+
+        &:hover {
+            &:not(:disabled) {
+                background: var(--irs-accent-soft);
+                color: var(--irs-accent);
+            }
+        }
+
+        &:disabled {
+            opacity: 0.35;
+        }
+    }
+
+    .irs-menu {
+        position: relative;
+    }
+
+    .irs-menu-list {
+        position: fixed;
+        z-index: 1090;
+        min-width: 14rem;
+        padding: 0.25rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 0.625rem;
+        background: var(--irs-surface);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+
+        button,
+        a {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            width: 100%;
+            padding: 0.4375rem 0.625rem;
+            border: 0;
+            border-radius: 0.375rem;
+            background: transparent;
+            color: inherit;
+            font-size: 0.875rem;
+            text-align: left;
+            text-decoration: none;
+        }
+
+        button:hover:not(:disabled),
+        a:hover {
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+        }
+
+        button {
+            &:disabled {
+                opacity: 0.4;
+            }
+        }
+
+        kbd {
+            margin-left: auto;
+            padding: 0 0.375rem;
+            border: 1px solid var(--irs-border);
+            border-radius: 0.25rem;
+            background: transparent;
+            color: var(--irs-muted);
+            font-size: 0.6875rem;
+        }
+
+        hr {
+            margin: 0.25rem 0;
+        }
+    }
+
+    .irs-seg-group {
+        display: inline-flex;
+        padding: 0.125rem;
+        border-radius: 0.5rem;
+        background: var(--irs-accent-soft);
+    }
+
+    .irs-seg-btn {
+        padding: 0.1875rem 0.625rem;
+        border: 0;
+        border-radius: 0.375rem;
+        background: transparent;
+        color: var(--irs-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+
+        &.irs-active {
+            background: var(--irs-surface);
+            color: inherit;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+        }
+    }
+
+    .irs-preview-cols {
+        &[data-view="edited"] [data-area="default"],
+        &[data-view="original"] [data-area="new"] {
+            display: none;
+        }
+
+        &[data-view="compare"] {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    .irs-browser {
+        .irs-card-icon {
+            width: 100%;
+            overflow: hidden;
+        }
+    }
+
+    .irs-back {
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+
+        svg {
+            &:last-child {
+                width: 0.875rem;
+                height: 0.875rem;
+            }
+        }
+    }
+
+    .irs-menu-list {
+        &.irs-menu-left {
+            right: auto;
+            left: 0;
+        }
+
+        em {
+            margin-left: auto;
+            padding: 0 0.5rem;
+            border-radius: 999px;
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+            font-size: 0.6875rem;
+            font-style: normal;
+        }
+    }
+
+    .irs-flips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .irs-toggle {
+        padding: 0.3125rem 0.75rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 0.5rem;
+        background: transparent;
+        color: inherit;
+        font-size: 0.8125rem;
+
+        &[aria-pressed="true"] {
+            border-color: var(--irs-accent);
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+            font-weight: 600;
+        }
+    }
+
+    .irs-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        height: 2rem;
+        padding: 0 0.75rem 0 0.5rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 999px;
+        background: transparent;
+        color: inherit;
+        font-size: 0.8125rem;
+        font-weight: 600;
+
+        &:hover {
+            border-color: var(--irs-accent);
+            background: var(--irs-accent-soft);
+            color: var(--irs-accent);
+        }
+    }
+}
+
+.local-iconrestyle-designer {
+    #page,
+    #page-content,
+    .main-inner,
+    .container,
+    .container-fluid {
+        max-width: none;
+    }
+
+    #topofscroll {
+        margin-top: 0;
+    }
+
+    #page-content {
+        padding: 0.5rem 0.75rem;
+    }
+}

@@ -1,0 +1,103 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_iconrestyle/filters/panel
+
+    The button that opens the filters and the panel it opens. The lists of components and purposes are filled by the script.
+
+    Example context (json):
+    {}
+}}
+<div class="irs-filters" data-region="filters">
+    <button type="button" class="irs-pillbtn irs-filtersbtn" data-action="filters-toggle" aria-haspopup="true" aria-expanded="false"
+        title="{{#str}}filtbutton, local_iconrestyle{{/str}}">
+        {{> local_iconrestyle/common/icon_filter}}<span>{{#str}}filtbutton, local_iconrestyle{{/str}}</span>
+        <span class="irs-count-badge" data-region="filters-count" hidden></span>
+    </button>
+    <div class="irs-filters-panel" data-region="filters-panel" role="dialog" aria-label="{{#str}}filtbutton, local_iconrestyle{{/str}}" hidden>
+        <div class="irs-filter-head">
+            <h2 class="irs-filter-heading">{{#str}}filtbutton, local_iconrestyle{{/str}}</h2>
+            <button type="button" class="irs-iconbtn" data-action="filters-clear" disabled
+                title="{{#str}}filtclear, local_iconrestyle{{/str}}" aria-label="{{#str}}filtclear, local_iconrestyle{{/str}}">
+                {{> local_iconrestyle/common/icon_filter_clear}}
+            </button>
+        </div>
+        <section class="irs-filter-section">
+            <h3 class="irs-filter-title">{{#str}}filttype, local_iconrestyle{{/str}}</h3>
+            <div class="irs-filter-chips">
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="kinds" value="font"><span>{{#str}}kindfont, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="kinds" value="image"><span>{{#str}}kindimage, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="kinds" value="container"><span>{{#str}}kindactivity, local_iconrestyle{{/str}}</span></label>
+            </div>
+        </section>
+        <section class="irs-filter-section">
+            <h3 class="irs-filter-title">{{#str}}filtstatus, local_iconrestyle{{/str}}</h3>
+            <div class="irs-filter-chips">
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="traits" value="modified"><span>{{#str}}filttraitmodified, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="traits" value="untouched"><span>{{#str}}filttraituntouched, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="traits" value="shared"><span>{{#str}}filttraitshared, local_iconrestyle{{/str}}</span></label>
+            </div>
+        </section>
+        <section class="irs-filter-section">
+            <h3 class="irs-filter-title">{{#str}}filtsort, local_iconrestyle{{/str}}</h3>
+            <select class="custom-select form-select" data-region="filters-sort" aria-label="{{#str}}filtsort, local_iconrestyle{{/str}}">
+                <option value="catalogue">{{#str}}filtsortcatalogue, local_iconrestyle{{/str}}</option>
+                <option value="name">{{#str}}filtsortname, local_iconrestyle{{/str}}</option>
+                <option value="component">{{#str}}filtsortcomponent, local_iconrestyle{{/str}}</option>
+                <option value="modified">{{#str}}filtsortmodified, local_iconrestyle{{/str}}</option>
+            </select>
+        </section>
+        <section class="irs-filter-section">
+            <h3 class="irs-filter-title">{{#str}}filtcustom, local_iconrestyle{{/str}}</h3>
+            <div class="irs-filter-chips">
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="traits" value="colour"><span>{{#str}}filttraitcolour, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="traits" value="shape"><span>{{#str}}filttraitshape, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="traits" value="spacing"><span>{{#str}}filttraitspacing, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="traits" value="transform"><span>{{#str}}filttraittransform, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="traits" value="effects"><span>{{#str}}filttraiteffects, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="traits" value="artwork"><span>{{#str}}filttraitartwork, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="traits" value="limited"><span>{{#str}}filttraitlimited, local_iconrestyle{{/str}}</span></label>
+            </div>
+        </section>
+        <section class="irs-filter-section">
+            <h3 class="irs-filter-title">{{#str}}filtplace, local_iconrestyle{{/str}}</h3>
+            <div class="irs-filter-chips">
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="places" value="site"><span>{{#str}}filtplacesite, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="places" value="category"><span>{{#str}}filtplacecategory, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="places" value="course"><span>{{#str}}filtplacecourse, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="places" value="activity"><span>{{#str}}filtplaceactivity, local_iconrestyle{{/str}}</span></label>
+            </div>
+        </section>
+        <section class="irs-filter-section" data-region="filters-mode-section">
+            <h3 class="irs-filter-title">{{#str}}filtmode, local_iconrestyle{{/str}}</h3>
+            <div class="irs-filter-chips">
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="modes" value="light"><span>{{#str}}mode_light, local_iconrestyle{{/str}}</span></label>
+                <label class="irs-chipcheck"><input type="checkbox" data-filter="modes" value="dark"><span>{{#str}}mode_dark, local_iconrestyle{{/str}}</span></label>
+            </div>
+        </section>
+        <section class="irs-filter-section" data-region="filters-purpose-section" hidden>
+            <h3 class="irs-filter-title">{{#str}}filtpurpose, local_iconrestyle{{/str}}</h3>
+            <div class="irs-filter-chips" data-region="filters-purposes"></div>
+        </section>
+        <section class="irs-filter-section">
+            <h3 class="irs-filter-title">{{#str}}filtcomponent, local_iconrestyle{{/str}}</h3>
+            <input type="search" class="form-control" data-region="filters-component-search" autocomplete="off"
+                placeholder="{{#str}}filtsearchcomponent, local_iconrestyle{{/str}}" aria-label="{{#str}}filtsearchcomponent, local_iconrestyle{{/str}}">
+            <div class="irs-filter-list" data-region="filters-components"></div>
+        </section>
+    </div>
+</div>

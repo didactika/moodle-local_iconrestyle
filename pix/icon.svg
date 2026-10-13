@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="40 40 440 440" role="img" aria-labelledby="title desc">
+<title id="title">Icon Restyle</title>
+<desc id="desc">A card with four icons of different shapes and colours, and a spark that marks the icons as restyled, in the teal of Didactika.</desc>
+<defs>
+<linearGradient id="card" x1="0" y1="0" x2="0.9" y2="1"><stop stop-color="#e3f5f5"/><stop offset="1" stop-color="#c0e3e4"/></linearGradient>
+<linearGradient id="deep" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2f747b"/><stop offset="1" stop-color="#20535c"/></linearGradient>
+<linearGradient id="mid" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#438b91"/><stop offset="1" stop-color="#2b7079"/></linearGradient>
+<linearGradient id="soft" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a3ced1"/><stop offset="1" stop-color="#7eb8bd"/></linearGradient>
+<linearGradient id="spark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#68bfc0"/><stop offset="0.55" stop-color="#55adaf"/><stop offset="1" stop-color="#409698"/></linearGradient>
+</defs>
+<g stroke="#103740" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round">
+<rect x="70" y="86" width="340" height="340" rx="68" fill="url(#deep)" />
+<rect x="96" y="112" width="340" height="340" rx="68" fill="url(#card)" />
+<rect x="140" y="156" width="112" height="112" rx="30" fill="url(#mid)" />
+<circle cx="196" cy="212" r="26" fill="#eefbfa" />
+<rect x="280" y="156" width="112" height="112" rx="56" fill="url(#deep)" />
+<rect x="312" y="188" width="48" height="48" rx="12" fill="#eefbfa" />
+<rect x="140" y="296" width="112" height="112" rx="30" fill="url(#soft)" />
+<circle cx="196" cy="352" r="30" fill="none" stroke="#20535c" stroke-width="14" />
+<rect x="280" y="296" width="112" height="112" rx="30" fill="url(#mid)" />
+<rect x="304" y="338" width="64" height="28" rx="14" fill="#eefbfa" />
+<circle cx="404" cy="118" r="62" fill="url(#spark)" />
+<path d="M404 78 L414 108 L444 118 L414 128 L404 158 L394 128 L364 118 L394 108 Z" fill="#eefbfa" stroke="#103740" stroke-width="5" />
+</g>
+</svg>

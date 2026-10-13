@@ -1,0 +1,271 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The panel of the open icon: preview, tabs and groups of properties.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+.irs {
+    .irs-panel {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
+        border: 1px solid var(--irs-border);
+        border-radius: var(--irs-radius);
+        background: var(--irs-surface);
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+
+        @media (max-width: 62rem) {
+            max-height: none;
+        }
+    }
+
+    .irs-panel-head {
+        flex: none;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.875rem 1rem 0.5rem;
+    }
+
+    .irs-panel-title {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        min-width: 0;
+    }
+
+    .irs-title {
+        margin: 0;
+        font-size: 1.0625rem;
+        overflow-wrap: anywhere;
+    }
+
+    .irs-close {
+        flex: none;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .irs-subtitle {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+
+    .irs-preview {
+        flex: none;
+        margin: 0 1rem 0.625rem;
+    }
+
+    .irs-notice {
+        position: relative;
+        margin: 0.75rem 1rem 0;
+        padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+        border-left: 3px solid var(--irs-accent);
+        background: var(--irs-accent-soft);
+        font-size: 0.8125rem;
+
+        &[hidden] {
+            display: none;
+        }
+
+        .irs-x {
+            top: 0.5rem;
+            right: 0.375rem;
+            transform: none;
+        }
+    }
+
+    .irs-preview-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .irs-preview-cols {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 0.625rem;
+        background: #fff;
+        color: #212529;
+
+        &.irs-dark {
+            background: #212529;
+            color: #f8f9fa;
+        }
+    }
+
+    .irs-preview-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .irs-preview-label {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .irs-preview-cells {
+        display: block;
+    }
+
+    .irs-contrast {
+        margin: 0.5rem 0 0;
+        font-size: 0.8125rem;
+    }
+
+    .irs-tabs {
+        flex: none;
+        display: flex;
+        gap: 0.25rem;
+        padding: 0 1rem;
+        border-bottom: 1px solid var(--irs-border);
+    }
+
+    .irs-tab {
+        position: relative;
+        padding: 0.625rem 0.875rem;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background: transparent;
+        color: var(--irs-muted);
+        font-weight: 600;
+
+        &:hover {
+            color: inherit;
+        }
+
+        &.irs-active {
+            border-bottom-color: var(--irs-accent);
+            color: var(--irs-accent);
+        }
+    }
+
+    .irs-badge {
+        display: inline-block;
+        min-width: 1.25rem;
+        margin-left: 0.25rem;
+        padding: 0 0.375rem;
+        border-radius: 999px;
+        background: var(--irs-accent-soft);
+        color: var(--irs-accent);
+        font-size: 0.75rem;
+        text-align: center;
+    }
+
+    .irs-panel-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    .irs-tabpanel {
+        padding: 0.25rem 1rem 1rem;
+    }
+
+    .irs-group {
+        border-bottom: 1px solid var(--irs-border);
+
+        > summary {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+
+            &::-webkit-details-marker {
+                display: none;
+            }
+
+            &::after {
+                content: "";
+                width: 0.5rem;
+                height: 0.5rem;
+                border-right: 2px solid var(--irs-muted);
+                border-bottom: 2px solid var(--irs-muted);
+                transform: rotate(45deg);
+                transition: transform 0.15s ease;
+            }
+        }
+
+        &[open] {
+            padding-bottom: 0.5rem;
+
+            > summary {
+                &::after {
+                    transform: rotate(225deg);
+                }
+            }
+        }
+    }
+
+    .irs-field {
+        margin-bottom: 0.875rem;
+    }
+
+    .irs-label {
+        display: block;
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+        font-size: 0.8125rem;
+    }
+
+    .irs-row {
+        display: grid;
+        grid-template-columns: 7rem minmax(0, 1fr);
+        align-items: center;
+        gap: 0.5rem;
+
+        .irs-label {
+            margin: 0;
+        }
+    }
+
+    .irs-colour-row,
+    .irs-artwork-row,
+    .irs-looks {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .irs-colour-picker {
+        width: 1.875rem;
+        height: 2.25rem;
+        padding: 0.125rem;
+        border: 1px solid var(--irs-border);
+        border-radius: 0.375rem;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .irs-colour-hex {
+        width: 6.5rem;
+        font-family: monospace;
+    }
+}
+
+.irs-import-issues {
+    padding-left: 1.25rem;
+}
+
+.irs-import-skipped {
+    margin: 0.75rem 0 0.25rem;
+    font-weight: 600;
+}
