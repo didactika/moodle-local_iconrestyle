@@ -201,13 +201,14 @@ final class scale_test extends \advanced_testcase {
     }
 
     /**
-     * B-02: when the revisions are not cached, a page costs one query and a few milliseconds.
+     * B-02: when neither the revisions nor the chain of the page are cached, a page costs one query and a few milliseconds.
      *
      * @param \context[] $chains Page contexts by number of stylesheets in their chain.
      */
     private function b02_cold_page(array $chains): void {
         foreach ($chains as $length => $context) {
             \cache::make('local_iconrestyle', 'ctxrev')->purge();
+            \cache::make('local_iconrestyle', 'chains')->purge();
             service_factory::reset();
             $time = 0.0;
             $reads = $this->reads(function () use ($context, &$time) {
