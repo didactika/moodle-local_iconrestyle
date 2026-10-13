@@ -356,7 +356,7 @@ final class scale_test extends \advanced_testcase {
         $growth = max(0, memory_get_peak_usage() - max($peak, $before)) / 1048576;
         $this->note('B-06', 'rules in the package', $total);
         $this->note('B-06', 'rules created', $report->get('created'));
-        $this->note('B-06', 'seconds', $time / 1000);
+        $this->budget('B-06', 'seconds', $time / 1000, 10);
         $this->note('B-06', 'rules per second', $total / max(0.001, $time / 1000));
         $this->budget('B-06', 'memory the import added to the peak, MB', $growth, 64);
         $this->budget('B-06', 'rules left out', $report->get('skipped'), 0);

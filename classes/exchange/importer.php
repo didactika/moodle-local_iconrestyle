@@ -46,7 +46,7 @@ class importer {
     public const REPLACE = 'replace';
 
     /** @var int Rules stored in one transaction. */
-    private const CHUNK = 100;
+    private const CHUNK = 500;
 
     /** @var rule_service Rule service. */
     private $service;
@@ -282,12 +282,7 @@ class importer {
      * @param import_report $report Report.
      */
     private function store_rule(rule $rule, array &$batch, bool $dryrun, int $userid, import_report $report): void {
-        $exists = $this->store->find($rule->contextid(), (string)$rule->slot(), $rule->target(), $rule->variant()) !== null;
-        $report->count($exists ? 'updated' : 'created', 1, (string)$rule->slot());
-        if ($dryrun) {
-            return;
-        }
-        $batch[] = [$rule, $exists];
+        $batch[] = $rule;
         if (count($batch) >= self::CHUNK) {
             $this->flush($batch, $dryrun, $userid, $report);
         }
@@ -296,25 +291,43 @@ class importer {
     /**
      * Store the queued rules, one by one when a limit stops the batch, so that only the rules that break it are left out.
      *
-     * @param array $batch Queue of rules with whether each one already existed, which this empties.
+     * @param rule[] $batch Queue of rules, which this empties.
      * @param bool $dryrun Whether nothing is stored.
      * @param int $userid User making the change.
      * @param import_report $report Report.
      */
     private function flush(array &$batch, bool $dryrun, int $userid, import_report $report): void {
-        if ($dryrun || $batch === []) {
+        if ($batch === []) {
+            return;
+        }
+        // One query tells which of the queued rules the site already has.
+        $contextids = [];
+        foreach ($batch as $rule) {
+            $contextids[$rule->contextid()] = true;
+        }
+        $stored = $this->store->stored_identities(array_keys($contextids));
+        $exists = [];
+        foreach ($batch as $index => $rule) {
+            $exists[$index] = isset($stored[rule_store::identity_of(
+                $rule->contextid(),
+                (string)$rule->slot(),
+                $rule->target(),
+                $rule->variant()
+            )]);
+            $report->count($exists[$index] ? 'updated' : 'created', 1, (string)$rule->slot());
+        }
+        if ($dryrun) {
             $batch = [];
             return;
         }
-        $rules = array_column($batch, 0);
         try {
-            $this->service->apply($rules, [], $userid);
+            $this->service->apply_bulk($batch, $userid);
         } catch (\InvalidArgumentException $exception) {
-            foreach ($batch as [$rule, $exists]) {
+            foreach ($batch as $index => $rule) {
                 try {
                     $this->service->apply([$rule], [], $userid);
                 } catch (\InvalidArgumentException $single) {
-                    $report->count($exists ? 'updated' : 'created', -1, (string)$rule->slot());
+                    $report->count($exists[$index] ? 'updated' : 'created', -1, (string)$rule->slot());
                     $report->skip($rule->slot() . ': ' . $single->getMessage(), (string)$rule->slot());
                 }
             }
