@@ -39,6 +39,12 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 - A look that applies to every colour mode, made before the site had colour modes, kept being served after the designer showed its light or dark variant empty or removed: the pages in the other modes, and any property the new variant did not set, still showed it, while the preview showed only the open variant. The designer now opens a mode with the look that the pages show in it, and the first change or removal in a mode gives every mode its own copy of that look, so each mode can be changed or removed on its own. It is the fix of release 5.3.1 of the Moodle 5.3 line, here for Moodle 5.0 to 5.2, the only ones of this line that have colour modes.
 
+## [4.0.2] - 2026-10-14
+
+### Fixed
+
+- The lists that open under a button or a field (the theme colours of a colour field, the filters and the menu of the toolbar) stayed where they were opened while the page, or the panel that holds the field, scrolled. They now follow their button or field as it moves, and close when it scrolls out of sight.
+
 ## [4.0.1] - 2026-10-13
 
 ### Fixed

@@ -21,6 +21,7 @@
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import selectors from 'local_iconrestyle/toolbar/selectors';
+import {follow} from 'local_iconrestyle/lib/follow';
 
 /**
  * Open the actions menu below its button, or close it.
@@ -34,9 +35,17 @@ const toggleMenu = (button, closeMenu) => {
     closeMenu();
     list.hidden = !open;
     if (open) {
-        const rect = button.getBoundingClientRect();
-        list.style.top = `${rect.bottom + 4}px`;
-        list.style.right = `${Math.max(8, window.innerWidth - rect.right)}px`;
+        const place = () => {
+            const rect = button.getBoundingClientRect();
+            if (rect.bottom < 0 || rect.top > window.innerHeight) {
+                closeMenu();
+                return;
+            }
+            list.style.top = `${rect.bottom + 4}px`;
+            list.style.right = `${Math.max(8, window.innerWidth - rect.right)}px`;
+        };
+        place();
+        follow(() => !list.hidden, place, list);
     }
     button.setAttribute('aria-expanded', open ? 'true' : 'false');
 };
