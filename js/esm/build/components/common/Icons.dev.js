@@ -52,7 +52,7 @@ const IconClose = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Glyph, { n
   lineNumber: 30,
   columnNumber: 32
 }), "IconClose");
-const IconColourMode = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Glyph, { name: "circle-half-stroke" }, void 0, false, {
+const IconColourMode = /* @__PURE__ */ __name(() => /* @__PURE__ */ jsxDEV(Glyph, { name: "adjust" }, void 0, false, {
   fileName: "public/local/iconrestyle/js/esm/src/components/common/Icons.tsx",
   lineNumber: 31,
   columnNumber: 37

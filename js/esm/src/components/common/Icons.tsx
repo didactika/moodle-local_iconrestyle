@@ -28,7 +28,7 @@ export const IconBack = () => <Glyph name="arrow-left" size={18} />;
 export const IconCheck = ({size = 18}: {size?: number}) => <Glyph name="check" size={size} />;
 export const IconChevron = () => <Glyph name="chevron-down" />;
 export const IconClose = () => <Glyph name="xmark" />;
-export const IconColourMode = () => <Glyph name="circle-half-stroke" />;
+export const IconColourMode = () => <Glyph name="adjust" />;
 export const IconCopy = () => <Glyph name="clone" />;
 export const IconDownload = () => <Glyph name="download" size={18} />;
 export const IconLinked = () => <Glyph name="link" className="irs-icon-linked" />;

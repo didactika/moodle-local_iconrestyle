@@ -36,3 +36,21 @@ function local_iconrestyle_before_standard_html_head() {
     }
     return '';
 }
+
+/**
+ * The icons of the plugin that Moodle does not have, mapped to the Font Awesome glyph that draws them.
+ *
+ * Moodle adds this map to its own, so the icons are drawn with the pix helper like any other and appear in the designer, where a
+ * site can restyle them. A glyph that is written as a class and is not in a map is not an icon of Moodle and cannot be found.
+ *
+ * @return string[] Glyph of each icon, by the key of the icon.
+ */
+function local_iconrestyle_get_fontawesome_icon_map() {
+    global $CFG;
+
+    return [
+        // The half circle that changes the colour mode; the name that Font Awesome 4 knows is also an alias in the later ones.
+        'local_iconrestyle:colour_mode' => 'fa-adjust',
+        'local_iconrestyle:moon' => $CFG->branch < 402 ? 'fa-moon-o' : 'fa-moon',
+    ];
+}
