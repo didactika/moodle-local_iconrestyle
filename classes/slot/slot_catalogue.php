@@ -233,8 +233,8 @@ class slot_catalogue {
     /**
      * Image icons of core, of its subsystems, of every plugin and of the themes that bring images for other components.
      *
-     * Every image file of a pix folder is an icon that a page can show, at any depth: the names keep their folders, as Moodle writes
-     * them (a/setting, f/pdf, icons/book).
+     * Every image file of a pix folder is an icon that a page can show, at any depth: the names keep their folders, as
+     * Moodle writes them (a/setting, f/pdf, icons/book).
      *
      * @return string[][] Names grouped by component.
      */

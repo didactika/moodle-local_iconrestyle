@@ -82,7 +82,8 @@ final class stylesheet_compiler_test extends \basic_testcase {
     public function test_recolour(): void {
         $css = $this->compiler()->compile([$this->rule('core:a/setting', ['fg' => '#1b6ec2'])]);
         $this->assertSame(
-            "body [class].fa-gear:not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin):not(.fa-duotone):not(.fa-sharp) {\n" .
+            "body [class].fa-gear:not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin):not(.fa-duotone)" .
+            ":not(.fa-sharp) {\n" .
             "  color: #1b6ec2;\n}\n",
             $css
         );

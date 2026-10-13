@@ -104,7 +104,8 @@ final class artwork_painters_test extends \advanced_testcase {
         $this->assertStringContainsString("fa-gear:not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin)" .
             ":not(.fa-duotone):not(.fa-sharp) {\n  background-color: #eeeeee;\n  border-radius: 50%;\n}\n", $css);
         $this->assertStringContainsString(
-            ":not(.fa-sharp)::before {\n  content: \"\";\n  display: inline-block;\n  width: 1em;\n  height: 1em;\n  vertical-align: -0.125em;\n" .
+            ":not(.fa-sharp)::before {\n  content: \"\";\n  display: inline-block;\n  width: 1em;\n  height: 1em;\n" .
+            "  vertical-align: -0.125em;\n" .
             "  background-color: #ff0000;\n  -webkit-mask: url(\"data:image/svg+xml;base64,",
             $css
         );
