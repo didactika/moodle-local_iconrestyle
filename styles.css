@@ -2,14 +2,66 @@
 /* Moodle 4.0 and later cores disagree on decimal formatting; use the current leading-zero style. */
 /* stylelint-disable number-leading-zero */
 
+/*
+ * Moodle 4.0 to 4.5 is Bootstrap 4, which names its colours --primary, --success and so on, and a theme such as vle adds its own
+ * (--primary-light); Moodle 5 is Bootstrap 5.3, which names them --bs-primary and so on, and changes them with the colour mode.
+ * Every colour of the plugin is one of the tokens below, so a piece never mixes a colour of the theme with a fixed one, and the
+ * last value of each chain is the colour Boost has when the theme gives none.
+ *
+ * The soft fills and the text on them are mixed from the colour itself where the browser can, so the border, the text and the fill
+ * of a piece are one hue and follow the theme and the colour mode. The modals are not inside the designer, so the tokens are on
+ * the root as well.
+ */
+
+:root,
 .irs {
-    --irs-gap: 1rem;
-    --irs-card: 6.5rem;
+    --irs-text: var(--bs-body-color, #212529);
+    --irs-surface: var(--bs-body-bg, #fff);
     --irs-border: var(--bs-border-color, var(--border-color, #dee2e6));
     --irs-muted: var(--bs-secondary-color, #6c757d);
     --irs-accent: var(--bs-primary, var(--primary, #0f6cbf));
     --irs-accent-soft: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
-    --irs-surface: var(--bs-body-bg, #fff);
+    --irs-accent-text: var(--irs-accent);
+    --irs-on-accent: #fff;
+    --irs-danger: var(--bs-danger, var(--danger, #ca3120));
+    --irs-danger-soft: var(--bs-danger-bg-subtle, #f8d7da);
+    --irs-danger-text: var(--irs-danger);
+    --irs-success: var(--bs-success, var(--success, #357a32));
+    --irs-success-soft: var(--bs-success-bg-subtle, #d9ead8);
+    --irs-success-text: var(--bs-success-text-emphasis, var(--irs-success));
+    --irs-warning: var(--bs-warning, var(--warning, #f0ad4e));
+    --irs-warning-soft: var(--bs-warning-bg-subtle, #fcefd8);
+    --irs-warning-text: var(--bs-warning-text-emphasis, #664d03);
+    --irs-neutral-soft: var(--bs-secondary-bg, #e9ecef);
+    --irs-neutral-faint: var(--bs-tertiary-bg, #f8f9fa);
+}
+
+@supports (color: color-mix(in srgb, red 10%, blue)) {
+
+    :root,
+    .irs {
+        --irs-accent-soft: color-mix(in srgb, var(--irs-accent) 14%, var(--irs-surface));
+        --irs-accent-text: color-mix(in srgb, var(--irs-accent) 80%, var(--irs-text));
+        --irs-danger-soft: color-mix(in srgb, var(--irs-danger) 14%, var(--irs-surface));
+        --irs-danger-text: color-mix(in srgb, var(--irs-danger) 80%, var(--irs-text));
+        --irs-success-soft: color-mix(in srgb, var(--irs-success) 16%, var(--irs-surface));
+        --irs-success-text: color-mix(in srgb, var(--irs-success) 70%, var(--irs-text));
+        --irs-warning-soft: color-mix(in srgb, var(--irs-warning) 22%, var(--irs-surface));
+        --irs-warning-text: color-mix(in srgb, var(--irs-warning) 45%, var(--irs-text));
+        --irs-neutral-soft: color-mix(in srgb, var(--irs-text) 8%, var(--irs-surface));
+        --irs-neutral-faint: color-mix(in srgb, var(--irs-text) 4%, var(--irs-surface));
+    }
+}
+
+.irs,
+.irs-import,
+.irs-places-form {
+    accent-color: var(--irs-accent);
+}
+
+.irs {
+    --irs-gap: 1rem;
+    --irs-card: 6.5rem;
     --irs-radius: 0.75rem;
     --irs-fill: calc(100vh - var(--irs-top, 9rem) - 1.25rem);
     display: flex;
@@ -23,7 +75,7 @@
     padding: 0.125rem 0.625rem;
     border-radius: 999px;
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
     font-size: 0.75rem;
     font-weight: 600;
     white-space: nowrap;
@@ -330,7 +382,7 @@
 
 .irs .irs-tab.irs-active {
     border-bottom-color: var(--irs-accent);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .irs .irs-badge {
@@ -340,7 +392,7 @@
     padding: 0 0.375rem;
     border-radius: 999px;
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
     font-size: 0.75rem;
     text-align: center;
 }
@@ -485,7 +537,7 @@
 .irs .irs-x:hover,
 .irs .irs-x:focus-visible {
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
     opacity: 1;
 }
 
@@ -575,7 +627,7 @@
     justify-content: center;
     width: 2.5rem;
     height: 2.5rem;
-    color: var(--bs-secondary-color, #495057);
+    color: var(--irs-muted);
 }
 
 .irs .irs-look-sample::after {
@@ -592,28 +644,28 @@
 }
 
 .irs .irs-look-box .irs-look-sample {
-    background: var(--bs-secondary-bg, #e9ecef);
+    background: var(--irs-neutral-soft);
     border-radius: 0.5rem;
 }
 
 .irs .irs-look-pill .irs-look-sample {
     width: 3.25rem;
     height: 2rem;
-    background: var(--bs-secondary-bg, #e9ecef);
+    background: var(--irs-neutral-soft);
     border-radius: 999px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
 
 .irs .irs-look-tile .irs-look-sample {
-    border: 1px solid var(--bs-border-color, #dee2e6);
+    border: 1px solid var(--irs-border);
     border-radius: 0.5rem;
-    background: var(--bs-tertiary-bg, #f8f9fa);
+    background: var(--irs-neutral-faint);
 }
 
 .irs .irs-look-badge .irs-look-sample {
     border-radius: 50%;
     background: var(--irs-accent);
-    color: #fff;
+    color: var(--irs-on-accent);
 }
 
 .irs .irs-look-outline .irs-look-sample {
@@ -635,7 +687,7 @@
     border: 1px solid var(--irs-border);
     border-radius: 999px;
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
     opacity: 1;
 }
 
@@ -661,33 +713,33 @@
 .irs .irs-pillbtn:focus-visible {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .irs .irs-pillbtn-primary {
     border-color: var(--irs-accent);
     background: var(--irs-accent);
-    color: #fff;
+    color: var(--irs-on-accent);
 }
 
 .irs .irs-pillbtn-primary:hover,
 .irs .irs-pillbtn-primary:focus-visible {
     background: var(--irs-accent);
-    color: #fff;
+    color: var(--irs-on-accent);
     filter: brightness(0.92);
 }
 
 .irs .irs-pillbtn-danger {
     border-color: transparent;
     background: transparent;
-    color: var(--bs-danger, #b02a37);
+    color: var(--irs-danger);
 }
 
 .irs .irs-pillbtn-danger:hover,
 .irs .irs-pillbtn-danger:focus-visible {
     border-color: transparent;
-    background: var(--bs-danger-bg-subtle, rgba(176, 42, 55, 0.12));
-    color: var(--bs-danger, #b02a37);
+    background: var(--irs-danger-soft);
+    color: var(--irs-danger);
 }
 
 .irs .irs-swatch {
@@ -703,7 +755,7 @@
 }
 
 .irs .irs-swatch-none {
-    --irs-cross: var(--bs-danger, #b02a37);
+    --irs-cross: var(--irs-danger);
     background: linear-gradient(135deg, transparent 45%, var(--irs-cross) 45%, var(--irs-cross) 55%, transparent 55%);
 }
 
@@ -745,7 +797,7 @@
 .irs .irs-theme-item:hover,
 .irs .irs-theme-item:focus {
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .irs .irs-theme-name {
@@ -787,7 +839,7 @@
 }
 
 .irs .irs-hint.irs-error {
-    color: var(--bs-danger, #b02a37);
+    color: var(--irs-danger);
 }
 
 .irs .irs-help {
@@ -846,7 +898,7 @@
 .irs .irs-link[aria-pressed=true] {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .irs .irs-link .irs-icon-unlinked,
@@ -888,7 +940,7 @@
 .irs .irs-shape[aria-pressed=true] {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .irs .irs-shape-sample {
@@ -967,7 +1019,7 @@
 .irs .irs-chip.irs-active {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
     font-weight: 600;
 }
 
@@ -992,20 +1044,20 @@
 .irs-places-form .irs-seg-option span {
     display: inline-block;
     padding: 0.375rem 0.875rem;
-    border: 1px solid var(--bs-border-color, #dee2e6);
+    border: 1px solid var(--irs-border);
     border-radius: 999px;
     cursor: pointer;
 }
 
 .irs-places-form .irs-seg-option input:checked + span {
-    border-color: var(--bs-primary, #0f6cbf);
-    background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
-    color: var(--bs-primary, #0f6cbf);
+    border-color: var(--irs-accent);
+    background: var(--irs-accent-soft);
+    color: var(--irs-accent-text);
     font-weight: 600;
 }
 
 .irs-places-form .irs-seg-option input:focus-visible + span {
-    outline: 2px solid var(--bs-primary, #0f6cbf);
+    outline: 2px solid var(--irs-accent);
     outline-offset: 2px;
 }
 
@@ -1022,12 +1074,12 @@
 
 .irs-places-form .irs-hint {
     margin: 0.25rem 0 0;
-    color: var(--bs-secondary-color, #6c757d);
+    color: var(--irs-muted);
     font-size: 0.8125rem;
 }
 
 .irs-places-form .irs-hint.irs-error {
-    color: var(--bs-danger, #b02a37);
+    color: var(--irs-danger);
 }
 
 .irs-places-form .irs-checks {
@@ -1053,7 +1105,7 @@
 
 .irs-places-form .irs-copy {
     padding-top: 0.5rem;
-    border-top: 1px solid var(--bs-border-color, #dee2e6);
+    border-top: 1px solid var(--irs-border);
 }
 
 .irs .irs-places-actions {
@@ -1087,9 +1139,9 @@
     margin: 0.25rem 0 0;
     padding: 0.25rem;
     overflow-y: auto;
-    border: 1px solid var(--bs-border-color, #dee2e6);
+    border: 1px solid var(--irs-border);
     border-radius: 0.5rem;
-    background: var(--bs-body-bg, #fff);
+    background: var(--irs-surface);
     list-style: none;
 }
 
@@ -1145,7 +1197,7 @@
 
 .irs .irs-back:hover {
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .irs .irs-search {
@@ -1176,7 +1228,7 @@
 .irs .irs-search .form-control.irs-active {
     border-color: var(--irs-accent);
     background-color: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
     font-weight: 600;
 }
 
@@ -1191,7 +1243,7 @@
 
 .irs .irs-filter option {
     background-color: var(--irs-surface);
-    color: var(--bs-body-color, inherit);
+    color: var(--irs-text);
     font-weight: 400;
 }
 
@@ -1217,7 +1269,7 @@
 
 .irs .irs-status[data-state=saved] .irs-status-saved {
     display: inline-flex;
-    color: var(--bs-success, #198754);
+    color: var(--irs-success);
 }
 
 .irs .irs-status[data-state=saving] .irs-status-busy,
@@ -1228,7 +1280,7 @@
 
 .irs .irs-status[data-state=error] .irs-status-error {
     display: inline-flex;
-    color: var(--bs-danger, #b02a37);
+    color: var(--irs-danger);
 }
 
 @keyframes irs-spin {
@@ -1267,7 +1319,7 @@
 
 .irs .irs-iconbtn:hover:not(:disabled) {
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .irs .irs-iconbtn:disabled {
@@ -1308,7 +1360,7 @@
 .irs .irs-menu-list button:hover:not(:disabled),
 .irs .irs-menu-list a:hover {
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .irs .irs-menu-list button:disabled {
@@ -1387,7 +1439,7 @@
     padding: 0 0.5rem;
     border-radius: 999px;
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
     font-size: 0.6875rem;
     font-style: normal;
 }
@@ -1410,7 +1462,7 @@
 .irs .irs-toggle[aria-pressed=true] {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
     font-weight: 600;
 }
 
@@ -1431,7 +1483,7 @@
 .irs .irs-back:hover {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .local-iconrestyle-designer #page,
@@ -1512,7 +1564,7 @@
 .irs .irs-panel-actions .irs-iconbtn[aria-pressed=true] {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .irs .irs-selectbtn {
@@ -1522,7 +1574,7 @@
 .irs .irs-selectbtn[aria-pressed=true] {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
     font-weight: 600;
 }
 
@@ -1563,7 +1615,7 @@
 .irs .irs-card.irs-picked .irs-pick {
     border-color: var(--irs-accent);
     background: var(--irs-accent);
-    color: #fff;
+    color: var(--irs-on-accent);
 }
 
 .irs .irs-card:disabled {
@@ -1677,14 +1729,14 @@
     border: 0;
     border-radius: 0.5rem;
     background: transparent;
-    color: var(--bs-primary, var(--primary, #0f6cbf));
+    color: var(--irs-accent-text);
     font-size: 0.8125rem;
     cursor: pointer;
 }
 
 .irs-linkbtn:hover,
 .irs-linkbtn:focus-visible {
-    background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
+    background: var(--irs-accent-soft);
 }
 
 .irs-chipcheck {
@@ -1706,7 +1758,7 @@
 .irs-chipcheck span {
     display: inline-block;
     padding: 0.25rem 0.75rem;
-    border: 1px solid var(--bs-border-color, #dee2e6);
+    border: 1px solid var(--irs-border);
     border-radius: 999px;
     font-size: 0.8125rem;
     user-select: none;
@@ -1714,15 +1766,15 @@
 }
 
 .irs-chipcheck:hover span {
-    border-color: var(--bs-primary, #0f6cbf);
-    background: var(--bs-tertiary-bg, #f1f3f5);
+    border-color: var(--irs-accent);
+    background: var(--irs-neutral-faint);
     box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.16);
     transform: translateY(-1px);
 }
 
 .irs-chipcheck:hover input:checked + span {
-    background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
-    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.16), 0 0 0 2px var(--bs-primary-bg-subtle, #e7f1fa);
+    background: var(--irs-accent-soft);
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.16), 0 0 0 2px var(--irs-accent-soft);
 }
 
 .irs-chipcheck input:active + span {
@@ -1742,9 +1794,9 @@
 }
 
 .irs-chipcheck input:checked + span {
-    border-color: var(--bs-primary, #0f6cbf);
-    background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
-    color: var(--bs-primary, #0f6cbf);
+    border-color: var(--irs-accent);
+    background: var(--irs-accent-soft);
+    color: var(--irs-accent-text);
     font-weight: 600;
 }
 
@@ -1753,7 +1805,7 @@
 }
 
 .irs-chipcheck input:focus-visible + span {
-    outline: 2px solid var(--bs-primary, #0f6cbf);
+    outline: 2px solid var(--irs-accent);
     outline-offset: 2px;
 }
 
@@ -1761,8 +1813,8 @@
     margin: 0 0 1rem;
     padding: 0.625rem 0.875rem;
     border-radius: 0.75rem;
-    background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
-    color: var(--bs-primary, #0f6cbf);
+    background: var(--irs-accent-soft);
+    color: var(--irs-accent-text);
     font-weight: 600;
 }
 
@@ -1801,32 +1853,32 @@
 .irs-import .irs-seg-option span {
     display: block;
     padding: 0.5rem 0.875rem;
-    border: 1px solid var(--bs-border-color, #dee2e6);
+    border: 1px solid var(--irs-border);
     border-radius: 0.75rem;
     text-align: center;
     cursor: pointer;
 }
 
 .irs-import .irs-seg-option input:checked + span {
-    border-color: var(--bs-primary, #0f6cbf);
-    background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
-    color: var(--bs-primary, #0f6cbf);
+    border-color: var(--irs-accent);
+    background: var(--irs-accent-soft);
+    color: var(--irs-accent-text);
     font-weight: 600;
 }
 
 .irs-import .irs-seg-option input:focus-visible + span {
-    outline: 2px solid var(--bs-primary, #0f6cbf);
+    outline: 2px solid var(--irs-accent);
     outline-offset: 2px;
 }
 
 .irs-import .irs-hint {
     margin: 0.375rem 0 0;
-    color: var(--bs-secondary-color, #6c757d);
+    color: var(--irs-muted);
     font-size: 0.8125rem;
 }
 
 .irs-import .irs-hint.irs-error {
-    color: var(--bs-danger, #b02a37);
+    color: var(--irs-danger);
 }
 
 .irs-review-bar {
@@ -1844,14 +1896,14 @@
 
 .irs-review-count {
     margin-left: auto;
-    color: var(--bs-secondary-color, #6c757d);
+    color: var(--irs-muted);
     font-size: 0.8125rem;
 }
 
 .irs-review-list {
     max-height: 16rem;
     overflow-y: auto;
-    border: 1px solid var(--bs-border-color, #dee2e6);
+    border: 1px solid var(--irs-border);
     border-radius: 0.75rem;
 }
 
@@ -1861,7 +1913,7 @@
     gap: 0.625rem;
     margin: 0;
     padding: 0.4375rem 0.75rem;
-    border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+    border-bottom: 1px solid var(--irs-border);
     cursor: pointer;
 }
 
@@ -1870,7 +1922,7 @@
 }
 
 .irs-review-row:hover {
-    background: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
+    background: var(--irs-accent-soft);
 }
 
 .irs-review-row.irs-disabled {
@@ -1887,7 +1939,7 @@
 }
 
 .irs-review-rules {
-    color: var(--bs-secondary-color, #6c757d);
+    color: var(--irs-muted);
     font-size: 0.75rem;
     white-space: nowrap;
 }
@@ -1901,23 +1953,23 @@
 }
 
 .irs-state-new {
-    background: var(--bs-success-bg-subtle, #d1e7dd);
-    color: var(--bs-success-text-emphasis, #0a3622);
+    background: var(--irs-success-soft);
+    color: var(--irs-success-text);
 }
 
 .irs-state-updates {
-    background: var(--bs-warning-bg-subtle, #fff3cd);
-    color: var(--bs-warning-text-emphasis, #664d03);
+    background: var(--irs-warning-soft);
+    color: var(--irs-warning-text);
 }
 
 .irs-state-skipped {
-    background: var(--bs-secondary-bg, #e9ecef);
-    color: var(--bs-secondary-color, #6c757d);
+    background: var(--irs-neutral-soft);
+    color: var(--irs-muted);
 }
 
 .irs-import .irs-theme-note {
     margin: 0.5rem 0.75rem;
-    color: var(--bs-secondary-color, #6c757d);
+    color: var(--irs-muted);
     font-size: 0.8125rem;
 }
 
@@ -1937,7 +1989,7 @@
 .irs-import-counts li {
     padding: 0.25rem 0.75rem;
     border-radius: 999px;
-    background: var(--bs-secondary-bg, #f1f3f5);
+    background: var(--irs-neutral-soft);
     font-size: 0.8125rem;
 }
 
@@ -1955,7 +2007,7 @@
     padding: 0 0.3125rem;
     border-radius: 999px;
     background: var(--irs-accent);
-    color: var(--bs-white, #fff);
+    color: var(--irs-on-accent);
     font-size: 0.6875rem;
     font-weight: 700;
     line-height: 1;
@@ -1983,7 +2035,7 @@
 .irs .irs-filtersbtn.irs-active {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
-    color: var(--irs-accent);
+    color: var(--irs-accent-text);
 }
 
 .irs .irs-filters-panel {
