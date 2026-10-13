@@ -323,6 +323,41 @@ class behat_local_iconrestyle extends behat_base {
     }
 
     /**
+     * Render an icon with Moodle's own renderer and check a length that the design gives in em, against the font size
+     * the icon really has, which differs between Moodle versions and so cannot be written as pixels.
+     *
+     * @Then /^the icon "([^"]+)" should have "([^"]+)" of "(-?[0-9.]+)" em$/
+     * @param string $slot Slot key such as core:a/setting.
+     * @param string $property CSS property.
+     * @param string $em Expected length in em.
+     */
+    public function the_icon_should_have_em(string $slot, string $property, string $em): void {
+        global $OUTPUT, $PAGE;
+        [$component, $name] = explode(':', $slot, 2);
+        $PAGE->set_url('/');
+        $html = $OUTPUT->pix_icon($name, 'Example', $component === 'core' ? 'moodle' : $component);
+        $script = "(function () {
+            var host = document.createElement('div');
+            host.id = 'iconrestyle-probe';
+            host.innerHTML = " . json_encode($html) . ";
+            document.body.appendChild(host);
+            var element = host.firstElementChild;
+            var computed = window.getComputedStyle(element);
+            var result = JSON.stringify({value: computed[" . json_encode($property) . "], size: computed['fontSize']});
+            host.remove();
+            return result;
+        })()";
+        $found = json_decode((string)$this->getSession()->evaluateScript($script), true);
+        $expected = (float)$em * (float)$found['size'];
+        if (abs((float)$found['value'] - $expected) > 0.1) {
+            throw new \Behat\Mink\Exception\ExpectationException(
+                "The icon {$slot} has {$property} '{$found['value']}', expected {$em} em of a font of {$found['size']}.",
+                $this->getSession()
+            );
+        }
+    }
+
+    /**
      * Check one computed style of the box Moodle draws around the icons of a purpose, or of the glyph inside it.
      *
      * @Then /^the (box|glyph) of the "([a-z]+)" activities (should|should not) have "([^"]+)" "([^"]+)"$/

@@ -93,9 +93,41 @@ const fingerprint = css => {
     };
     return JSON.stringify(nodeData(postcss.parse(css)));
 };
+/**
+ * One line for each declaration, with the selector and the at-rules around it, so two stylesheets can be compared.
+ *
+ * @param {string} css Stylesheet.
+ * @returns {string[]} Lines.
+ */
+const lines = css => {
+    const out = [];
+    const walk = (node, context) => {
+        node.each(child => {
+            if (child.type === 'rule') {
+                child.each(declaration => {
+                    if (declaration.type === 'decl') {
+                        out.push(context + child.selector.replace(/\s+/g, ' ') + ' { ' + declaration.prop + ': ' + declaration.value + ' }');
+                    }
+                });
+            } else if (child.type === 'atrule' && child.nodes) {
+                walk(child, context + '@' + child.name + ' ' + child.params + ' ');
+            }
+        });
+    };
+    walk(postcss.parse(css), '');
+    return out;
+};
 if (args.includes('--check')) {
     if (fingerprint(readFileSync(target, 'utf8')) !== fingerprint(output)) {
-        throw new Error('styles.css is out of date. Run tools/build-styles.mjs without --check.');
+        const shipped = lines(readFileSync(target, 'utf8'));
+        const built = lines(output);
+        const different = [];
+        for (let i = 0; i < Math.max(shipped.length, built.length) && different.length < 8; i++) {
+            if (shipped[i] !== built[i]) {
+                different.push('  shipped: ' + shipped[i] + '\n  built:   ' + built[i]);
+            }
+        }
+        throw new Error('styles.css is out of date. Run tools/build-styles.mjs without --check.\n' + different.join('\n'));
     }
     const shipped = await require('stylelint').lint({files: target, configFile: resolve(core, '.stylelintrc')});
     if (shipped.errored || shipped.results.some(item => item.warnings.length)) {
