@@ -21,6 +21,14 @@ its own $plugin->release line -- no need to reconcile entries across branches.
 
 ## [Unreleased]
 
+## [4.0.3] - 2026-10-13
+
+### Changed
+
+- The web service classes use the `core_external` names and a plugin class, `local_iconrestyle\compat\external_aliases`, declares them as aliases on Moodle 4.0 and 4.1, in place of the `compat.php` file that every class loaded with a manual `require_once`.
+- The kinds of icon that a look applies to are written separated by a comma in the template (`data-kinds="font,image"`).
+- The `Content-Length` of the stylesheet and of an artwork is computed before the header is written.
+
 ## [4.0.1] - 2026-10-13
 
 ### Fixed
