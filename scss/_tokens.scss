@@ -61,5 +61,7 @@
 .irs,
 .irs-import,
 .irs-places-form {
+    /* Moodle 4.0 and 4.1 do not know accent-color. */
+    /* stylelint-disable-next-line property-no-unknown, csstree/validator */
     accent-color: var(--irs-accent);
 }

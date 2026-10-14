@@ -20,6 +20,8 @@
     }
 
     .irs-sk-cell {
+        /* Moodle 4.0 and 4.1 do not know aspect-ratio. */
+        /* stylelint-disable-next-line property-no-unknown, csstree/validator */
         aspect-ratio: 1;
         border-radius: var(--irs-radius);
     }
