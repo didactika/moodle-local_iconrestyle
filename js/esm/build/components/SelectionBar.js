@@ -1,4 +1,7 @@
 import{IconClose as g,IconColourMode as f}from"./common/Icons";import{jsx as e,jsxs as l}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The bar that floats over the grid while icons are being chosen: what to do with them and how many there are.
  *
  * @module     local_iconrestyle/components/SelectionBar

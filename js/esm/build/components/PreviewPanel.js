@@ -1,4 +1,7 @@
 import S from"./ShadowStage";import y from"./IconCell";import{contrastRatio as x,parseHex as I}from"../lib/color";import{jsx as i,jsxs as s}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The live preview of the open icon: how Moodle draws it, how it looks with the draft, or both, on a light or a dark surface.
  *
  * @module     local_iconrestyle/components/PreviewPanel

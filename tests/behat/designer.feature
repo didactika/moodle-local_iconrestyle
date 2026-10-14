@@ -46,6 +46,15 @@ Feature: Customise icons in the designer
     And I click on "[data-key='core:a/setting']" "css_element"
     Then the theme colour of "fg" should contain "primary"
 
+  Scenario: The list of theme colours goes with its field when the panel is scrolled
+    When I set the field "Search icons" to "a/setting"
+    And I wait until "[data-key='core:a/setting']" "css_element" exists
+    And I click on "[data-key='core:a/setting']" "css_element"
+    And I click on "[data-region='fg-themeinput']" "css_element"
+    And I wait until "[data-region='fg-themepanel']" "css_element" exists
+    And I scroll away from "[data-region='fg-themeinput']" by 40 pixels
+    Then "[data-region='fg-themepanel']" should be next to "[data-region='fg-themeinput']"
+
   Scenario: What is saved shows at once on every icon of the designer page, without reloading
     When I set the field "Search icons" to "a/setting"
     And I wait until "[data-key='core:a/setting']" "css_element" exists

@@ -1,4 +1,7 @@
 import{fetchOne as l}from"@moodle/lms/core/ajax";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * Every web service call of the designer, in one place.
  *
  * @module     local_iconrestyle/services/api

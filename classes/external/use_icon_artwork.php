@@ -24,25 +24,25 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use local_iconrestyle\asset\asset_rejected_exception;
 use local_iconrestyle\service_factory;
 use local_iconrestyle\slot\slot_key;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
-
 /**
  * An image icon cannot be recoloured as it is, so its own file becomes the artwork and the colour is painted through it.
  */
-class use_icon_artwork extends api {
+class use_icon_artwork extends external_api {
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters(['slotkey' => new value(PARAM_RAW, 'Slot key of an image icon')]);
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters(['slotkey' => new external_value(PARAM_RAW, 'Slot key of an image icon')]);
     }
 
     /**
@@ -55,9 +55,10 @@ class use_icon_artwork extends api {
     public static function execute(string $slotkey): array {
         global $USER;
         $params = self::validate_parameters(self::execute_parameters(), ['slotkey' => $slotkey]);
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage();
+        require_capability('local/iconrestyle:manage', $context);
         try {
             $slot = slot_key::parse($params['slotkey']);
         } catch (\InvalidArgumentException $exception) {
@@ -78,9 +79,9 @@ class use_icon_artwork extends api {
     /**
      * Returned structure.
      *
-     * @return structure Description.
+     * @return external_single_structure Description.
      */
-    public static function execute_returns(): structure {
+    public static function execute_returns(): external_single_structure {
         return add_asset::execute_returns();
     }
 }

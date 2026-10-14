@@ -24,6 +24,7 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
 use local_iconrestyle\service_factory;
 
 #[\PHPUnit\Framework\Attributes\CoversNothing]
@@ -41,7 +42,6 @@ final class services_test extends \advanced_testcase {
      */
     protected function setUp(): void {
         parent::setUp();
-        require_once(__DIR__ . '/../../classes/external/compat.php');
         $this->resetAfterTest();
         service_factory::reset();
         $this->setAdminUser();
@@ -69,7 +69,7 @@ final class services_test extends \advanced_testcase {
      * @return mixed The cleaned response.
      */
     private function clean(string $function, $result) {
-        return api::clean_returnvalue($function::execute_returns(), $result);
+        return external_api::clean_returnvalue($function::execute_returns(), $result);
     }
 
     /**
@@ -392,13 +392,13 @@ final class services_test extends \advanced_testcase {
     public function test_preview(): void {
         global $DB;
         $css = $this->clean(preview_css::class, preview_css::execute([$this->input(['fg' => '#e83e8c'])]));
-        $this->assertStringStartsWith('.irs-preview-new .icon.fa-', $css);
+        $this->assertStringStartsWith('.irs-preview-new [class].fa-', $css);
         $this->assertStringContainsString('color: #e83e8c;', $css);
         $this->assertStringNotContainsString('body ', $css);
         $this->assertSame(0, $DB->count_records('local_iconrestyle_rule'));
 
         $current = preview_css::execute([$this->input(['fg' => '#e83e8c'])], 'current');
-        $this->assertStringStartsWith('.irs-preview-current .icon.fa-', $current);
+        $this->assertStringStartsWith('.irs-preview-current [class].fa-', $current);
 
         foreach ([[array_fill(0, 201, $this->input([])), 'new'], [[], 'body']] as $case) {
             try {

@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * One icon of the grid: how the site draws it, or how it will look once what is waiting is saved.
  *
  * @module     local_iconrestyle/components/IconCard

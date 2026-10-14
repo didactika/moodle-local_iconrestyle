@@ -1,4 +1,7 @@
 import{useEffect as h,useRef as g,useState as b}from"react";import*as N from"../../services/api";import{IconClose as P}from"../common/Icons";import{jsx as t,jsxs as r}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * Chooses categories, courses or activities by name: what is typed is searched on the server and the places found are offered.
  *
  * @module     local_iconrestyle/components/places/LocationPicker

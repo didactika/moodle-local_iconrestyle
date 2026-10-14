@@ -1,4 +1,7 @@
 import{useEffect as p,useRef as h}from"react";import{createPortal as g}from"react-dom";import{Fragment as N,jsx as a,jsxs as l}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * A modal dialog with the markup of Bootstrap's, so it follows the theme, with focus kept inside and Escape to close.
  *
  * @module     local_iconrestyle/components/common/Modal

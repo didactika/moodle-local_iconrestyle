@@ -1,4 +1,7 @@
 import{whereLabel as h}from"./draft";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * What the designer shows about the open icon and the colour mode, worked out from its state.
  *
  * @module     local_iconrestyle/lib/view

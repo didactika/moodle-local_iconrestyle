@@ -1,4 +1,7 @@
 import{useEffect as u,useState as a}from"react";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The colour mode this page is shown in, when Moodle has colour modes.
  *
  * Boost writes the mode that is applied in the data-bs-theme attribute of the html element, and the mode the person chose,

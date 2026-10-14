@@ -1,4 +1,7 @@
 import{useLayoutEffect as a,useRef as S,useState as x}from"react";import{createPortal as L}from"react-dom";import{fitCells as m}from"../lib/fit";import{jsx as H}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * An isolated tree that shows icons with the stylesheets of the page and a look that is not saved yet.
  *
  * The tree is a shadow root of its own, so the compiled look of a draft cannot reach the rest of the page and the stylesheet of

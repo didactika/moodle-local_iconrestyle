@@ -2,6 +2,9 @@ var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 import { jsxDEV } from "react/jsx-dev-runtime";
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * One colour control: a picker, a hex box with a cross that clears it, and a searchable list of the colours of the theme.
  *
  * @module     local_iconrestyle/components/inspector/ColourField

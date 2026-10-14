@@ -18,10 +18,12 @@
     --irs-text: var(--bs-body-color, #212529);
     --irs-surface: var(--bs-body-bg, #fff);
     --irs-border: var(--bs-border-color, var(--border-color, #dee2e6));
+    --irs-border-strong: color-mix(in srgb, var(--irs-text) 42%, var(--irs-surface));
     --irs-muted: var(--bs-secondary-color, #6c757d);
     --irs-accent: var(--bs-primary, var(--primary, #0f6cbf));
     --irs-accent-soft: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
     --irs-accent-text: var(--irs-accent);
+    --irs-accent-ring: var(--irs-accent-soft);
     --irs-on-accent: #fff;
     --irs-danger: var(--bs-danger, var(--danger, #ca3120));
     --irs-danger-soft: var(--bs-danger-bg-subtle, #f8d7da);
@@ -42,6 +44,7 @@
     .irs {
         --irs-accent-soft: color-mix(in srgb, var(--irs-accent) 14%, var(--irs-surface));
         --irs-accent-text: color-mix(in srgb, var(--irs-accent) 80%, var(--irs-text));
+        --irs-accent-ring: color-mix(in srgb, var(--irs-accent) 25%, transparent);
         --irs-danger-soft: color-mix(in srgb, var(--irs-danger) 14%, var(--irs-surface));
         --irs-danger-text: color-mix(in srgb, var(--irs-danger) 80%, var(--irs-text));
         --irs-success-soft: color-mix(in srgb, var(--irs-success) 16%, var(--irs-surface));
@@ -56,6 +59,8 @@
 .irs,
 .irs-import,
 .irs-places-form {
+    /* Moodle 4.0 and 4.1 do not know accent-color. */
+    /* stylelint-disable-next-line property-no-unknown, csstree/validator */
     accent-color: var(--irs-accent);
 }
 
@@ -94,19 +99,20 @@
     grid-template-columns: minmax(0, 1fr) minmax(23rem, 30rem);
 }
 
-@media (max-width: 62rem) {
+.irs.irs-narrow {
+    height: auto;
+}
 
-    .irs {
-        height: auto;
-    }
+.irs.irs-narrow .irs-panel {
+    max-height: none;
+}
 
-    .irs .irs-layout.irs-open {
-        grid-template-columns: minmax(0, 1fr);
-    }
+.irs.irs-narrow .irs-layout.irs-open {
+    grid-template-columns: minmax(0, 1fr);
+}
 
-    .irs .irs-grid {
-        height: 50vh;
-    }
+.irs.irs-narrow .irs-grid {
+    height: 50vh;
 }
 
 .irs .irs-browser {
@@ -245,13 +251,6 @@
     border-radius: var(--irs-radius);
     background: var(--irs-surface);
     box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
-}
-
-@media (max-width: 62rem) {
-
-    .irs .irs-panel {
-        max-height: none;
-    }
 }
 
 .irs .irs-panel-head {
@@ -696,12 +695,35 @@
     transform: none;
 }
 
+.irs .irs-glyph {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.irs .irs-glyph.irs-glyph-lg {
+    font-size: 1.125rem;
+}
+
+.irs .irs-glyph .icon {
+    width: 1em;
+    max-width: none;
+    height: 1em;
+    margin: 0;
+    font-size: inherit;
+}
+
 .irs .irs-pillbtn {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
     padding: 0.375rem 0.875rem;
-    border: 1px solid var(--irs-border);
+    border: 1px solid var(--irs-border-strong);
     border-radius: 999px;
     background: var(--irs-surface);
     color: inherit;
@@ -1206,12 +1228,11 @@
     min-width: 9rem;
 }
 
-.irs .irs-search svg {
+.irs .irs-search .irs-glyph {
     position: absolute;
     top: 50%;
     left: 0.625rem;
-    width: 1rem;
-    height: 1rem;
+    font-size: 1rem;
     color: var(--irs-muted);
     transform: translateY(-50%);
     pointer-events: none;
@@ -1220,8 +1241,14 @@
 .irs .irs-search input {
     height: 2rem;
     padding: 0.125rem 0.75rem 0.125rem 2rem;
+    border: 1px solid var(--irs-border-strong);
     border-radius: 999px;
     font-size: 0.875rem;
+}
+
+.irs .irs-search .form-control:focus {
+    border-color: var(--irs-accent);
+    box-shadow: 0 0 0 0.2rem var(--irs-accent-ring);
 }
 
 .irs .irs-filter.irs-active,
@@ -1235,6 +1262,7 @@
 .irs .irs-filter {
     width: auto;
     height: 2rem;
+    border-color: var(--irs-border-strong);
     padding-top: 0.125rem;
     padding-bottom: 0.125rem;
     border-radius: 999px;
@@ -1424,9 +1452,8 @@
     cursor: pointer;
 }
 
-.irs .irs-back svg:last-child {
-    width: 0.875rem;
-    height: 0.875rem;
+.irs .irs-back .irs-glyph:last-child {
+    font-size: 0.875rem;
 }
 
 .irs .irs-menu-list.irs-menu-left {
@@ -1594,9 +1621,8 @@
     transition: background-color 0.12s ease, border-color 0.12s ease;
 }
 
-.irs .irs-pick svg {
-    width: 0.6875rem;
-    height: 0.6875rem;
+.irs .irs-pick .irs-glyph {
+    font-size: 0.6875rem;
 }
 
 .irs .irs-card.irs-picking .irs-shared {
@@ -2002,18 +2028,19 @@
 }
 
 .irs .irs-count-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 1.25rem;
-    height: 1.25rem;
-    padding: 0 0.3125rem;
-    border-radius: 999px;
+    position: absolute;
+    top: -0.45rem;
+    right: -0.45rem;
+    min-width: 1.15rem;
+    height: 1.15rem;
+    padding: 0 0.3rem;
+    border-radius: 1rem;
     background: var(--irs-accent);
     color: var(--irs-on-accent);
-    font-size: 0.6875rem;
-    font-weight: 700;
-    line-height: 1;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.15rem;
+    text-align: center;
 }
 
 .irs .irs-count-badge[hidden] {
@@ -2034,11 +2061,20 @@
     font-weight: 600;
 }
 
+.irs .irs-filtersbtn {
+    position: relative;
+}
+
 .irs .irs-filtersbtn[aria-expanded=true],
 .irs .irs-filtersbtn.irs-active {
     border-color: var(--irs-accent);
     background: var(--irs-accent-soft);
     color: var(--irs-accent-text);
+}
+
+.irs .irs-filtersbtn[aria-expanded=true],
+.irs .irs-filtersbtn:focus-visible {
+    box-shadow: 0 0 0 0.2rem var(--irs-accent-ring);
 }
 
 .irs .irs-filters-panel {
@@ -2195,4 +2231,77 @@
 
 .irs-location-item small {
     color: var(--irs-muted);
+}
+
+.irs .irs-sk {
+    display: block;
+    background: color-mix(in srgb, var(--irs-text) 10%, var(--irs-surface));
+    animation: irs-sk-breathe 1.4s ease-in-out infinite;
+}
+
+.irs .irs-sk-pill {
+    height: 2rem;
+    border-radius: 999px;
+}
+
+.irs .irs-sk-cell {
+    /* Moodle 4.0 and 4.1 do not know aspect-ratio. */
+    /* stylelint-disable-next-line property-no-unknown, csstree/validator */
+    aspect-ratio: 1;
+    border-radius: var(--irs-radius);
+}
+
+.irs .irs-sk-bar {
+    display: flex;
+    flex: none;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--irs-border);
+}
+
+.irs .irs-sk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+    gap: 0.75rem;
+    padding: 0.75rem;
+    overflow: hidden;
+}
+
+.irs .irs-loading.irs-sk-over {
+    position: absolute;
+    top: 3.25rem;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    padding: 0;
+    background: var(--irs-surface);
+    border-radius: 0 0 var(--irs-radius) var(--irs-radius);
+}
+
+.irs .irs-sk-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+}
+
+@keyframes irs-sk-breathe {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.45;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .irs .irs-sk {
+        animation: none;
+    }
 }

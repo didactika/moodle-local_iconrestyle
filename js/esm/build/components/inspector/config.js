@@ -1,4 +1,7 @@
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * How each slider of the editing panel is named, stepped and where it rests while its property is not set.
  *
  * @module     local_iconrestyle/components/inspector/config

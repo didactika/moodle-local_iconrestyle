@@ -24,16 +24,17 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use local_iconrestyle\service_factory;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * Backs the "where" picker of the designer with a small, bounded search.
  */
-class search_locations extends api {
+class search_locations extends external_api {
     /** @var string[] Kinds of place that can be searched. */
     public const KINDS = ['category', 'course', 'activity'];
 
@@ -46,12 +47,12 @@ class search_locations extends api {
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters([
-            'kind' => new value(PARAM_ALPHA, 'category, course or activity'),
-            'query' => new value(PARAM_TEXT, 'Text to look for in names', VALUE_DEFAULT, ''),
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([
+            'kind' => new external_value(PARAM_ALPHA, 'category, course or activity'),
+            'query' => new external_value(PARAM_TEXT, 'Text to look for in names', VALUE_DEFAULT, ''),
         ]);
     }
 
@@ -67,8 +68,9 @@ class search_locations extends api {
         if (!in_array($params['kind'], self::KINDS, true)) {
             throw new \invalid_parameter_exception('Unknown kind of place.');
         }
-        self::validate_context(\context_system::instance());
-        service_factory::instance()->permissions()->require_manage();
+        $context = \context_system::instance();
+        self::validate_context($context);
+        require_capability('local/iconrestyle:manage', $context);
         $text = trim($params['query']);
         if ($params['kind'] === 'category') {
             return ['places' => self::categories($text)];
@@ -172,14 +174,17 @@ class search_locations extends api {
     /**
      * Returned structure.
      *
-     * @return structure Description.
+     * @return external_single_structure Description.
      */
-    public static function execute_returns(): structure {
-        return new structure([
-            'places' => new listof(new structure([
-                'contextid' => new value(PARAM_INT, 'Context id'),
-                'name' => new value(PARAM_RAW, 'Name'),
-                'detail' => new value(PARAM_RAW, 'Extra text, such as the short name of a course or the course of an activity'),
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure([
+            'places' => new external_multiple_structure(new external_single_structure([
+                'contextid' => new external_value(PARAM_INT, 'Context id'),
+                'name' => new external_value(PARAM_RAW, 'Name'),
+                'detail' => new external_value(
+                    PARAM_RAW,
+                    'Extra text, such as the short name of a course or the course of an activity'
+                ),
             ])),
         ]);
     }

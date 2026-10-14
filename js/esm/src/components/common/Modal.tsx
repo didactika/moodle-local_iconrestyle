@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * A modal dialog with the markup of Bootstrap's, so it follows the theme, with focus kept inside and Escape to close.
  *
  * @module     local_iconrestyle/components/common/Modal

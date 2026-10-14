@@ -2,6 +2,9 @@ var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 import { jsxDEV } from "react/jsx-dev-runtime";
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The icon designer: one grid of every icon that can be customised, a panel to edit the open one and the tools to filter,
  * choose, copy, export and import.
  *
@@ -29,6 +32,7 @@ import { applyStylesheet } from "./engine/stylesheet";
 import { createText } from "./engine/text";
 import { addToast } from "./engine/toast";
 import { usePageColourMode } from "./hooks/usePageColourMode";
+import { useNarrow } from "./hooks/useNarrow";
 import { usePreviewCss } from "./hooks/usePreviewCss";
 import { useSelection } from "./hooks/useSelection";
 import { appearanceOf, needsOwnArtwork, pickLook } from "./lib/draft";
@@ -69,6 +73,7 @@ function Designer(props) {
   const [placesOpen, setPlacesOpen] = useState(false);
   const pageMode = usePageColourMode();
   const root = useRef(null);
+  const narrow = useNarrow(root);
   const waiting = useRef(/* @__PURE__ */ new Set());
   const pendingArtwork = useRef(/* @__PURE__ */ new Set());
   const stateRef = useRef(null);
@@ -412,12 +417,12 @@ function Designer(props) {
     false,
     {
       fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-      lineNumber: 426,
+      lineNumber: 428,
       columnNumber: 35
     },
     this
   ) : null;
-  return /* @__PURE__ */ jsxDEV("div", { className: view.rootClass, "data-region": "designer", ref: root, children: [
+  return /* @__PURE__ */ jsxDEV("div", { className: narrow ? `${view.rootClass} irs-narrow` : view.rootClass, "data-region": "designer", ref: root, children: [
     /* @__PURE__ */ jsxDEV("div", { className: icon ? "irs-layout irs-open" : "irs-layout", "data-region": "layout", children: [
       /* @__PURE__ */ jsxDEV("section", { className: "irs-browser", "aria-label": text("iconlist"), children: [
         /* @__PURE__ */ jsxDEV(
@@ -451,7 +456,7 @@ function Designer(props) {
               false,
               {
                 fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-                lineNumber: 438,
+                lineNumber: 440,
                 columnNumber: 30
               },
               this
@@ -461,7 +466,7 @@ function Designer(props) {
           false,
           {
             fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-            lineNumber: 433,
+            lineNumber: 435,
             columnNumber: 17
           },
           this
@@ -487,29 +492,44 @@ function Designer(props) {
           false,
           {
             fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-            lineNumber: 440,
+            lineNumber: 442,
             columnNumber: 17
           },
           this
         ),
         /* @__PURE__ */ jsxDEV(SelectionBar, { selection, modeLabels: view.selectionModes, text }, void 0, false, {
           fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-          lineNumber: 445,
+          lineNumber: 447,
           columnNumber: 17
         }, this),
         /* @__PURE__ */ jsxDEV("p", { className: "irs-empty", "data-region": "empty", hidden: !loaded || filtered.length > 0, children: text("noicons") }, void 0, false, {
           fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-          lineNumber: 446,
+          lineNumber: 448,
           columnNumber: 17
         }, this),
-        /* @__PURE__ */ jsxDEV("p", { className: "irs-loading", "data-region": "loading", hidden: loaded, children: text("loading") }, void 0, false, {
+        /* @__PURE__ */ jsxDEV("div", { className: "irs-loading irs-sk-over", "data-region": "loading", role: "status", hidden: loaded, children: [
+          /* @__PURE__ */ jsxDEV("div", { className: "irs-sk-grid", "aria-hidden": "true", children: Array.from({ length: 120 }, (_, index) => /* @__PURE__ */ jsxDEV("span", { className: "irs-sk irs-sk-cell" }, index, false, {
+            fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
+            lineNumber: 451,
+            columnNumber: 66
+          }, this)) }, void 0, false, {
+            fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
+            lineNumber: 450,
+            columnNumber: 21
+          }, this),
+          /* @__PURE__ */ jsxDEV("span", { className: "irs-sk-label", children: text("loading") }, void 0, false, {
+            fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
+            lineNumber: 453,
+            columnNumber: 21
+          }, this)
+        ] }, void 0, true, {
           fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-          lineNumber: 447,
+          lineNumber: 449,
           columnNumber: 17
         }, this)
       ] }, void 0, true, {
         fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-        lineNumber: 432,
+        lineNumber: 434,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV(
@@ -540,14 +560,14 @@ function Designer(props) {
         false,
         {
           fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-          lineNumber: 449,
+          lineNumber: 456,
           columnNumber: 13
         },
         this
       )
     ] }, void 0, true, {
       fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-      lineNumber: 431,
+      lineNumber: 433,
       columnNumber: 9
     }, this),
     placesOpen && /* @__PURE__ */ jsxDEV(
@@ -569,7 +589,7 @@ function Designer(props) {
       false,
       {
         fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-        lineNumber: 457,
+        lineNumber: 464,
         columnNumber: 24
       },
       this
@@ -589,14 +609,14 @@ function Designer(props) {
       false,
       {
         fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-        lineNumber: 464,
+        lineNumber: 471,
         columnNumber: 20
       },
       this
     )
   ] }, void 0, true, {
     fileName: "public/local/iconrestyle/js/esm/src/Designer.tsx",
-    lineNumber: 430,
+    lineNumber: 432,
     columnNumber: 12
   }, this);
 }

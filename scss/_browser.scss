@@ -40,8 +40,14 @@
         }
     }
 
-    @media (max-width: 62rem) {
+    // The designer is narrow when the space it has is, which is less than the window when a drawer of Moodle is open; a script puts
+    // the class on it, because the queries of the window do not know about the drawers.
+    &.irs-narrow {
         height: auto;
+
+        .irs-panel {
+            max-height: none;
+        }
 
         .irs-layout {
             &.irs-open {

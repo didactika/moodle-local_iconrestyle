@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * Reviews a package before it changes anything: what is in it, how to import it, which icons to take and what that would do.
  *
  * @module     local_iconrestyle/components/ImportModal

@@ -1,7 +1,7 @@
-// This file is part of Moodle - https://moodle.org/
-// Moodle is free software under the GNU General Public License, version 3 or later.
-
 /**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The icon designer: one grid of every icon that can be customised, a panel to edit the open one and the tools to filter,
  * choose, copy, export and import.
  *
@@ -29,6 +29,7 @@ import {applyStylesheet} from './engine/stylesheet';
 import {createText} from './engine/text';
 import {addToast} from './engine/toast';
 import {usePageColourMode} from './hooks/usePageColourMode';
+import {useNarrow} from './hooks/useNarrow';
 import {usePreviewCss} from './hooks/usePreviewCss';
 import {useSelection, type SelectionMode} from './hooks/useSelection';
 import {appearanceOf, needsOwnArtwork, pickLook} from './lib/draft';
@@ -77,6 +78,7 @@ export default function Designer(props: DesignerProps) {
     const [placesOpen, setPlacesOpen] = useState(false);
     const pageMode = usePageColourMode();
     const root = useRef<HTMLDivElement>(null);
+    const narrow = useNarrow(root);
     const waiting = useRef(new Set<string>());
     const pendingArtwork = useRef(new Set<string>());
 
@@ -427,7 +429,7 @@ export default function Designer(props: DesignerProps) {
         surface={surface} modes={modes} note={view.note} foreground={draft.fg} text={text} onView={setPreviewView}
         onSurface={changeSurface} /> : null;
 
-    return <div className={view.rootClass} data-region="designer" ref={root}>
+    return <div className={narrow ? `${view.rootClass} irs-narrow` : view.rootClass} data-region="designer" ref={root}>
         <div className={icon ? 'irs-layout irs-open' : 'irs-layout'} data-region="layout">
             <section className="irs-browser" aria-label={text('iconlist')}>
                 <Toolbar adminurl={props.adminurl} query={filters.query} count={filtered.length} status={status}
@@ -444,7 +446,12 @@ export default function Designer(props: DesignerProps) {
                     onMove={select} onFirstRender={() => mark('irs:rendered')} />
                 <SelectionBar selection={selection} modeLabels={view.selectionModes} text={text} />
                 <p className="irs-empty" data-region="empty" hidden={!loaded || filtered.length > 0}>{text('noicons')}</p>
-                <p className="irs-loading" data-region="loading" hidden={loaded}>{text('loading')}</p>
+                <div className="irs-loading irs-sk-over" data-region="loading" role="status" hidden={loaded}>
+                    <div className="irs-sk-grid" aria-hidden="true">
+                        {Array.from({length: 120}, (_, index) => <span key={index} className="irs-sk irs-sk-cell" />)}
+                    </div>
+                    <span className="irs-sk-label">{text('loading')}</span>
+                </div>
             </section>
             <Inspector icon={icon} draft={draft} customised={customised} removable={view.removable} variants={view.variants}
                 otherModes={view.others.length} ranges={ranges} specials={specials} copying={selection.mode === 'copy'}

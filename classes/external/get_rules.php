@@ -24,23 +24,23 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
 use local_iconrestyle\service_factory;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * Returns every rule of the site, each saying where it applies.
  */
-class get_rules extends api {
+class get_rules extends external_api {
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters([]);
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([]);
     }
 
     /**
@@ -50,9 +50,10 @@ class get_rules extends api {
      */
     public static function execute(): array {
         self::validate_parameters(self::execute_parameters(), []);
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage();
+        require_capability('local/iconrestyle:manage', $context);
 
         return ['rules' => array_map([rule_payload::class, 'export'], $factory->rules()->find_all())];
     }
@@ -60,9 +61,9 @@ class get_rules extends api {
     /**
      * Returned structure.
      *
-     * @return structure Description.
+     * @return external_single_structure Description.
      */
-    public static function execute_returns(): structure {
-        return new structure(['rules' => new listof(rule_payload::output())]);
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure(['rules' => new external_multiple_structure(rule_payload::output())]);
     }
 }

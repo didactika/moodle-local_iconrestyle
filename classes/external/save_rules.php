@@ -24,13 +24,14 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use local_iconrestyle\hook\head_callbacks;
 use local_iconrestyle\rule\rule_conflict_exception;
 use local_iconrestyle\service_factory;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
 
 /**
  * The designer sends everything that changed since its last save in one request. All of it is stored in one transaction, so
@@ -38,19 +39,24 @@ require_once(__DIR__ . '/compat.php');
  * its rules changed. The answer carries the address of the stylesheet the site has afterwards, so the designer needs no
  * second request to show what it just saved.
  */
-class save_rules extends api {
+class save_rules extends external_api {
     /** @var int Most changes one request may carry. */
     public const MAX_CHANGES = 100;
 
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters([
-            'rules' => new listof(rule_payload::input(), 'Rules to create or change', VALUE_DEFAULT, []),
-            'deleteids' => new listof(new value(PARAM_INT, 'Rule id'), 'Rules to delete', VALUE_DEFAULT, []),
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([
+            'rules' => new external_multiple_structure(rule_payload::input(), 'Rules to create or change', VALUE_DEFAULT, []),
+            'deleteids' => new external_multiple_structure(
+                new external_value(PARAM_INT, 'Rule id'),
+                'Rules to delete',
+                VALUE_DEFAULT,
+                []
+            ),
         ]);
     }
 
@@ -65,9 +71,10 @@ class save_rules extends api {
     public static function execute(array $rules = [], array $deleteids = []): array {
         global $USER;
         $params = self::validate_parameters(self::execute_parameters(), ['rules' => $rules, 'deleteids' => $deleteids]);
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         $factory = service_factory::instance();
-        $factory->permissions()->require_manage();
+        require_capability('local/iconrestyle:manage', $context);
 
         if (count($params['rules']) + count($params['deleteids']) > self::MAX_CHANGES) {
             throw new \invalid_parameter_exception('Too many changes in one request.');
@@ -98,13 +105,16 @@ class save_rules extends api {
     /**
      * Returned structure.
      *
-     * @return structure Description.
+     * @return external_single_structure Description.
      */
-    public static function execute_returns(): structure {
-        return new structure([
-            'rules' => new listof(rule_payload::output(), 'Stored rules, in the order they were sent'),
-            'deleted' => new listof(new value(PARAM_INT, 'Rule id'), 'Ids of the rules that were deleted'),
-            'stylesheeturl' => new value(PARAM_RAW, 'Address of the stylesheet of the site, empty when no rule applies'),
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure([
+            'rules' => new external_multiple_structure(rule_payload::output(), 'Stored rules, in the order they were sent'),
+            'deleted' => new external_multiple_structure(
+                new external_value(PARAM_INT, 'Rule id'),
+                'Ids of the rules that were deleted'
+            ),
+            'stylesheeturl' => new external_value(PARAM_RAW, 'Address of the stylesheet of the site, empty when no rule applies'),
         ]);
     }
 }

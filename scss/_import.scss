@@ -42,12 +42,12 @@
         flex: 1 1 12rem;
         margin: 0;
 
-        input {
+        & input {
             position: absolute;
             opacity: 0;
         }
 
-        span {
+        & span {
             display: block;
             padding: 0.5rem 0.875rem;
             border: 1px solid var(--irs-border);
@@ -56,7 +56,7 @@
             cursor: pointer;
         }
 
-        input {
+        & input {
             &:checked {
                 + span {
                     border-color: var(--irs-accent);
@@ -93,7 +93,7 @@
     gap: 0.25rem 0.5rem;
     margin-bottom: 0.5rem;
 
-    .form-control {
+    & .form-control {
         flex: 1 1 10rem;
         min-width: 8rem;
     }
@@ -192,7 +192,7 @@
     padding: 0;
     list-style: none;
 
-    li {
+    & li {
         padding: 0.25rem 0.75rem;
         border-radius: 999px;
         background: var(--irs-neutral-soft);

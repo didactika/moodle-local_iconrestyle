@@ -1,4 +1,7 @@
 import*as S from"../services/api";import{emptyDraft as H,fromRule as R,isEmpty as v,ruleKey as m,sameDraft as U,toInput as G,traitsOf as J,whereOf as B}from"../lib/draft";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * What is saved, what is waiting to be saved and how to undo and redo.
  *
  * Every icon can have several variants, one for each place where it applies. A variant is identified by its rule key,

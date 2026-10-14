@@ -1,4 +1,7 @@
 import{useState as d}from"react";import P from"./inspector/StyleTab";import x from"./places/PlacesTab";import{IconClose as I,IconCopy as R,IconTrash as S}from"./common/Icons";import{jsx as a,jsxs as i}from"react/jsx-runtime";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The editing panel of the open icon: its title, the preview, the tabs, what is edited and the button that removes the variant.
  *
  * @module     local_iconrestyle/components/Inspector

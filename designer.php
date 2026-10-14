@@ -35,5 +35,6 @@ $PAGE->add_body_class('local-iconrestyle-designer');
 service_factory::instance()->permissions()->require_manage();
 
 echo $OUTPUT->header();
-echo $OUTPUT->render(new designer_page());
+// The element that the component fills in is empty, so the placeholder goes right before its closing tag.
+echo preg_replace('~</div>\s*$~', designer_page::placeholder() . '</div>', $OUTPUT->render(new designer_page()), 1);
 echo $OUTPUT->footer();

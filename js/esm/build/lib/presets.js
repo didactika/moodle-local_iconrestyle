@@ -1,4 +1,7 @@
 import{DESIGN_PROPS as r}from"./draft";/**
+ * This file is part of Moodle - https://moodle.org/
+ * Moodle is free software under the GNU General Public License, version 3 or later.
+ *
  * The quick looks, the groups of properties that can be linked and what it takes to clear a design.
  *
  * @module     local_iconrestyle/lib/presets
