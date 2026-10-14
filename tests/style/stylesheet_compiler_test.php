@@ -82,7 +82,8 @@ final class stylesheet_compiler_test extends \basic_testcase {
     public function test_recolour(): void {
         $css = $this->compiler()->compile([$this->rule('core:a/setting', ['fg' => '#1b6ec2'])]);
         $this->assertSame(
-            "body .icon.fa-gear:not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin):not(.fa-duotone):not(.fa-sharp) {\n" .
+            "body [class].fa-gear:not(.fa-regular):not(.fa-brands):not(.fa-light):not(.fa-thin):not(.fa-duotone)" .
+            ":not(.fa-sharp) {\n" .
             "  color: #1b6ec2;\n}\n",
             $css
         );
@@ -96,7 +97,7 @@ final class stylesheet_compiler_test extends \basic_testcase {
             'fg' => 'token:primary', 'bg' => '#fff', 'shape' => 'circle', 'padding' => 25, 'opacity' => 80,
         ])]);
         $this->assertSame(
-            "body .icon.fa-regular.fa-bookmark {\n" .
+            "body [class].fa-regular.fa-bookmark {\n" .
             "  background-color: #ffffff;\n" .
             "  border-radius: 50%;\n" .
             "  box-sizing: content-box;\n" .
@@ -135,7 +136,7 @@ final class stylesheet_compiler_test extends \basic_testcase {
      */
     public function test_image_container(): void {
         $css = $this->compiler()->compile([$this->rule('core:i/groupn', ['painter' => 'none', 'bg' => '#eee'])]);
-        $this->assertStringContainsString('body img.icon[src*="/image.php/"][src*="/core/"][src$="/i/groupn"]', $css);
+        $this->assertStringContainsString('body img[src*="/image.php/"][src*="/core/"][src$="/i/groupn"]', $css);
         $this->assertStringContainsString("background-color: #eeeeee;\n", $css);
     }
 

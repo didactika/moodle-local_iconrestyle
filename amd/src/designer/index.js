@@ -104,7 +104,7 @@ export const init = () => {
             return;
         }
         const draft = state.draftOf(active);
-        const customised = state.isSaved(active) || state.isPending(active);
+        const customised = state.isSaved(active) || state.isPending(active) || state.isInherited(active);
         inspector.render(icon, draft, {
             customised,
             removable: customised || active !== state.everywhereKey(selected, modeNow()),

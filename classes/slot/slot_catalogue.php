@@ -30,8 +30,8 @@ namespace local_iconrestyle\slot;
  * The list is built from the running Moodle, never typed in, and is cached per installed code version.
  */
 class slot_catalogue {
-    /** @var string[] Image extensions that count as icons. */
-    private const EXTENSIONS = ['svg', 'png'];
+    /** @var string[] Image extensions that count as icons: every kind of image that Moodle serves from a pix folder. */
+    private const EXTENSIONS = ['svg', 'png', 'gif', 'jpg', 'jpeg', 'webp', 'ico'];
 
     /** @var string[] Font Awesome families that do not need the generic prefix class. */
     private const FAMILIES = ['fa', 'fa-solid', 'fa-regular', 'fa-brands', 'fa-light', 'fa-thin', 'fa-duotone', 'fa-sharp'];
@@ -231,22 +231,27 @@ class slot_catalogue {
     }
 
     /**
-     * Image icons of core and of every plugin that ships any.
+     * Image icons of core, of its subsystems, of every plugin and of the themes that bring images for other components.
+     *
+     * Every image file of a pix folder is an icon that a page can show, at any depth: the names keep their folders, as
+     * Moodle writes them (a/setting, f/pdf, icons/book).
      *
      * @return string[][] Names grouped by component.
      */
     private function image_icons(): array {
         global $CFG;
         $root = is_dir($CFG->dirroot . '/pix') ? $CFG->dirroot : $CFG->dirroot . '/public';
-        $found = ['core' => []];
-        foreach (glob($root . '/pix/*/*.{' . implode(',', self::EXTENSIONS) . '}', GLOB_BRACE) ?: [] as $file) {
-            $found['core'][] = basename(dirname($file)) . '/' . pathinfo($file, PATHINFO_FILENAME);
-        }
-        foreach (\core_component::get_plugin_types() as $type => $unused) {
-            foreach (\core_component::get_plugin_list($type) as $name => $directory) {
-                $files = glob($directory . '/pix/*.{' . implode(',', self::EXTENSIONS) . '}', GLOB_BRACE) ?: [];
-                foreach ($files as $file) {
-                    $found[$type . '_' . $name][] = pathinfo($file, PATHINFO_FILENAME);
+        $found = ['core' => $this->images_in($root . '/pix')];
+        foreach (\core_component::get_component_list() as $type => $components) {
+            foreach ($components as $component => $directory) {
+                $found[$component] = array_merge($found[$component] ?? [], $this->images_in($directory . '/pix'));
+                if ($type === 'theme') {
+                    // A theme can bring images for core and for plugins in these folders; they are icons that its pages show.
+                    $found['core'] = array_merge($found['core'], $this->images_in($directory . '/pix_core'));
+                    foreach (glob($directory . '/pix_plugins/*/*', GLOB_ONLYDIR) ?: [] as $folder) {
+                        $owner = basename(dirname($folder)) . '_' . basename($folder);
+                        $found[$owner] = array_merge($found[$owner] ?? [], $this->images_in($folder));
+                    }
                 }
             }
         }
@@ -255,5 +260,27 @@ class slot_catalogue {
             sort($found[$component]);
         }
         return $found;
+    }
+
+    /**
+     * The image files of a folder, at any depth.
+     *
+     * @param string $directory Folder to look in.
+     * @return string[] Path of each image relative to the folder, without its extension.
+     */
+    private function images_in(string $directory): array {
+        if (!is_dir($directory)) {
+            return [];
+        }
+        $names = [];
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS));
+        foreach ($files as $file) {
+            if (!$file->isFile() || !in_array(strtolower($file->getExtension()), self::EXTENSIONS, true)) {
+                continue;
+            }
+            $relative = substr($file->getPathname(), strlen($directory) + 1);
+            $names[] = str_replace('\\', '/', substr($relative, 0, -strlen($file->getExtension()) - 1));
+        }
+        return $names;
     }
 }

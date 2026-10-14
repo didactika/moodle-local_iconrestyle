@@ -24,24 +24,27 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_value;
 use local_iconrestyle\hook\head_callbacks;
 use local_iconrestyle\service_factory;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
+// The classes below use those of core_external, which Moodle 4.0 and 4.1 only have under their old names.
+// phpcs:ignore moodle.Files.MoodleInternal.MoodleInternalGlobalState
+\local_iconrestyle\compat\external_aliases::register();
 
 /**
  * The designer asks for it after saving, so every icon on its own page shows what was just saved without a reload.
  */
-class get_stylesheet_url extends api {
+class get_stylesheet_url extends external_api {
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters([]);
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([]);
     }
 
     /**
@@ -51,8 +54,9 @@ class get_stylesheet_url extends api {
      */
     public static function execute(): string {
         self::validate_parameters(self::execute_parameters(), []);
-        self::validate_context(\context_system::instance());
-        service_factory::instance()->permissions()->require_manage();
+        $context = \context_system::instance();
+        self::validate_context($context);
+        require_capability('local/iconrestyle:manage', $context);
         $url = head_callbacks::stylesheet_url(\context_system::instance());
         return $url === null ? '' : $url->out(false);
     }
@@ -60,9 +64,9 @@ class get_stylesheet_url extends api {
     /**
      * Returned structure.
      *
-     * @return value Description.
+     * @return external_value Description.
      */
-    public static function execute_returns(): value {
-        return new value(PARAM_RAW, 'Address of the stylesheet, empty when no rule applies');
+    public static function execute_returns(): external_value {
+        return new external_value(PARAM_RAW, 'Address of the stylesheet, empty when no rule applies');
     }
 }

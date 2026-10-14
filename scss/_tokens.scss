@@ -1,0 +1,67 @@
+// This file is part of Moodle - https://moodle.org/
+// Moodle is free software under the GNU General Public License, version 3 or later.
+
+// The colours of the plugin, which all come from the theme.
+// @copyright 2026 Didactika.org
+// @author Hector Arrechea <hectorlazaroarrechea@gmail.com>
+// @license https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+/*
+ * Moodle 4.0 to 4.5 is Bootstrap 4, which names its colours --primary, --success and so on, and a theme such as vle adds its own
+ * (--primary-light); Moodle 5 is Bootstrap 5.3, which names them --bs-primary and so on, and changes them with the colour mode.
+ * Every colour of the plugin is one of the tokens below, so a piece never mixes a colour of the theme with a fixed one, and the
+ * last value of each chain is the colour Boost has when the theme gives none.
+ *
+ * The soft fills and the text on them are mixed from the colour itself where the browser can, so the border, the text and the fill
+ * of a piece are one hue and follow the theme and the colour mode. The modals are not inside the designer, so the tokens are on
+ * the root as well.
+ */
+:root,
+.irs {
+    --irs-text: var(--bs-body-color, #212529);
+    --irs-surface: var(--bs-body-bg, #fff);
+    --irs-border: var(--bs-border-color, var(--border-color, #dee2e6));
+    --irs-border-strong: color-mix(in srgb, var(--irs-text) 42%, var(--irs-surface));
+    --irs-muted: var(--bs-secondary-color, #6c757d);
+    --irs-accent: var(--bs-primary, var(--primary, #0f6cbf));
+    --irs-accent-soft: var(--bs-primary-bg-subtle, var(--primary-light, #e7f1fa));
+    --irs-accent-text: var(--irs-accent);
+    --irs-accent-ring: var(--irs-accent-soft);
+    --irs-on-accent: #fff;
+    --irs-danger: var(--bs-danger, var(--danger, #ca3120));
+    --irs-danger-soft: var(--bs-danger-bg-subtle, #f8d7da);
+    --irs-danger-text: var(--irs-danger);
+    --irs-success: var(--bs-success, var(--success, #357a32));
+    --irs-success-soft: var(--bs-success-bg-subtle, #d9ead8);
+    --irs-success-text: var(--bs-success-text-emphasis, var(--irs-success));
+    --irs-warning: var(--bs-warning, var(--warning, #f0ad4e));
+    --irs-warning-soft: var(--bs-warning-bg-subtle, #fcefd8);
+    --irs-warning-text: var(--bs-warning-text-emphasis, #664d03);
+    --irs-neutral-soft: var(--bs-secondary-bg, #e9ecef);
+    --irs-neutral-faint: var(--bs-tertiary-bg, #f8f9fa);
+}
+
+@supports (color: color-mix(in srgb, red 10%, blue)) {
+    :root,
+    .irs {
+        --irs-accent-soft: color-mix(in srgb, var(--irs-accent) 14%, var(--irs-surface));
+        --irs-accent-text: color-mix(in srgb, var(--irs-accent) 80%, var(--irs-text));
+        --irs-accent-ring: color-mix(in srgb, var(--irs-accent) 25%, transparent);
+        --irs-danger-soft: color-mix(in srgb, var(--irs-danger) 14%, var(--irs-surface));
+        --irs-danger-text: color-mix(in srgb, var(--irs-danger) 80%, var(--irs-text));
+        --irs-success-soft: color-mix(in srgb, var(--irs-success) 16%, var(--irs-surface));
+        --irs-success-text: color-mix(in srgb, var(--irs-success) 70%, var(--irs-text));
+        --irs-warning-soft: color-mix(in srgb, var(--irs-warning) 22%, var(--irs-surface));
+        --irs-warning-text: color-mix(in srgb, var(--irs-warning) 45%, var(--irs-text));
+        --irs-neutral-soft: color-mix(in srgb, var(--irs-text) 8%, var(--irs-surface));
+        --irs-neutral-faint: color-mix(in srgb, var(--irs-text) 4%, var(--irs-surface));
+    }
+}
+
+.irs,
+.irs-import,
+.irs-places-form {
+    /* Moodle 4.0 and 4.1 do not know accent-color. */
+    /* stylelint-disable-next-line property-no-unknown, csstree/validator */
+    accent-color: var(--irs-accent);
+}

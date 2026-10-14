@@ -30,7 +30,7 @@
 
         &:hover {
             background: var(--irs-accent-soft);
-            color: var(--irs-accent);
+            color: var(--irs-accent-text);
         }
     }
 
@@ -39,12 +39,11 @@
         flex: 0 1 17rem;
         min-width: 9rem;
 
-        & svg {
+        & .irs-glyph {
             position: absolute;
             top: 50%;
             left: 0.625rem;
-            width: 1rem;
-            height: 1rem;
+            font-size: 1rem;
             color: var(--irs-muted);
             transform: translateY(-50%);
             pointer-events: none;
@@ -53,30 +52,37 @@
         & input {
             height: 2rem;
             padding: 0.125rem 0.75rem 0.125rem 2rem;
+            border: 1px solid var(--irs-border-strong);
             border-radius: 999px;
             font-size: 0.875rem;
         }
+    }
+
+    .irs-search .form-control:focus {
+        border-color: var(--irs-accent);
+        box-shadow: 0 0 0 0.2rem var(--irs-accent-ring);
     }
 
     .irs-filter.irs-active,
     .irs-search .form-control.irs-active {
         border-color: var(--irs-accent);
         background-color: var(--irs-accent-soft);
-        color: var(--irs-accent);
+        color: var(--irs-accent-text);
         font-weight: 600;
     }
 
     .irs-filter {
         width: auto;
         height: 2rem;
+        border-color: var(--irs-border-strong);
         padding-top: 0.125rem;
         padding-bottom: 0.125rem;
         border-radius: 999px;
         font-size: 0.8125rem;
 
-        option {
+        & option {
             background-color: var(--irs-surface);
-            color: var(--bs-body-color, inherit);
+            color: var(--irs-text);
             font-weight: 400;
         }
     }
@@ -103,7 +109,7 @@
         &[data-state="saved"] {
             .irs-status-saved {
                 display: inline-flex;
-                color: var(--bs-success, #198754);
+                color: var(--irs-success);
             }
         }
 
@@ -116,7 +122,7 @@
         &[data-state="error"] {
             .irs-status-error {
                 display: inline-flex;
-                color: var(--bs-danger, #b02a37);
+                color: var(--irs-danger);
             }
         }
     }
@@ -159,7 +165,7 @@
         &:hover {
             &:not(:disabled) {
                 background: var(--irs-accent-soft);
-                color: var(--irs-accent);
+                color: var(--irs-accent-text);
             }
         }
 
@@ -201,7 +207,7 @@
         & button:hover:not(:disabled),
         & a:hover {
             background: var(--irs-accent-soft);
-            color: var(--irs-accent);
+            color: var(--irs-accent-text);
         }
 
         & button {
@@ -220,7 +226,7 @@
             font-size: 0.6875rem;
         }
 
-        hr {
+        & hr {
             margin: 0.25rem 0;
         }
     }
@@ -271,11 +277,8 @@
         background: transparent;
         cursor: pointer;
 
-        & svg {
-            &:last-child {
-                width: 0.875rem;
-                height: 0.875rem;
-            }
+        & .irs-glyph:last-child {
+            font-size: 0.875rem;
         }
     }
 
@@ -285,12 +288,12 @@
             left: 0;
         }
 
-        em {
+        & em {
             margin-left: auto;
             padding: 0 0.5rem;
             border-radius: 999px;
             background: var(--irs-accent-soft);
-            color: var(--irs-accent);
+            color: var(--irs-accent-text);
             font-size: 0.6875rem;
             font-style: normal;
         }
@@ -313,7 +316,7 @@
         &[aria-pressed="true"] {
             border-color: var(--irs-accent);
             background: var(--irs-accent-soft);
-            color: var(--irs-accent);
+            color: var(--irs-accent-text);
             font-weight: 600;
         }
     }
@@ -334,7 +337,7 @@
         &:hover {
             border-color: var(--irs-accent);
             background: var(--irs-accent-soft);
-            color: var(--irs-accent);
+            color: var(--irs-accent-text);
         }
     }
 }

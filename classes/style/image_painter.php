@@ -66,7 +66,9 @@ final class image_painter implements painter {
             return icon_in_box::blocks($drawing);
         }
         if ($signature->kind() === glyph_signature::KIND_FONT) {
-            return ['::before' => ['content' => '""', 'display' => 'block', 'width' => '100%', 'height' => '1em'] + $drawing];
+            return ['::before' => [
+                'content' => '""', 'display' => 'inline-block', 'width' => '1em', 'height' => '1em', 'vertical-align' => '-0.125em',
+            ] + $drawing];
         }
         return ['' => $drawing + ['object-fit' => 'none', 'object-position' => '-9999px 0']];
     }

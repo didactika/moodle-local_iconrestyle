@@ -27,6 +27,7 @@
  */
 import selectors from 'local_iconrestyle/filters/selectors';
 import {bindFilterListeners} from 'local_iconrestyle/filters/listeners';
+import {follow} from 'local_iconrestyle/lib/follow';
 import {showComponents, showPurposes} from 'local_iconrestyle/filters/templates';
 
 const SHOWN = 80;
@@ -96,21 +97,34 @@ export const createFilters = (root, options) => {
         });
     };
 
+    let stopFollowing = () => null;
+
     const close = () => {
         find(selectors.panel).hidden = true;
         find(selectors.toggle).setAttribute('aria-expanded', 'false');
+        stopFollowing();
     };
 
-    const open = () => {
+    const place = () => {
         const panel = find(selectors.panel);
-        const button = find(selectors.toggle);
-        const rect = button.getBoundingClientRect();
+        const rect = find(selectors.toggle).getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) {
+            close();
+            return;
+        }
         const left = Math.max(8, Math.min(rect.left, window.innerWidth - Math.min(24 * 16, window.innerWidth - 16) - 8));
         panel.style.top = `${rect.bottom + 6}px`;
         panel.style.left = `${left}px`;
         panel.style.maxHeight = `${Math.max(240, window.innerHeight - rect.bottom - 24)}px`;
+    };
+
+    const open = () => {
+        const panel = find(selectors.panel);
+        place();
         panel.hidden = false;
-        button.setAttribute('aria-expanded', 'true');
+        find(selectors.toggle).setAttribute('aria-expanded', 'true');
+        stopFollowing();
+        stopFollowing = follow(() => !panel.hidden, place, panel);
     };
 
     const clearAll = () => {

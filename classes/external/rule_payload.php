@@ -24,6 +24,9 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use local_iconrestyle\asset\asset_urls;
 use local_iconrestyle\rule\design;
 use local_iconrestyle\rule\rule;
@@ -31,9 +34,9 @@ use local_iconrestyle\rule\rule_conflict_exception;
 use local_iconrestyle\service_factory;
 use local_iconrestyle\slot\slot_key;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
+// The classes below use those of core_external, which Moodle 4.0 and 4.1 only have under their old names.
+// phpcs:ignore moodle.Files.MoodleInternal.MoodleInternalGlobalState
+\local_iconrestyle\compat\external_aliases::register();
 
 /**
  * One place that describes and builds the rule structure, so every function agrees on it.
@@ -42,49 +45,65 @@ class rule_payload {
     /**
      * Fields a client may send to create or change a rule.
      *
-     * @return structure Description of the editable fields.
+     * @return external_single_structure Description of the editable fields.
      */
-    public static function input(): structure {
-        return new structure([
-            'slotkey' => new value(PARAM_RAW, 'Slot key such as core:a/setting'),
-            'contextid' => new value(PARAM_INT, 'Where the rule applies: the site, a category, a course or an activity'),
-            'pages' => new listof(new value(PARAM_ALPHA, 'Kind of page'), 'Pages the rule is limited to', VALUE_DEFAULT, []),
-            'regions' => new listof(new value(PARAM_ALPHA, 'Region'), 'Regions the rule is limited to', VALUE_DEFAULT, []),
-            'mode' => new value(PARAM_ALPHA, 'Colour mode: all, light or dark', VALUE_DEFAULT, 'all'),
-            'painter' => new value(PARAM_ALPHA, 'color, mask, image or none', VALUE_DEFAULT, 'color'),
-            'assetid' => new value(PARAM_INT, 'Artwork asset, zero for none', VALUE_DEFAULT, 0),
-            'fg' => new value(PARAM_RAW, 'Foreground colour or token, empty for none', VALUE_DEFAULT, ''),
-            'bg' => new value(PARAM_RAW, 'Background colour or token, empty for none', VALUE_DEFAULT, ''),
-            'design' => new value(PARAM_RAW, 'Design properties as a JSON object, empty for none', VALUE_DEFAULT, ''),
-            'enabled' => new value(PARAM_BOOL, 'Whether the rule is applied', VALUE_DEFAULT, true),
-            'rev' => new value(PARAM_INT, 'Revision the editor read, zero for a new rule', VALUE_DEFAULT, 0),
+    public static function input(): external_single_structure {
+        return new external_single_structure([
+            'slotkey' => new external_value(PARAM_RAW, 'Slot key such as core:a/setting'),
+            'contextid' => new external_value(PARAM_INT, 'Where the rule applies: the site, a category, a course or an activity'),
+            'pages' => new external_multiple_structure(
+                new external_value(PARAM_ALPHA, 'Kind of page'),
+                'Pages the rule is limited to',
+                VALUE_DEFAULT,
+                []
+            ),
+            'regions' => new external_multiple_structure(
+                new external_value(PARAM_ALPHA, 'Region'),
+                'Regions the rule is limited to',
+                VALUE_DEFAULT,
+                []
+            ),
+            'mode' => new external_value(PARAM_ALPHA, 'Colour mode: all, light or dark', VALUE_DEFAULT, 'all'),
+            'painter' => new external_value(PARAM_ALPHA, 'color, mask, image or none', VALUE_DEFAULT, 'color'),
+            'assetid' => new external_value(PARAM_INT, 'Artwork asset, zero for none', VALUE_DEFAULT, 0),
+            'fg' => new external_value(PARAM_RAW, 'Foreground colour or token, empty for none', VALUE_DEFAULT, ''),
+            'bg' => new external_value(PARAM_RAW, 'Background colour or token, empty for none', VALUE_DEFAULT, ''),
+            'design' => new external_value(PARAM_RAW, 'Design properties as a JSON object, empty for none', VALUE_DEFAULT, ''),
+            'enabled' => new external_value(PARAM_BOOL, 'Whether the rule is applied', VALUE_DEFAULT, true),
+            'rev' => new external_value(PARAM_INT, 'Revision the editor read, zero for a new rule', VALUE_DEFAULT, 0),
         ]);
     }
 
     /**
      * Fields returned for a rule.
      *
-     * @return structure Description of the returned fields.
+     * @return external_single_structure Description of the returned fields.
      */
-    public static function output(): structure {
-        return new structure([
-            'id' => new value(PARAM_INT, 'Rule id'),
-            'slotkey' => new value(PARAM_RAW, 'Slot key'),
-            'contextid' => new value(PARAM_INT, 'Context where the rule applies'),
-            'contextname' => new value(PARAM_RAW, 'Name of that context'),
-            'contextkind' => new value(PARAM_ALPHA, 'site, category, course or activity'),
-            'pages' => new listof(new value(PARAM_ALPHA, 'Kind of page'), 'Pages the rule is limited to'),
-            'regions' => new listof(new value(PARAM_ALPHA, 'Region'), 'Regions the rule is limited to'),
-            'mode' => new value(PARAM_ALPHA, 'Colour mode: all, light or dark'),
-            'painter' => new value(PARAM_ALPHA, 'Painter'),
-            'assetid' => new value(PARAM_INT, 'Artwork asset, zero for none'),
-            'asseturl' => new value(PARAM_RAW, 'Address of the artwork, empty for none'),
-            'assetkind' => new value(PARAM_ALPHA, 'svg, png or webp, empty for none'),
-            'fg' => new value(PARAM_RAW, 'Foreground, empty for none'),
-            'bg' => new value(PARAM_RAW, 'Background, empty for none'),
-            'design' => new value(PARAM_RAW, 'Design properties as a JSON object, empty for none'),
-            'enabled' => new value(PARAM_BOOL, 'Whether the rule is applied'),
-            'rev' => new value(PARAM_INT, 'Revision for optimistic locking'),
+    public static function output(): external_single_structure {
+        return new external_single_structure([
+            'id' => new external_value(PARAM_INT, 'Rule id'),
+            'slotkey' => new external_value(PARAM_RAW, 'Slot key'),
+            'contextid' => new external_value(PARAM_INT, 'Context where the rule applies'),
+            'contextname' => new external_value(PARAM_RAW, 'Name of that context'),
+            'contextkind' => new external_value(PARAM_ALPHA, 'site, category, course or activity'),
+            'pages' => new external_multiple_structure(
+                new external_value(PARAM_ALPHA, 'Kind of page'),
+                'Pages the rule is limited to'
+            ),
+            'regions' => new external_multiple_structure(
+                new external_value(PARAM_ALPHA, 'Region'),
+                'Regions the rule is limited to'
+            ),
+            'mode' => new external_value(PARAM_ALPHA, 'Colour mode: all, light or dark'),
+            'painter' => new external_value(PARAM_ALPHA, 'Painter'),
+            'assetid' => new external_value(PARAM_INT, 'Artwork asset, zero for none'),
+            'asseturl' => new external_value(PARAM_RAW, 'Address of the artwork, empty for none'),
+            'assetkind' => new external_value(PARAM_ALPHA, 'svg, png or webp, empty for none'),
+            'fg' => new external_value(PARAM_RAW, 'Foreground, empty for none'),
+            'bg' => new external_value(PARAM_RAW, 'Background, empty for none'),
+            'design' => new external_value(PARAM_RAW, 'Design properties as a JSON object, empty for none'),
+            'enabled' => new external_value(PARAM_BOOL, 'Whether the rule is applied'),
+            'rev' => new external_value(PARAM_INT, 'Revision for optimistic locking'),
         ]);
     }
 

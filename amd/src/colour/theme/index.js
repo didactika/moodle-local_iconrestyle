@@ -27,6 +27,7 @@ import selectors from 'local_iconrestyle/colour/theme/selectors';
 import {bindThemeListeners} from 'local_iconrestyle/colour/theme/listeners';
 import {renderResults} from 'local_iconrestyle/colour/theme/templates';
 import Templates from 'core/templates';
+import {follow} from 'local_iconrestyle/lib/follow';
 import * as themevars from 'local_iconrestyle/lib/themevars';
 
 const LIMIT = 80;
@@ -71,8 +72,14 @@ export const createThemeColours = (field, name, config) => {
     let typing = false;
     let shown = '';
 
+    let stopFollowing = () => null;
+
     const place = () => {
         const rect = input.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) {
+            close();
+            return;
+        }
         const width = Math.min(Math.max(rect.width, 260), window.innerWidth - 2 * MARGIN);
         const left = Math.max(MARGIN, Math.min(rect.left, window.innerWidth - width - MARGIN));
         const below = window.innerHeight - rect.bottom - MARGIN;
@@ -127,7 +134,7 @@ export const createThemeColours = (field, name, config) => {
         input.value = shown;
         input.setAttribute('aria-expanded', 'false');
         document.removeEventListener('pointerdown', onOutside, true);
-        window.removeEventListener('resize', close);
+        stopFollowing();
     }
 
     const open = async() => {
@@ -141,7 +148,8 @@ export const createThemeColours = (field, name, config) => {
         input.setAttribute('aria-expanded', 'true');
         input.select();
         document.addEventListener('pointerdown', onOutside, true);
-        window.addEventListener('resize', close);
+        stopFollowing();
+        stopFollowing = follow(() => !panel.hidden, place, panel);
     };
 
     bindThemeListeners({input, panel, list}, {

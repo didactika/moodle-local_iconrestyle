@@ -24,29 +24,33 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use local_iconrestyle\asset\asset_rejected_exception;
 use local_iconrestyle\asset\asset_urls;
 use local_iconrestyle\service_factory;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
+// The classes below use those of core_external, which Moodle 4.0 and 4.1 only have under their old names.
+// phpcs:ignore moodle.Files.MoodleInternal.MoodleInternalGlobalState
+\local_iconrestyle\compat\external_aliases::register();
 
 /**
  * The file travels as base64 in the request, which keeps the upload inside the normal web service checks.
  */
-class add_asset extends api {
+class add_asset extends external_api {
     /** @var int Longest accepted base64 text, enough for the largest accepted raster file. */
     private const MAX_BASE64 = 360000;
 
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters([
-            'content' => new value(PARAM_RAW, 'The file, base64 encoded'),
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([
+            'content' => new external_value(PARAM_RAW, 'The file, base64 encoded'),
         ]);
     }
 
@@ -60,8 +64,9 @@ class add_asset extends api {
     public static function execute(string $content): array {
         global $USER;
         $params = self::validate_parameters(self::execute_parameters(), ['content' => $content]);
-        self::validate_context(\context_system::instance());
-        service_factory::instance()->permissions()->require_manage();
+        $context = \context_system::instance();
+        self::validate_context($context);
+        require_capability('local/iconrestyle:manage', $context);
 
         $bytes = strlen($params['content']) <= self::MAX_BASE64 ? base64_decode($params['content'], true) : false;
         if ($bytes === false || $bytes === '') {
@@ -95,16 +100,16 @@ class add_asset extends api {
     /**
      * Returned structure.
      *
-     * @return structure Description.
+     * @return external_single_structure Description.
      */
-    public static function execute_returns(): structure {
-        return new structure([
-            'id' => new value(PARAM_INT, 'Asset id'),
-            'url' => new value(PARAM_RAW, 'Address of the artwork'),
-            'kind' => new value(PARAM_ALPHA, 'svg, png or webp'),
-            'width' => new value(PARAM_INT, 'Width'),
-            'height' => new value(PARAM_INT, 'Height'),
-            'monochrome' => new value(PARAM_BOOL, 'Whether the artwork uses a single colour'),
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure([
+            'id' => new external_value(PARAM_INT, 'Asset id'),
+            'url' => new external_value(PARAM_RAW, 'Address of the artwork'),
+            'kind' => new external_value(PARAM_ALPHA, 'svg, png or webp'),
+            'width' => new external_value(PARAM_INT, 'Width'),
+            'height' => new external_value(PARAM_INT, 'Height'),
+            'monochrome' => new external_value(PARAM_BOOL, 'Whether the artwork uses a single colour'),
         ]);
     }
 }

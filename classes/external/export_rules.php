@@ -24,25 +24,35 @@
  */
 namespace local_iconrestyle\external;
 
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 use local_iconrestyle\service_factory;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/compat.php');
+// The classes below use those of core_external, which Moodle 4.0 and 4.1 only have under their old names.
+// phpcs:ignore moodle.Files.MoodleInternal.MoodleInternalGlobalState
+\local_iconrestyle\compat\external_aliases::register();
 
 /**
  * Gives the package as text, for the designer to save as a file. A site with very many rules uses the command line instead,
  * because a web request is not the place to build a file of that size.
  */
-class export_rules extends api {
+class export_rules extends external_api {
     /**
      * Parameters.
      *
-     * @return parameters Description.
+     * @return external_function_parameters Description.
      */
-    public static function execute_parameters(): parameters {
-        return new parameters([
-            'slots' => new listof(new value(PARAM_RAW, 'Slot key of an icon'), 'Icons to export, none for all', VALUE_DEFAULT, []),
+    public static function execute_parameters(): external_function_parameters {
+        return new external_function_parameters([
+            'slots' => new external_multiple_structure(
+                new external_value(PARAM_RAW, 'Slot key of an icon'),
+                'Icons to export, none for all',
+                VALUE_DEFAULT,
+                []
+            ),
         ]);
     }
 
@@ -54,9 +64,10 @@ class export_rules extends api {
      */
     public static function execute(array $slots = []): array {
         $params = self::validate_parameters(self::execute_parameters(), ['slots' => $slots]);
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         $factory = service_factory::instance();
-        $factory->permissions()->require_exchange();
+        require_capability('local/iconrestyle:exchange', $context);
         $exporter = $factory->exporter();
         $lines = [];
         foreach ($exporter->lines(self::valid_slots($params['slots'])) as $line) {
@@ -88,13 +99,16 @@ class export_rules extends api {
     /**
      * Returned structure.
      *
-     * @return structure Description.
+     * @return external_single_structure Description.
      */
-    public static function execute_returns(): structure {
-        return new structure([
-            'filename' => new value(PARAM_FILE, 'Name to save the package under'),
-            'content' => new value(PARAM_RAW, 'The package, one JSON object on each line'),
-            'skipped' => new listof(new value(PARAM_RAW, 'Reason'), 'Rules that were left out and why'),
+    public static function execute_returns(): external_single_structure {
+        return new external_single_structure([
+            'filename' => new external_value(PARAM_FILE, 'Name to save the package under'),
+            'content' => new external_value(PARAM_RAW, 'The package, one JSON object on each line'),
+            'skipped' => new external_multiple_structure(
+                new external_value(PARAM_RAW, 'Reason'),
+                'Rules that were left out and why'
+            ),
         ]);
     }
 }

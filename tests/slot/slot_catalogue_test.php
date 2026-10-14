@@ -70,6 +70,47 @@ final class slot_catalogue_test extends \advanced_testcase {
     }
 
     /**
+     * Every image file of the pix folders of core and of the plugins is an icon of the list, whatever its extension or depth.
+     */
+    public function test_every_image_file_is_listed(): void {
+        global $CFG;
+        $catalogue = service_factory::instance()->catalogue();
+        $listed = array_column($catalogue->all(), 'key');
+        $extensions = ['svg', 'png', 'gif', 'jpg', 'jpeg', 'webp', 'ico'];
+        $folders = ['core' => (is_dir($CFG->dirroot . '/pix') ? $CFG->dirroot : $CFG->dirroot . '/public') . '/pix'];
+        foreach (\core_component::get_component_list() as $components) {
+            foreach ($components as $component => $directory) {
+                $folders[$component] = $directory . '/pix';
+            }
+        }
+        $missing = [];
+        $checked = 0;
+        foreach ($folders as $component => $folder) {
+            if (!is_dir($folder)) {
+                continue;
+            }
+            $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($folder, \FilesystemIterator::SKIP_DOTS));
+            foreach ($files as $file) {
+                $extension = strtolower($file->getExtension());
+                if (!$file->isFile() || !in_array($extension, $extensions, true)) {
+                    continue;
+                }
+                $name = substr(substr($file->getPathname(), strlen($folder) + 1), 0, -strlen($extension) - 1);
+                $key = $component . ':' . str_replace('\\', '/', $name);
+                if (!\local_iconrestyle\slot\slot_key::is_valid($key)) {
+                    continue;
+                }
+                $checked++;
+                if (!in_array($key, $listed, true)) {
+                    $missing[] = $key;
+                }
+            }
+        }
+        $this->assertGreaterThan(500, $checked);
+        $this->assertSame([], array_slice($missing, 0, 20), 'Images of pix folders that the list does not have');
+    }
+
+    /**
      * Keys are unique, valid and sorted.
      */
     public function test_keys_are_unique_valid_and_sorted(): void {
