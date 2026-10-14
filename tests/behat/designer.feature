@@ -53,7 +53,7 @@ Feature: Customise icons in the designer
     And I click on "[data-region='fg-themeinput']" "css_element"
     And I wait until "[data-region='fg-themepanel']" "css_element" exists
     And I scroll away from "[data-region='fg-themeinput']" by 40 pixels
-    Then "[data-region='fg-themepanel']" should be right under "[data-region='fg-themeinput']"
+    Then "[data-region='fg-themepanel']" should be next to "[data-region='fg-themeinput']"
 
   Scenario: What is saved shows at once on every icon of the designer page, without reloading
     When I set the field "Search icons" to "a/setting"

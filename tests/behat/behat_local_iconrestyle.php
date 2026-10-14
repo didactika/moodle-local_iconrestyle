@@ -672,20 +672,26 @@ class behat_local_iconrestyle extends behat_base {
     }
 
     /**
-     * Check that a list that floats is still right under the field that opened it.
+     * Check that a list that floats is still next to the field that opened it, under it or over it.
      *
-     * @Then /^"([^"]+)" should be right under "([^"]+)"$/
+     * The list opens under the field and over it when the window leaves more room there, so the check accepts both and
+     * fails only when the list has been left behind where the field was.
+     *
+     * @Then /^"([^"]+)" should be next to "([^"]+)"$/
      * @param string $list CSS selector of the list.
      * @param string $field CSS selector of the field.
      */
-    public function the_list_should_be_under(string $list, string $field): void {
-        $gap = (float) $this->getSession()->evaluateScript(
-            "document.querySelector(" . json_encode($list) . ").getBoundingClientRect().top -" .
-            "document.querySelector(" . json_encode($field) . ").getBoundingClientRect().bottom"
+    public function the_list_should_be_next_to(string $list, string $field): void {
+        $gaps = $this->getSession()->evaluateScript(
+            "(function() { var list = document.querySelector(" . json_encode($list) . ").getBoundingClientRect();" .
+            "var field = document.querySelector(" . json_encode($field) . ").getBoundingClientRect();" .
+            "return [list.top - field.bottom, field.top - list.bottom]; })()"
         );
-        if ($gap < -1 || $gap > 16) {
-            throw new \Behat\Mink\Exception\ExpectationException(
-                'The list is ' . $gap . ' pixels from the field, not right under it.',
+        $under = (float) $gaps[0];
+        $over = (float) $gaps[1];
+        if (($under < -1 || $under > 16) && ($over < -1 || $over > 16)) {
+            throw new BehatMinkExceptionExpectationException(
+                'The list is ' . $under . ' pixels under the field and ' . $over . ' over it, not next to it.',
                 $this->getSession()
             );
         }
